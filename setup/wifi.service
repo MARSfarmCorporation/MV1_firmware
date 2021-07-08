@@ -1,0 +1,11 @@
+[Unit]
+Description=wifi-connect
+After=multi-user.target
+
+[Service]
+ExecStart=/bin/bash /home/pi/MVP/scripts/wifi.sh
+Restart=on-failure
+User=pi
+
+[Install]
+WantedBy=multi-user.target
