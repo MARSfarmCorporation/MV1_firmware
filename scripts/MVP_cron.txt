@@ -1,0 +1,42 @@
+# Crontab jobs used by the MVP 
+# Author: Howard Webb
+# Date: 11/13/2017
+# Warning: This will overwrite any existing crontab, do not use if you use cron for other purposes
+
+#Modified by: Jackie Zhong(zy99120@gmail.com)
+
+# Don't send email
+MAILTO=""
+
+# Path to the MVP python code
+PY_PATH=/home/pi/MVP/python
+
+# Path to the MVP scripts
+MVP_SCRIPTS=/home/pi/MVP/scripts
+
+# Path to other scripts
+SCRIPT_PATH=/home/pi/scripts
+
+# Cron output log
+CRON_LOG=/home/pi/MVP/logs/cron.log
+
+# m h  dom mon dow   command
+
+# Log sensors interval
+1 * * * * $MVP_SCRIPTS/LogData.sh >> $CRON_LOG 2>&1
+
+# Image taking control
+0 8 * * * $MVP_SCRIPTS/Webcam.sh >> $CRON_LOG 2>&1
+
+# upload image taken to amazon S3
+1 8 * * * $MVP_SCRIPTS/S3.sh >> $CRON_LOG 2>&1
+
+# Check CouchDB heartbeat
+10 * * * * $MVP_SCRIPTS/Heartbeat.sh >> $CRON_LOG 2>&1
+
+# Start CouchDB when reboot
+@reboot /home/pi/MVP/scripts/./StartCouchDB.sh
+
+
+
+
