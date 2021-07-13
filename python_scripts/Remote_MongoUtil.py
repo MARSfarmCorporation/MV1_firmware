@@ -1,3 +1,7 @@
+'''
+Date: Jul 13, 2021
+Author: Henry Borska (henryborska@wustl.edu)
+'''
 #Python version: 3.7.3
 import csv
 import collections
