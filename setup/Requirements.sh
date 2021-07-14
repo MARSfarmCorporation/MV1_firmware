@@ -20,3 +20,5 @@ sudo pip3 install gspread
 sudo pip3 install google-api-python-client
 sudo pip3 install oauth2client
 
+#New Requirements for GPIO actuation 
+sudo apt-get install pigpio python-pigpio python3-pigpio
