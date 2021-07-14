@@ -36,14 +36,18 @@ def log_sensors(test = False):
         co2 = get_co2(con)
         if(int(co2) > 10000):
             co2 = get_co2(con)
+            
         
         status = 'Success'
+        print(status)
+        print(co2)
         if test:
             status = 'Test'
         insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'co2', co2, 'ppm', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
 
     except Exception as e:
         status = 'Failure'
+        print(status)
         if test:
             status = 'Test'
     
@@ -53,12 +57,15 @@ def log_sensors(test = False):
         temp = si.get_tempC()
 
         status = 'Success'
+        print(status)
+        print(temp)
         if test:
             status = 'Test'
         insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'temperature', temp, 'C', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
         
     except Exception as e:
         status = 'Failure'
+        print(status)
         if test:
             status = 'Test'
 
@@ -68,20 +75,23 @@ def log_sensors(test = False):
         humid = si.get_humidity()
 
         status = 'Success'
+        print(status)
+        print(humid)
         if test:
             status = 'Test'
         insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'humidity', humid, '%', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
         
     except Exception as e:
         status = 'Failure'
+        print(status)
         if test:
             status = 'Test'
 
 
     #Update google sheets
-    update_sheet('Environment_Observation', 'Temperature', temp, 'Celcius')
-    update_sheet('Environment_Observation', 'Humidity', humid, 'Percentage')
-    update_sheet('Environment_Observation', 'CO2', co2, 'ppm')
+    #update_sheet('Environment_Observation', 'Temperature', temp, 'Celcius')
+    #update_sheet('Environment_Observation', 'Humidity', humid, 'Percentage')
+    #update_sheet('Environment_Observation', 'CO2', co2, 'ppm')
 
 def test():
     log_sensors(True)
