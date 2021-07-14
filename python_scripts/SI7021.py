@@ -149,13 +149,13 @@ class SI7021(object):
        if not ((msgs is None) or (msgs[0].data is None)):
           rev = msgs[0].data[0]
           if rev == 0xFF:
-              #self._logger.info("version 1.0")
+              print("version 1.0")
           elif rev == 0x20:
-              #self._logger.info("version 2.0")
+              print("version 2.0")
           else:
-              #self._logger.error("Unknown")
+              print("Unknown")
        else:
-          #self._logger.error("No Revision Data Available")
+          print("No Revision Data Available")
           return rev        
 
    def get_id1(self):
@@ -172,9 +172,9 @@ class SI7021(object):
            msgs = self._i2c.get_data([read_id_1_1, read_id_1_2], 0.05, 4)
            ret= msgs[0].data
            for data in ret:
-               #self._logger.info("ID: " + str(hex(data)))
+               print("ID: " + str(hex(data)))
        except Exception as e:
-          #self._logger.error("Error getting msgs " + str(e))
+          print("Error getting msgs " + str(e))
 
    def get_id2(self):
        """Print the second part of the chips unique id
@@ -187,22 +187,22 @@ class SI7021(object):
                None
        """
            
-       #self._logger.info("\nGet ID 2")
+       print("\nGet ID 2")
        msgs = self._i2c.get_data([read_id_2_1, read_id_2_2], 0.05, 4)
        ret= msgs[0].data
        for data in ret:
-          #self._logger.info("ID" + str(hex(data)))
+          print("ID" + str(hex(data)))
        sna3 = msgs[0].data[0]
        if sna3 == 0x00:
-           #self._logger.info("Device: Engineering Sample")
+           print("Device: Engineering Sample")
        elif sna3 == 0xFF:
-           #self._logger.info("Device: Engineering Sample")       
+           print("Device: Engineering Sample")       
        elif sna3 == 0x14:
-           #self._logger.info("Device: SI7020")
+           print("Device: SI7020")
        elif sna3 == 0x15:
-           #self._logger.info("Device: SI7021")
+           print("Device: SI7021")
        else:
-           #self._logger.error("Unknown")
+           print("Unknown")
 
    def reset(self):
        """Reset the device
@@ -214,9 +214,9 @@ class SI7021(object):
                None
        """
             
-       #self._logger.info("\nReset")
+       print("\nReset")
        rev_1 = self._i2c.msg_write([reset_cmd])
-       #self._logger.info("Reset: " + str(rev_1))
+       print("Reset: " + str(rev_1))
     
 def test():
     """Exercise all the SI7021 functions
