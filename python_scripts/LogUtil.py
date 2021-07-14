@@ -3,7 +3,7 @@
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
-def get_logger(name="MvpLogger"):
+def Logger(name="MFMiniLogger"):
     """Create and return a logger
 
     Builds a Python logger to:
