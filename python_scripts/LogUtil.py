@@ -17,7 +17,7 @@ def get_logger(name="MvpLogger"):
     Raises:
         None
     """
-    fname = "/home/pi/MVP/logs/mvp.log"
+    fname = "/home/pi/Desktop/MarsFarmMini/logs/Operations.log"
     fmt = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
     # build logger
     logger = logging.getLogger('mvp.'+name)
