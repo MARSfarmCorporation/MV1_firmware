@@ -121,7 +121,7 @@ class SI7021(object):
            Raises:
                None
        """
-       msgs = self._i2c.get_data([temp_no_hold], 0.03, 3)
+       msgs = self._i2c.get_msg([temp_no_hold], 0.03, 3)
        value = self._i2c.bytesToWord(msgs[0].data[0], msgs[0].data[1])
        if value == None:
            raise NameError("No TempC data")
