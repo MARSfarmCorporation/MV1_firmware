@@ -37,6 +37,7 @@ class I2C(object):
    #        print "Cmd: ", hex(cmd)
    #    print "Buffer:", size        
        msgs = [self._i2c.Message(cmds), self._i2c.Message(bytearray([0x00 for x in range(size)]), read=True)]
+       print(hex(msgs))
        try:
            self._i2c.transfer(self._addr, msgs)
            ret = msgs[1].data
