@@ -20,5 +20,3 @@ sudo pip3 install gspread
 sudo pip3 install google-api-python-client
 sudo pip3 install oauth2client
 
-#couchdb
-sudo pip3 install couchdb
