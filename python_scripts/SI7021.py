@@ -10,7 +10,7 @@ https://www.silabs.com/documents/public/data-sheets/Si7021-A20.pdf
 
 
 import time
-from I2CUtil import I2C
+from I2CUtil import I2C, byteToWord
 #from LogUtil import Logger
 
 class DataException(Exception):
@@ -104,7 +104,7 @@ class SI7021(object):
            Raises:
                 None
        """
-       msgs = self._i2c.get_data([rh_no_hold], 0.03, 2)
+       msgs = self._i2c.get_msg([rh_no_hold], 2)
        value = self._i2c.bytesToWord(msgs[0].data[0], msgs[0].data[1])       
        if value == None:
            raise DataException("No Humidity data")
@@ -121,7 +121,7 @@ class SI7021(object):
            Raises:
                None
        """
-       msgs = self._i2c.get_msg([temp_no_hold], 0.03, 3)
+       msgs = self._i2c.get_msg([temp_no_hold], 3)
        value = self._i2c.bytesToWord(msgs[0].data[0], msgs[0].data[1])
        if value == None:
            raise NameError("No TempC data")
