@@ -50,7 +50,7 @@ class SI7021(object):
       #self._logger = logger
       #if logger == None:
           #self._logger = Logger("SI7021", Logger.INFO, "/home/pi/python/logs/obsv.log")
-      self._i2c = I2C(path, addr)
+      self._i2c = I2C(addr)
           
  
    def calc_humidity(self, read):
