@@ -10,7 +10,7 @@ Modified by: Jackie Zhong(zy99120@gmail.com), Henry Borska - July 2021 - (HLB948
 
 from Remote_MongoUtil import EnvironmentalObservation, insert_one
 from SI7021 import *
-# from GSheetUtil import update_sheet
+from GSheetUtil import update_sheet
 from MHZ16 import get_co2
 import serial
 import string
@@ -79,9 +79,9 @@ def log_sensors(test = False):
 
 
     #Update google sheets
-    # update_sheet('Environment_Observation', 'Temperature', temp, 'Celcius')
-    # update_sheet('Environment_Observation', 'Humidity', humid, 'Percentage')
-    # update_sheet('Environment_Observation', 'CO2', co2, 'ppm')
+    update_sheet('Environment_Observation', 'Temperature', temp, 'Celcius')
+    update_sheet('Environment_Observation', 'Humidity', humid, 'Percentage')
+    update_sheet('Environment_Observation', 'CO2', co2, 'ppm')
 
 def test():
     log_sensors(True)
