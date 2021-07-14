@@ -11,7 +11,7 @@ https://www.silabs.com/documents/public/data-sheets/Si7021-A20.pdf
 
 import time
 from I2CUtil import I2C
-#from LogUtil import Logger
+from LogUtil import Logger
 
 class DataException(Exception):
     pass
