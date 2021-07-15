@@ -89,9 +89,21 @@ def log_sensors(test = False):
 
 
     #Update google sheets
-    #update_sheet('Environment_Observation', 'Temperature', temp, 'Celcius')
-    #update_sheet('Environment_Observation', 'Humidity', humid, 'Percentage')
-    #update_sheet('Environment_Observation', 'CO2', co2, 'ppm')
+    #this part is for google sheet update
+    try:
+        update_sheet('Environment_Observation', 'CO2', co2, 'ppm')
+    except Exception as e:
+        update_sheet('Environment_Observation_ERROR', 'CO2', 0, 'ppm')
+    
+    try:
+        update_sheet('Environment_Observation', 'Temperature', temp, 'Celcius')
+    except Exception as e:
+        update_sheet('Environment_Observation_ERROR', 'Temperature', '0', 'Celcius')
+    
+    try:
+        update_sheet('Environment_Observation', 'Humidity', humid, 'Percentage')
+    except Exception as e:
+        update_sheet('Environment_Observation_ERROR', 'Humidity', 0, 'Percentage')
 
 def test():
     log_sensors(True)
