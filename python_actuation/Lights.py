@@ -3,7 +3,7 @@ import pigpio
 pi = pigpio.pi()
 
 class Light:
-    def __init__( self, gpio_pin__far_red, gpio_pin_red, gpio_pin_green, gpio_pin_blue, gpio_pin_white):
+    def __init__( self, gpio_pin_far_red, gpio_pin_red, gpio_pin_green, gpio_pin_blue, gpio_pin_white):
         self.gpioFarRed = gpio_pin_far_red #Store red GPIO
         self.gpioRed = gpio_pin_red #Store red GPIO
         self.gpioGreen = gpio_pin_green #Store green GPIO
