@@ -27,6 +27,8 @@ VALUE = 106
 
 
 def log_sensors(test = False):
+    
+    
 
     si=SI7021()
     con = serial.Serial("/dev/ttyAMA0", 9600, timeout=5)
@@ -37,6 +39,7 @@ def log_sensors(test = False):
         if(int(co2) > 10000):
             co2 = get_co2(con)
             
+        insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'co2', co2, 'ppm', TRIAL_ID, "Tyler-Trial", TRIAL_START_DATE))
         
         status = 'Success'
         print(status)
