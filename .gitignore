@@ -3,3 +3,9 @@ pictures/*
 
 # exception to the rule
 !pictures/.gitkeep 
+
+# exclude everything
+.aws/*
+
+# exception to the rule
+!.aws/.gitkeep 
