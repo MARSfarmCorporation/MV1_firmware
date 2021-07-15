@@ -18,7 +18,7 @@ def main():
     try:
         s3 = boto3.resource('s3')
 
-        list_of_files = glob.glob('/home/pi/MVP/pictures/*')
+        list_of_files = glob.glob('/home/pi/Desktop/MarsFarmMini/pictures/*')
         latest_file = max(list_of_files, key=os.path.getctime) #get the latest taken picture
         data = open(latest_file, 'rb')
         name = os.path.basename(latest_file)
