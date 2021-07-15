@@ -6,7 +6,7 @@ import os
 camera = PiCamera(resolution=(640,480))
 #camera.rotation = 180 # uncomment if picture is upside down
 # Set focus
-focus =  50 #6 to 14 inches
+focus =  2000 #6 to 14 inches
 value = (focus<<4) & 0x3ff0
 dat1 = (value>>8)&0x3f
 dat2 = value & 0xf0
