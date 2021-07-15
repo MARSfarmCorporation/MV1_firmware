@@ -14,13 +14,14 @@ from GSheetUtil import update_sheet
 from MHZ16 import get_co2
 import serial
 import string
+import time
 
 
 #Hardcoded Data
 TRIAL_NAME = "Test Trial 1"
 TRIAL_ID = "60db520a1a0f29f5a74a0f62"
 TRIAL_START_DATE = 1623621469
-OBSERVATION_DATE = 1626195469 #change to date now 
+OBSERVATION_DATE = time.time() #change to date now 
 ATTRIBUTE = "humidity"
 UNIT = "%"
 VALUE = 106
@@ -38,9 +39,7 @@ def log_sensors(test = False):
         co2 = get_co2(con)
         if(int(co2) > 10000):
             co2 = get_co2(con)
-            
-        insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'co2', co2, 'ppm', TRIAL_ID, "Tyler-Trial", TRIAL_START_DATE))
-        
+
         status = 'Success'
         print(status)
         print(co2)
