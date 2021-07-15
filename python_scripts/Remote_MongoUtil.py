@@ -38,6 +38,7 @@ class EnvironmentalObservation(object):
         self.unit = unit
         self.trial_id = ObjectId(trial_id)
         self.trial_name = trial_name
+        self.trial_start_date = self.formatDate(trial_start_date)
         self.day_number = self.calculateDayNum(trial_start_date, observation_date)
         self.week_number = self.calculateWeekNum(trial_start_date, observation_date)
         self.model_name = "EnvironmentalObservation"
