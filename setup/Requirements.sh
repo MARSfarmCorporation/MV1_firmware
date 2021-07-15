@@ -8,6 +8,7 @@ sudo pip3 install boto3
 
 #awscli for AWS utility
 sudo apt install awscli
+sudo pip3 install --upgrade awscli
 
 #periphery for SI7021
 sudo pip3 install python-periphery
