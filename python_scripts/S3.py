@@ -28,7 +28,7 @@ def main():
     except Exception as e:
         current_time = datetime.datetime.now()
         
-        file = open('/home/pi/MVP/logs/S3.log', mode='a')
+        file = open('/home/pi/Desktop/MarsFarmMini/pictures/S3.log', mode='a')
         file.write("%s : %s" % (current_time, str(e)))
         file.close()
 
