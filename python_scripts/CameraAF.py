@@ -13,5 +13,5 @@ dat2 = value & 0xf0
 os.system("i2cset -y 0 0x0c %d %d" % (dat1,dat2))
 
 sleep(2)
-camera.capture('/home/pi/MVP/pictures/' + format(datetime.datetime.now(), '%Y-%m-%d_%H%M') + '.jpg')
+camera.capture('/home/pi/Desktop/MarsFarmMini/pictures/' + format(datetime.datetime.now(), '%Y-%m-%d_%H%M') + '.jpg')
 camera.close()
