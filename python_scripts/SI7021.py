@@ -116,7 +116,7 @@ class SI7021(object):
            Raises:
                None
        """
-       print("\nGet Temp - no hold split")
+       #print("\nGet Temp - no hold split")
        msgs = self._i2c.msg_write([temp_no_hold])
        # need a pause here between sending the request and getting the data
        time.sleep(2.02)
