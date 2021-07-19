@@ -77,7 +77,7 @@ class SI7021(object):
                None
        """
 
-       print ("\nGet Temp - get previous")
+       #print ("\nGet Temp - get previous")
        msgs = self._i2c.get_msg([previous_temp], 3)
        if msgs == None:
            return None
@@ -95,7 +95,7 @@ class SI7021(object):
            Raises:
                 None
        """
-       print ("\nGet Humidity - no hold split")
+       #print ("\nGet Humidity - no hold split")
        msgs = self._i2c.msg_write([rh_no_hold])
        # need a pause here between sending the request and getting the data
        time.sleep(2.03)
