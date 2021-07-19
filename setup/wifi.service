@@ -3,7 +3,7 @@ Description=wifi-connect
 After=multi-user.target
 
 [Service]
-ExecStart=/bin/bash /home/pi/MVP/scripts/wifi.sh
+ExecStart=/bin/bash /home/pi/Desktop/MarsFarmMini/scripts/wifi.sh
 Restart=on-failure
 User=pi
 
