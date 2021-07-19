@@ -5,7 +5,7 @@ Please run LogSensors.py OWITH PYTHON3!!!!!
 -If want to run in Python2, get rid of all parts related to CO2 collection
     
 Author: Howard Webb 
-Modified by: Jackie Zhong(zy99120@gmail.com), Henry Borska - July 2021 - (HLB948@gmail.com)
+Modified by: Jackie Zhong(zy99120@gmail.com), Henry Borska - July 2021 - (HLB948@gmail.com), Tyler Richards(richardstylerj20@gmail.com)
 """
 
 from Remote_MongoUtil import EnvironmentalObservation, insert_one
