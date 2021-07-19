@@ -23,6 +23,8 @@ sudo pip3 install oauth2client
 
 #New Requirements for GPIO actuation 
 sudo apt-get install pigpio python-pigpio python3-pigpio
+
+#New Requirements for MongoDB
 pip3 install pymongo
 pip3 install pymongo[srv]
 pip3 install python-dotenv
