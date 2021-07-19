@@ -6,7 +6,7 @@
 
 #######################################
 
-TARGET=/home/pi/MVP
+TARGET=/home/pi/Desktop/MarsFarmMini
 PYTHON=$TARGET/python
 
 # Declarations
@@ -27,5 +27,5 @@ error_exit()
 
 timestamp="$(date +"%D %T")"
 
-crontab /home/pi/MVP/scripts/MVP_cron.txt || error_exit "Failure loading Cron"
+crontab /home/pi/Desktop/MarsFarmMini/scripts/MVP_cron.txt || error_exit "Failure loading Cron"
 echo $(date +"%D %T") "Cron loaded"
