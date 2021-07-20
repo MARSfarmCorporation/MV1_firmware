@@ -28,4 +28,4 @@ sudo apt-get install pigpio python-pigpio python3-pigpio
 pip3 install pymongo
 pip3 install pymongo[srv]
 pip3 install python-dotenv
-pip3 install bson
+
