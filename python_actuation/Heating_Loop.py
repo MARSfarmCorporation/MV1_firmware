@@ -6,7 +6,7 @@ fan1 = Fan.Fan(16) #Create circulation fan
 heater = Heater.Heater(5)
 fan1.setState(1) #Leave on forever
 
-setpoint = 26.6 #Given in C
+setpoint = 30 #Given in C
 hysteresis = 0.5
 
 si=SI7021()
