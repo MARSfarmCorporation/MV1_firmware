@@ -2,7 +2,7 @@ import Fan
 from SI7021 import *
 
 fan1 = Fan.Fan(16) #Create circulation fan 
-heater = Heater.Heater(21)
+heater = Heater.Heater(5)
 fan1.setState(1) #Leave on forever
 
 set_point = 30 #Given in C
