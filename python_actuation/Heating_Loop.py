@@ -12,19 +12,19 @@ while True:
     temp = si.get_tempC()
     print(temp, "C")
 
-    if ( (temp < setpoint + hysteresis) && (hysteresis > 0) ): #Measured temp is below setpoint
+    if ( (temp < setpoint + hysteresis) and (hysteresis > 0) ): #Measured temp is below setpoint
         heater.setState(1) #Turn on heater to raise temp   
 
-    if ( (temp > setpoint + hysteresis) && (hysteresis > 0) ): #Measured temp is below setpoint
+    if ( (temp > setpoint + hysteresis) and (hysteresis > 0) ): #Measured temp is below setpoint
         #Hysteresis is present to prevent fast switching of heater
         #Once heater has been turned on, the setpoint needs to be "moved"
         hysteresis = hysteresis * -1
         heater.setState(0) #Turn off heater to lower temp
          
-    if ( (temp > setpoint + hysteresis) && (hysteresis < 0) ): #Measured temp is above setpoint
+    if ( (temp > setpoint + hysteresis) and (hysteresis < 0) ): #Measured temp is above setpoint
         heater.setState(0) #Turn off heater to lower temp
 
-    if ( (temp < setpoint + hysteresis) && (hysteresis < 0) ): #Measured temp is below setpoint
+    if ( (temp < setpoint + hysteresis) and (hysteresis < 0) ): #Measured temp is below setpoint
         #Hysteresis is present to prevent fast switching of heater
         #Once heater has been turned on, the setpoint needs to be "moved"
         hysteresis = hysteresis * -1
