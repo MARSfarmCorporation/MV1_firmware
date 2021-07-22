@@ -9,6 +9,8 @@ fan1.setState(1) #Leave on forever
 set_point = 26.6 #Given in C
 hysteresis = 0.5
 
+si=SI7021()
+
 while True:
     temp = si.get_tempC()
     print(temp, "C")
