@@ -10,6 +10,7 @@ hysteresis = 0.5
 
 while True:
     temp = si.get_tempC()
+    print(temp, "F")
 
     if ( (temp < setpoint + hysteresis) && (hysteresis > 0) ): #Measured temp is below setpoint
         heater.setState(1) #Turn on heater to raise temp   
