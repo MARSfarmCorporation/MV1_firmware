@@ -1,4 +1,5 @@
 import Fan
+import Heater
 from SI7021 import *
 
 fan1 = Fan.Fan(16) #Create circulation fan 
