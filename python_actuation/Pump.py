@@ -19,7 +19,7 @@ class Pump:
         if (state == 1): #Forward
             pi.write(self.gpioA,1) #set pump to state
             pi.write(self.gpioB,0) #set pump to state
-        elif (state == 2): #Backward
+        elif (state == -1): #Backward
             pi.write(self.gpioA,0) #set pump to state
             pi.write(self.gpioB,1) #set pump to state
         else: #Stop pump
