@@ -20,6 +20,8 @@ while True:
     if (i%200 > 100):
         fan1.setState(1)
         fan2.setState(0)
+        pump.setState(1)
     else:
         fan1.setState(0)
         fan2.setState(1)
+        pump.setState(-1)
