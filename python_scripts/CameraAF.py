@@ -12,6 +12,7 @@ pi = pigpio.pi()
 lights = Lights.Light(26,5,6,13,19)
 
 #Record previous light settings
+print(type(pi.get_PWM_dutycycle(26)))
 f = int(pi.get_PWM_dutycycle(26))
 r = int(pi.get_PWM_dutycycle(5))
 g = int(pi.get_PWM_dutycycle(6))
