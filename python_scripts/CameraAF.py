@@ -2,7 +2,19 @@ from picamera import PiCamera
 from time import sleep
 import datetime
 import os
+import os
+import glob
 
+#Clear previous photos from directory to prevent SD card from becoming full
+files = glob.glob('/home/pi/Desktop/MarsFarmMini/pictures/*.jpg')
+
+for f in files:
+    try:
+        f.unlink() #Delete file in list
+    except OSError as e:
+        print("Error: %s : %s" % (f, e.strerror))#Throw error
+        
+#Set camera resolution
 camera = PiCamera(resolution=(1080,720))
 #camera.rotation = 180 # uncomment if picture is upside down
 # Set focus
