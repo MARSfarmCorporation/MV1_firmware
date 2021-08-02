@@ -5,6 +5,9 @@ import os
 import os
 import glob
 import Lights
+import pigpio
+
+pi = pigpio.pi()
 
 lights = Lights.Light(26,5,6,13,19)
 
