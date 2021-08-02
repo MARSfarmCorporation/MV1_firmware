@@ -13,13 +13,13 @@ lights = Lights.Light(26,5,6,13,19)
 
 #Record previous light settings
 print(type(pi.get_PWM_dutycycle(26)))
-farred = int(float(pi.get_PWM_dutycycle(26)))
-red = int(float(pi.get_PWM_dutycycle(5)))
-green = int(float(pi.get_PWM_dutycycle(6)))
-blue = int(float(pi.get_PWM_dutycycle(13)))
-white = int(float(pi.get_PWM_dutycycle(19)))
+farred = pi.get_PWM_dutycycle(26)
+red = pi.get_PWM_dutycycle(5)
+green = pi.get_PWM_dutycycle(6)
+blue = pi.get_PWM_dutycycle(13)
+white = pi.get_PWM_dutycycle(19)
 
-print(farred)
+print(farred) 
 
 #Turn off light
 lights.customMode(0,0,0,0,0)
@@ -52,4 +52,4 @@ camera.capture('/home/pi/Desktop/MarsFarmMini/pictures/' + format(datetime.datet
 camera.close()
 
 #Return light to previous settings
-lights.customMode(f,r,g,b,w)
+lights.customMode(farred,red,green,blue,white)
