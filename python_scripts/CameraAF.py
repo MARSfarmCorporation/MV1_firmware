@@ -12,14 +12,11 @@ pi = pigpio.pi()
 lights = Lights.Light(26,5,6,13,19)
 
 #Record previous light settings
-print(type(pi.get_PWM_dutycycle(26)))
 farred = pi.get_PWM_dutycycle(26)
 red = pi.get_PWM_dutycycle(5)
 green = pi.get_PWM_dutycycle(6)
 blue = pi.get_PWM_dutycycle(13)
 white = pi.get_PWM_dutycycle(19)
-
-print(farred) 
 
 #Turn off light
 lights.customMode(0,0,0,0,0)
