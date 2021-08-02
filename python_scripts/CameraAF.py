@@ -3,10 +3,10 @@ from time import sleep
 import datetime
 import os
 
-camera = PiCamera(resolution=(640,480))
+camera = PiCamera(resolution=(1080,720))
 #camera.rotation = 180 # uncomment if picture is upside down
 # Set focus
-focus =  400 #6 to 14 inches
+focus =  50 #6 to 14 inches
 value = (focus<<4) & 0x3ff0
 dat1 = (value>>8)&0x3f
 dat2 = value & 0xf0
