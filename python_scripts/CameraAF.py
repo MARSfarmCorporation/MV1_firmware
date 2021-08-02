@@ -4,6 +4,19 @@ import datetime
 import os
 import os
 import glob
+import Lights
+
+lights = Lights.Light(26,5,6,13,19)
+
+#Record previous light settings
+f = pi.get_PWM_dutycycle(26)
+r = pi.get_PWM_dutycycle(5)
+g = pi.get_PWM_dutycycle(6)
+b = pi.get_PWM_dutycycle(13)
+w = pi.get_PWM_dutycycle(19)
+
+#Turn off light
+lights.customMode(0,0,0,0,0)
 
 #Clear previous photos from directory to prevent SD card from becoming full
 files = glob.glob('/home/pi/Desktop/MarsFarmMini/pictures/*.jpg')
@@ -24,6 +37,13 @@ dat1 = (value>>8)&0x3f
 dat2 = value & 0xf0
 os.system("i2cset -y 0 0x0c %d %d" % (dat1,dat2))
 
+#Turn on white light at 50%
+lights.customMode(0,0,0,0,127)
+
+#Take picture
 sleep(2)
 camera.capture('/home/pi/Desktop/MarsFarmMini/pictures/' + format(datetime.datetime.now(), '%Y-%m-%d_%H%M') + '.jpg')
 camera.close()
+
+#Return light to previous settings
+lights.customMode(f,r,g,b,w)
