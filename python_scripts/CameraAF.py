@@ -10,7 +10,7 @@ files = glob.glob('/home/pi/Desktop/MarsFarmMini/pictures/*.jpg')
 
 for f in files:
     try:
-        f.remove() #Delete file in list
+        os.remove(f) #Delete file in list
     except OSError as e:
         print("Error: %s : %s" % (f, e.strerror))#Throw error
         
