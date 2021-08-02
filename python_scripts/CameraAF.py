@@ -13,11 +13,13 @@ lights = Lights.Light(26,5,6,13,19)
 
 #Record previous light settings
 print(type(pi.get_PWM_dutycycle(26)))
-f = int(float(pi.get_PWM_dutycycle(26)))
-r = int(float(pi.get_PWM_dutycycle(5)))
-g = int(float(pi.get_PWM_dutycycle(6)))
-b = int(float(pi.get_PWM_dutycycle(13)))
-w = int(float(pi.get_PWM_dutycycle(19)))
+farred = int(float(pi.get_PWM_dutycycle(26)))
+red = int(float(pi.get_PWM_dutycycle(5)))
+green = int(float(pi.get_PWM_dutycycle(6)))
+blue = int(float(pi.get_PWM_dutycycle(13)))
+white = int(float(pi.get_PWM_dutycycle(19)))
+
+print(farred)
 
 #Turn off light
 lights.customMode(0,0,0,0,0)
