@@ -35,6 +35,8 @@ CRON_LOG=/home/pi/Desktop/MarsFarmMini/logs/cron.log
 # Start pigpio service at reboot
 @reboot python3 $PY_ACT_PATH/boot_script.py
 
+@reboot sudo ifconfig eth0 down; sudo macchanger --mac=66:d0:72:62:31:25 eth0; sudo ifconfig eth0 up
+
 
 
 
