@@ -1,34 +1,53 @@
-import Fan
 import Heater
 from SI7021 import *
+import trial
+import time
+import datetime
 
-fan1 = Fan.Fan(16) #Create circulation fan 
 heater = Heater.Heater(5)
-fan1.setState(1) #Leave on forever
-
-setpoint = 30 #Given in C
-hysteresis = 0.5
 
 si=SI7021()
 
-while True:
-    temp = si.get_tempC()
-    print(temp, "C")
+# Import dictionary data
+data = trial.trial
 
-    if ( (temp < setpoint + hysteresis) and (hysteresis > 0) ): #Measured temp is below setpoint
-        heater.setState(1) #Turn on heater to raise temp   
+# Get current time
+current_time = datetime.datetime.now()
 
-    if ( (temp > setpoint + hysteresis) and (hysteresis > 0) ): #Measured temp is below setpoint
-        #Hysteresis is present to prevent fast switching of heater
-        #Once heater has been turned on, the setpoint needs to be "moved"
-        hysteresis = hysteresis * -1
-        heater.setState(0) #Turn off heater to lower temp
-         
-    if ( (temp > setpoint + hysteresis) and (hysteresis < 0) ): #Measured temp is above setpoint
-        heater.setState(0) #Turn off heater to lower temp
+# Get start date from JSON
+start_date = data['start_date']
 
-    if ( (temp < setpoint + hysteresis) and (hysteresis < 0) ): #Measured temp is below setpoint
-        #Hysteresis is present to prevent fast switching of heater
-        #Once heater has been turned on, the setpoint needs to be "moved"
-        hysteresis = hysteresis * -1
-        heater.setState(1) #Turn on heater to raise temp  
+# Look specifically at phase data, as that carries the information on what the device should be doing
+phaseData = data['phases']
+
+current_phase = []
+# Look through phase array
+for i in range(len(phaseData)):
+    # If current time is greater than the start day of the phase, then it is saved
+    # Loop is continued until current time is less than start day of phase
+    if time.time() > (phaseData[i]['phase_start'] * 86400) + start_date:
+        current_phase = phaseData[i]  # Save specific phase data
+
+temp_settings = current_phase['step'][0]['temperature']  # Store temperature settings as variable
+
+target_temp = 0  # Variable to hold target temperature
+
+# Look through temperature array and find most up to date temperature setting
+# NOTE: This only works if times are SORTED in ascending order in JSON
+for i in range(len(temp_settings)):
+
+    if current_time.hour >= temp_settings[i]['start_time'][0]:
+        if current_time.minute >= temp_settings[i]['start_time'][1]:
+            target_temp = temp_settings[i]['setting']  # Save temp if the current time is greater than time from array
+
+setpoint = (5/9)*(target_temp - 32)
+
+temp = si.get_tempC()
+# print(temp, "C")
+
+if ( temp < setpoint): #Measured temp is below setpoint
+    heater.setState(1) #Turn on heater to raise temp   
+
+if ( temp > setpoint): #Measured temp is below setpoint
+    heater.setState(0) #Turn off heater to lower temp
+
