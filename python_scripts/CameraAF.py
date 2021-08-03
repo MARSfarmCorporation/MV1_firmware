@@ -31,10 +31,10 @@ for f in files:
         print("Error: %s : %s" % (f, e.strerror))#Throw error
         
 #Set camera resolution
-camera = PiCamera(resolution=(1080,720))
+camera = PiCamera(resolution=(1920,1080))
 #camera.rotation = 180 # uncomment if picture is upside down
 # Set focus
-focus =  50 #6 to 14 inches
+focus =  300 #6 to 14 inches
 value = (focus<<4) & 0x3ff0
 dat1 = (value>>8)&0x3f
 dat2 = value & 0xf0
