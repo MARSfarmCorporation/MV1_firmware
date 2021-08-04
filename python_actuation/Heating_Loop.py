@@ -4,7 +4,7 @@ import trial
 import time
 import datetime
 
-heater = Heater.Heater(5)
+heater = Heater.Heater(21)
 
 si=SI7021()
 
