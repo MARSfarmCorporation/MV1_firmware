@@ -23,7 +23,7 @@ for i in range(len(phaseData)):
     if time.time() > (phaseData[i]['phase_start'] * 86400) + start_date:
         current_phase = phaseData[i]  # Save specific phase data
 
-light_settings = current_phase['step'][1]['light_intensity']  # Store light settings are variable
+light_settings = current_phase['step'][2]['light_intensity']  # Store light settings are variable
 
 # Variable to hold target light settings, dummy variable turns on red slightly to indicate error
 target_light = [0, 10, 0, 0];
