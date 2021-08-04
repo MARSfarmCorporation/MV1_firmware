@@ -16,6 +16,13 @@ trial = {
         {"name": "growth",
          "phase_start": 0,
          "step": [
+            {"circulation_fan": [
+                 {
+                     "start_time": [0, 0],
+                     "setting": 1
+                 }
+             ]
+            },
             {"temperature": [
                  {
                      "start_time": [0, 0],
@@ -79,22 +86,22 @@ trial = {
             {"temperature": [
                  {
                      "start_time": [0, 0],
-                     "setting": [75]
+                     "setting": 75
                  },
                  {
                      "start_time": [16, 0],
-                     "setting": [85]
+                     "setting": 85
                  }
              ]
              },
             {"light_intensity": [
                  {
                      "start_time": [0, 0],
-                     "setting": [0, 0, 0, 0, 0]
+                     "setting": [0, 0, 0, 0]
                  },
                  {
                      "start_time": [10, 0],
-                     "setting": [75, 75, 75, 75, 75]
+                     "setting": [75, 75, 75, 75]
                  }
              ]
              }
