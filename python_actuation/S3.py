@@ -12,6 +12,28 @@ import glob
 import os
 import boto3
 import datetime
+import trial
+import time
+import datetime
+
+# Import dictionary data
+data = trial.trial
+
+# Try to get device ID and trial ID from JSON
+try:
+    trial_id_num = data['_id']['$oid']
+    trial_id = str(data['_id']['$oid'])
+    device_id = str(data['device_id'])
+    
+except Exception as e:
+        current_time = datetime.datetime.now()
+        
+        file = open('/home/pi/Desktop/MarsFarmMini/logs/S3.log', mode='a')
+        file.write("%s : %s" % (current_time, str(e)))
+        file.close()    
+
+# Look specifically at phase data, as that carries the information on what the device should be doing
+phaseData = data['phases']
 
 def main():
     
@@ -25,12 +47,19 @@ def main():
         currTime = str(datetime.datetime.now())
         
         #If bucket was not public, we could also add credentials in here
-        s3.Bucket('henry-metadata-testing').put_object(Key=name,
-                                                       Body=data,
-                                                       Metadata={'currTime':currTime,
-                                                                 'device_id':'5678',
-                                                                 'trial_id': '1234'
-                                                                })
+        if trial_id_num != 0:
+            s3.Bucket('henry-metadata-testing').put_object(Key=name,
+                                                           Body=data,
+                                                           Metadata={'currTime':currTime,
+                                                                     'device_id':device_id,
+                                                                     'trial_id':trial_id
+                                                                    })
+       else:
+             s3.Bucket('henry-metadata-testing').put_object(Key=name,
+                                                           Body=data,
+                                                           Metadata={'currTime':currTime,
+                                                                     'device_id':device_id,
+                                                                    })
         
     except Exception as e:
         current_time = datetime.datetime.now()
