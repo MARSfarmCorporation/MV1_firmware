@@ -34,7 +34,7 @@ for i in range(len(phaseData)):
     if time.time() > (phaseData[i]['phase_start'] * 86400) + start_date:
         current_phase = phaseData[i]  # Save specific phase data
 
-temp_settings = current_phase['step'][0]['temperature']  # Store temperature settings as variable
+temp_settings = current_phase['step'][1]['temperature']  # Store temperature settings as variable
 circ_settings = current_phase['step'][0]['circulation_fan']  # Store circulation fan settings as variable
 
 target_temp = 0  # Variable to hold target temperature
