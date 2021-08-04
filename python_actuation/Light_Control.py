@@ -37,6 +37,5 @@ for i in range(len(light_settings)):
 
 lights = Lights.Light(26,5,13,19)
 lights.customMode(target_light[0], target_light[1], target_light[2], target_light[3]) 
-print(target_light[0], target_light[1], target_light[2], target_light[3])
 
 
