@@ -21,11 +21,11 @@ class Light:
         pi.set_PWM_frequency(self.gpioBlue,1000)
         pi.set_PWM_frequency(self.gpioWhite,1000)
 
-        #Turn off lights if they were on
-        pi.set_PWM_dutycycle(self.gpioFarRed,0)
-        pi.set_PWM_dutycycle(self.gpioRed,0)
-        pi.set_PWM_dutycycle(self.gpioBlue,0)
-        pi.set_PWM_dutycycle(self.gpioWhite,0)
+        #Turn off lights if they were on; Commented out to prevent flashing
+        #pi.set_PWM_dutycycle(self.gpioFarRed,0)
+        #pi.set_PWM_dutycycle(self.gpioRed,0)
+        #pi.set_PWM_dutycycle(self.gpioBlue,0)
+        #pi.set_PWM_dutycycle(self.gpioWhite,0)
         
     #Turn fan on and off
     def setState(self,state):
