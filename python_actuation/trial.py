@@ -42,18 +42,18 @@ trial = {
                  },
                  {
                     "start_time": [12, 0],
-                    "setting": [0, 10, 150, 0]
-                 },
-                 {
-                    "start_time": [12, 10],
                     "setting": [0, 150, 0, 0]
                  },
                  {
-                    "start_time": [12, 20],
-                    "setting": [150, 150, 150, 150]
+                    "start_time": [12, 10],
+                    "setting": [0, 0, 150, 0]
                  },
                  {
-                     "start_time": [17, 0],
+                    "start_time": [12, 20],
+                    "setting": [0, 0, 0, 150]
+                 },
+                 {
+                     "start_time": [12, 30],
                      "setting": [75, 75, 75, 75, 75]
                  }
              ]
