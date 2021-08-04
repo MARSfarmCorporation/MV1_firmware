@@ -36,7 +36,7 @@ target_temp = 0  # Variable to hold target temperature
 # NOTE: This only works if times are SORTED in ascending order in JSON
 for i in range(len(temp_settings)):
 
-    if ((current_time.hour*60) + current_time.minute) >= ((light_settings[i]['start_time'][0]*60) + light_settings[i]['start_time'][1]):
+    if ((current_time.hour*60) + current_time.minute) >= ((temp_settings[i]['start_time'][0]*60) + temp_settings[i]['start_time'][1]):
         target_temp = temp_settings[i]['setting']  # Save temp if the current time is greater than time from array
 
 setpoint = (5/9)*(target_temp - 32)
