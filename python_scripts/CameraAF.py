@@ -18,7 +18,7 @@ blue = pi.get_PWM_dutycycle(13)
 white = pi.get_PWM_dutycycle(19)
 
 #Turn off light
-lights.customMode(0,0,0,0,0)
+lights.customMode(0,0,0,0)
 
 #Clear previous photos from directory to prevent SD card from becoming full
 files = glob.glob('/home/pi/Desktop/MarsFarmMini/pictures/*.jpg')
@@ -40,7 +40,7 @@ dat2 = value & 0xf0
 os.system("i2cset -y 0 0x0c %d %d" % (dat1,dat2))
 
 #Turn on white light at 50%
-lights.customMode(0,0,0,0,127)
+lights.customMode(0,0,0,255)
 
 #Take picture
 sleep(2)
