@@ -19,18 +19,38 @@ trial = {
             {"temperature": [
                  {
                      "start_time": [0, 0],
-                     "setting": 75
+                     "setting": 85
                  },
                  {
                      "start_time": [15, 40],
-                     "setting": 85
+                     "setting": 70
                  }
              ]
              },
             {"light_intensity": [
                  {
                      "start_time": [0, 0],
-                     "setting": [0, 0, 0, 0, 0]
+                     "setting": [0, 0, 0, 0]
+                 },
+                 {
+                    "start_time": [11, 30],
+                    "setting": [10, 10, 10, 10]
+                 },
+                 {
+                    "start_time": [11, 50],
+                    "setting": [0, 50, 10, 150]
+                 },
+                 {
+                    "start_time": [12, 0],
+                    "setting": [0, 10, 150, 0]
+                 },
+                 {
+                    "start_time": [12, 10],
+                    "setting": [0, 150, 0, 0]
+                 },
+                 {
+                    "start_time": [12, 20],
+                    "setting": [150, 150, 150, 150]
                  },
                  {
                      "start_time": [17, 0],
