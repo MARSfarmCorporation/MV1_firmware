@@ -3,6 +3,12 @@ from SI7021 import *
 import trial
 import time
 import datetime
+import Fan
+
+exhaustFan = Fan.Fan(16)
+circFan = Fan.Fan(20)
+
+circFan.setState(1)
 
 heater = Heater.Heater(21)
 
@@ -29,8 +35,10 @@ for i in range(len(phaseData)):
         current_phase = phaseData[i]  # Save specific phase data
 
 temp_settings = current_phase['step'][0]['temperature']  # Store temperature settings as variable
+circ_settings = current_phase['step'][0]['circulation_fan']  # Store circulation fan settings as variable
 
 target_temp = 0  # Variable to hold target temperature
+target_fan = 1 # Variable to hold fan target
 
 # Look through temperature array and find most up to date temperature setting
 # NOTE: This only works if times are SORTED in ascending order in JSON
@@ -39,14 +47,32 @@ for i in range(len(temp_settings)):
     if ((current_time.hour*60) + current_time.minute) >= ((temp_settings[i]['start_time'][0]*60) + temp_settings[i]['start_time'][1]):
         target_temp = temp_settings[i]['setting']  # Save temp if the current time is greater than time from array
 
-setpoint = (5/9)*(target_temp - 32)
+# Look through circ fan array and find most up to date setting
+# NOTE: This only works if times are SORTED in ascending order in JSON
+for i in range(len(circ_settings)):
 
-temp = si.get_tempC()
+    if ((current_time.hour*60) + current_time.minute) >= ((circ_settings[i]['start_time'][0]*60) + circ_settings[i]['start_time'][1]):
+        target_fan = circ_settings[i]['setting']  # Save setting if the current time is greater than time from array
+
+circFan.setState(target_fan) # Set circ fan state
+
+setpoint = (5/9)*(target_temp - 32) # Convert F to C
+
+temp = si.get_tempC() # Get temp from Si7021
 # print(temp, "C")
 
+# Heater control code 
 if ( temp < setpoint): #Measured temp is below setpoint
     heater.setState(1) #Turn on heater to raise temp   
+    circFan.setState(1) # Set circ fan state
 
-if ( temp > setpoint): #Measured temp is below setpoint
+if ( temp > setpoint): #Measured temp is above setpoint
     heater.setState(0) #Turn off heater to lower temp
 
+# Exhaust fan control code
+if ( temp > setpoint + 1): #Measured temp is above setpoint by too much
+    exhaustFan.setState(1) #Turn on exhaust fan
+else:
+    exhaustFan.setState(0) #Turn off fan
+
+  
