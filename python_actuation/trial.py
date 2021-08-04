@@ -26,19 +26,7 @@ trial = {
             {"temperature": [
                  {
                      "start_time": [0, 0],
-                     "setting": 85
-                 },
-                 {
-                     "start_time": [12, 25],
-                     "setting": 79
-                 },
-                 {
-                     "start_time": [13, 25],
                      "setting": 80
-                 },
-                 {
-                     "start_time": [15, 40],
-                     "setting": 70
                  }
              ]
              },
@@ -48,32 +36,36 @@ trial = {
                      "setting": [0, 0, 0, 0]
                  },
                  {
-                    "start_time": [11, 30],
-                    "setting": [10, 10, 10, 10]
+                    "start_time": [16, 15],
+                    "setting": [255, 255, 255, 255]
                  },
                  {
-                    "start_time": [11, 50],
-                    "setting": [0, 50, 10, 150]
+                    "start_time": [17, 15],
+                    "setting": [0, 0, 0, 0]
                  },
                  {
-                    "start_time": [12, 0],
-                    "setting": [0, 150, 0, 0]
+                    "start_time": [18, 15],
+                    "setting": [255, 255, 255, 255]
                  },
                  {
-                    "start_time": [12, 10],
-                    "setting": [0, 0, 150, 0]
+                    "start_time": [19, 15],
+                    "setting": [0, 0, 0, 0]
                  },
                  {
-                    "start_time": [12, 20],
-                    "setting": [0, 0, 0, 150]
+                    "start_time": [20, 15],
+                    "setting": [255, 255, 255, 255]
                  },
                  {
-                    "start_time": [12, 25],
-                    "setting": [0, 150, 0, 50]
+                    "start_time": [21, 15],
+                    "setting": [0, 0, 0, 0]
                  },
                  {
-                     "start_time": [12, 30],
-                     "setting": [75, 75, 75, 75]
+                    "start_time": [22, 30],
+                    "setting": [255, 255, 255, 255]
+                 },
+                 {
+                    "start_time": [23, 15],
+                    "setting": [0, 0, 0, 0]
                  }
              ]
              }
