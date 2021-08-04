@@ -26,11 +26,10 @@ try:
     device_id = str(data['device_id'])
     
 except Exception as e:
-        current_time = datetime.datetime.now()
-        
-        file = open('/home/pi/Desktop/MarsFarmMini/logs/S3.log', mode='a')
-        file.write("%s : %s" % (current_time, str(e)))
-        file.close()    
+    current_time = datetime.datetime.now()
+    file = open('/home/pi/Desktop/MarsFarmMini/logs/S3.log', mode='a')
+    file.write("%s : %s" % (current_time, str(e)))
+    file.close()    
 
 # Look specifically at phase data, as that carries the information on what the device should be doing
 phaseData = data['phases']
