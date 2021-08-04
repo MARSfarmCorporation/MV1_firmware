@@ -26,6 +26,10 @@ trial = {
                      "setting": 79
                  },
                  {
+                     "start_time": [13, 25],
+                     "setting": 85
+                 },
+                 {
                      "start_time": [15, 40],
                      "setting": 70
                  }
