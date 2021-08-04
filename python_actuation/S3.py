@@ -53,7 +53,7 @@ def main():
                                                                      'device_id':device_id,
                                                                      'trial_id':trial_id
                                                                     })
-       else:
+        else:
              s3.Bucket('henry-metadata-testing').put_object(Key=name,
                                                            Body=data,
                                                            Metadata={'currTime':currTime,
