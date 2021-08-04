@@ -3,8 +3,6 @@ import trial
 import time
 import datetime
 
-lights = Lights.Light(26,5,13,19)
-
 # Import dictionary data
 data = trial.trial
 
@@ -38,6 +36,8 @@ for i in range(len(light_settings)):
         if current_time.minute >= light_settings[i]['start_time'][1]:
             target_light = light_settings[i]['setting']  # Save temp if the current time is greater than time from array
 
+lights = Lights.Light(26,5,13,19)
 lights.customMode(target_light[0], target_light[1], target_light[2], target_light[3]) 
+print(target_light[0], target_light[1], target_light[2], target_light[3])
 
 
