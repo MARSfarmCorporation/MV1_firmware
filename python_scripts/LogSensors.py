@@ -47,6 +47,7 @@ def log_sensors(test = False):
     #Inserting humidity and temp into database
     try:
         sensor_data = sht.read_data()
+        print(sensor_data)
         temp2 = sensor_data[0]
         humid2 = sensor_data[1]
 
