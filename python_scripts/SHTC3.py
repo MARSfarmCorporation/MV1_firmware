@@ -28,8 +28,8 @@ class SHTC3(object):
         temp = None
         humidity = None
 
-        msgs = self._i2c.msg_write([read_command])
-
+        msgs = self._i2c.msg_write([0x78])
+        msgs = self._i2c.msg_write([0x66])
         # need a pause here between sending the request and getting the data
         time.sleep(0.013)
         msgs = self._i2c.msg_read(6)
