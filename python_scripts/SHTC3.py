@@ -36,8 +36,8 @@ class SHTC3(object):
         if msgs == None:
             return None
         else:
-            temp_data = bytesToWord(msgs[0].data[0], msgs[0].data[1])
-            humidity_data = bytesToWord(msgs[0].data[3], msgs[0].data[4])
+            temp_data = [bytesToWord(msgs[0].data[0]), bytesToWord(msgs[0].data[1])]
+            humidity_data = [bytesToWord(msgs[0].data[3]), bytesToWord(msgs[0].data[4])]
 
         # decode data into human values:
         # convert bytes into 16-bit signed integer
