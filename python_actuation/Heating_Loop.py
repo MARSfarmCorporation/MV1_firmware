@@ -65,11 +65,11 @@ if ( temp < setpoint): #Measured temp is below setpoint
     heater.setState(1) #Turn on heater to raise temp   
     circFan.setState(1) # Set circ fan state
 
-if ( temp > setpoint): #Measured temp is above setpoint
+if ( temp >= setpoint): #Measured temp is above setpoint
     heater.setState(0) #Turn off heater to lower temp
 
 # Exhaust fan control code
-if ( temp > setpoint + 1): #Measured temp is above setpoint by too much
+if ( temp >= setpoint + 1): #Measured temp is above setpoint by too much
     exhaustFan.setState(1) #Turn on exhaust fan
 else:
     exhaustFan.setState(0) #Turn off fan
