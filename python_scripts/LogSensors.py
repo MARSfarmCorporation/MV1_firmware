@@ -47,12 +47,11 @@ def log_sensors(test = False):
     #Inserting humidity and temp into database
     try:
         sensor_data = sht.read_data()
-        print(sensor_data)
-        temp2 = sensor_data[0]
-        humid2 = sensor_data[1]
+        temp = sensor_data[0]
+        humid = sensor_data[1]
 
-        # insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'humidity', humid, '%', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
-        # insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'temperature', temp, 'C', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
+        insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'humidity', humid, '%', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
+        insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'temperature', temp, 'C', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
         #print(status)
         #print(humid)
 
@@ -67,12 +66,12 @@ def log_sensors(test = False):
         update_sheet('Environment_Observation_ERROR', 'CO2', 0, 'ppm')
 
     try:
-        update_sheet('Environment_Observation', 'Temperature', temp2, 'Celcius')
+        update_sheet('Environment_Observation', 'Temperature', temp, 'Celcius')
     except Exception as e:
         update_sheet('Environment_Observation_ERROR', 'Temperature', '0', 'Celcius')
 
     try:
-        update_sheet('Environment_Observation', 'Humidity', humid2, 'Percentage')
+        update_sheet('Environment_Observation', 'Humidity', humid, 'Percentage')
     except Exception as e:
         update_sheet('Environment_Observation_ERROR', 'Humidity', 0, 'Percentage')
 
