@@ -1,5 +1,5 @@
 import Heater
-from SI7021 import *
+from SHTC3 import *
 import trial
 import time
 import datetime
@@ -12,7 +12,7 @@ circFan.setState(1)
 
 heater = Heater.Heater(21)
 
-si=SI7021()
+sht=SHTC3()
 
 # Import dictionary data
 data = trial.trial
@@ -58,8 +58,8 @@ circFan.setState(target_fan) # Set circ fan state
 
 setpoint = (5/9)*(target_temp - 32) # Convert F to C
 
-temp = si.get_tempC() # Get temp from Si7021
-# print(temp, "C")
+temp = (sht.get_data())[0] # Get temp from SHTC3
+print(temp, "C")
 
 # Heater control code 
 if ( temp < setpoint): #Measured temp is below setpoint
