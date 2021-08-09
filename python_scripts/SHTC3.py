@@ -32,7 +32,9 @@ class SHTC3(object):
         # need a pause here between sending the request and getting the data
         time.sleep(1)
         msgs = self._i2c.msg_read(6)
-
+        print("Output:")
+        print(msgs)
+        
         if msgs == None:
             return None
         else:
