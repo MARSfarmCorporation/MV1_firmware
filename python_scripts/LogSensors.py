@@ -56,7 +56,7 @@ def log_sensors(test = False):
         #print(humid)
 
     except Exception as e:
-        print("fault")
+        print(e)
 
     #Update google sheets
     #this part is for google sheet update
