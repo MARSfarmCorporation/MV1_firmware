@@ -38,8 +38,6 @@ class SHTC3(object):
         else:
             temp_data = bytesToWord(msgs[0].data[0], msgs[0].data[1])
             humidity_data = bytesToWord(msgs[0].data[3], msgs[0].data[4])
-            print(temp_data)
-            print(humidity_data)
 
         # decode data into human values:
         # convert bytes into 16-bit signed integer
@@ -52,6 +50,8 @@ class SHTC3(object):
         raw_humidity = (humidity_data[1] << 8) + humidity_data[0]
         raw_humidity = (625 * raw_humidity) >> 12
         humidity = raw_humidity / 100.0
-
+        
+        print(temperature)
+        print(humidity)
         return [temperature, humidity]
 
