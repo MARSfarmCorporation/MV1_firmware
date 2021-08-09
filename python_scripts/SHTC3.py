@@ -1,10 +1,10 @@
 """
-SI7021 humidity and temperature sensor
+SHTC3 humidity and temperature sensor
 Technical notes of commands and operation and from:
-https://www.silabs.com/documents/public/data-sheets/Si7021-A20.pdf
+https://www.mouser.com/datasheet/2/682/seri_s_a0003561073_1-2291167.pdf
 
- Author : Howard Webb
- Date   : 06/20/2018
+ Author : Tyler Richards
+ Date   : 08/09/2021
 
 """
 
@@ -28,21 +28,22 @@ class SHTC3(object):
         temp = None
         humidity = None
 
+        #Split read command into array of 2 bytes then send. See read_command for full 16 bit value
         msgs = self._i2c.msg_write([0x78,0x66])
         # need a pause here between sending the request and getting the data
         time.sleep(1)
+        
+        #Read in the 6 byte output (2 temp bytes, one CRC temp byte, 2 humidity bytes, one CRC humidity byte)
         msgs = self._i2c.msg_read(6)
         
         if msgs == None:
             return None
         else:
-            raw_temp = bytesToWord(msgs[0].data[0], msgs[0].data[1])
-            raw_humidity = bytesToWord(msgs[0].data[3], msgs[0].data[4])
+            raw_temp = bytesToWord(msgs[0].data[0], msgs[0].data[1]) #Read out temp data
+            raw_humidity = bytesToWord(msgs[0].data[3], msgs[0].data[4]) #Read out humidity data
 
-        # decode data into human values:
-        # convert bytes into 16-bit signed integer
-        # convert the LSB value to a human value according to the datasheet
-        raw_temp = ((4375 * raw_temp) >> 14) - 4500
+        # decode data into human values according to data sheet:
+        raw_temp = ((4375 * raw_temp) >> 14) - 4500 
         temperature = raw_temp / 100.0
 
         # repeat above steps for humidity data
