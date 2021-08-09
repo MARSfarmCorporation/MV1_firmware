@@ -32,14 +32,14 @@ class SHTC3(object):
         # need a pause here between sending the request and getting the data
         time.sleep(1)
         msgs = self._i2c.msg_read(6)
-        print("Output:")
-        print(msgs)
         
         if msgs == None:
             return None
         else:
-            temp_data = msgs[0:2]
-            humidity_data = msgs[3:5]
+            temp_data = bytesToWord(msgs[0].data[0], msgs[0].data[1])
+            humidity_data = bytesToWord(msgs[0].data[3], msgs[0].data[4])
+            print(temp_data)
+            print(humidity_data)
 
         # decode data into human values:
         # convert bytes into 16-bit signed integer
