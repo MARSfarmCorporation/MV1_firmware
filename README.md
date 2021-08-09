@@ -5,58 +5,58 @@ This all runs locally on a provisioned Raspberry Pi
 
 ## Python scripts and their function
 
-### CameraAF
+### CameraAF.py
 Sets the focal distance and orientation of the ArduCam and takes a photo. Also flashes the LED's white to while taking photo
 
-### GSheetUtil
+### GSheetUtil.py
 Utility for writing to google sheets
 
-### I2CUtil
+### I2CUtil.py
 Utility for I2C communications
 
-### LogSensors
+### LogSensors.py
 Records sensor readings and sends them to MongoDB and Google sheets
 
-### LogUtil
+### LogUtil.py
 Now defunct/ unusable code that originally logged actions taken by Pi
 
-### Remote_MongoUtil
+### Remote_MongoUtil.py
 Utility for sending data to MongoDB
 
-### S3
+### S3.py
 Utility for sending photos to S3 bucket
 
-### Heating_Loop
+### Heating_Loop.py
 Reads trials.py to control the temperature and fans inside the unit
 
-### Light_Control
+### Light_Control.py
 Reads trials.py to control the lighting inside the unit
 
-### Rainbow_2
+### Rainbow_2.py
 Test program to show patterns on LED's
 
-### boot_script
+### boot_script.py
 Program run by cron at boot to ensure RPI GPIO is configured for use
 
-### trial
+### trial.py
 File that stores data from MQTT to define how the RPI should actuate the lights, fan, and heater
 
 ## Python classes and their function
 
-### Lights
+### Lights.py
 This class saves the PWM values for Far Red, Red, Blue, and White for each LED channel then actuates its GPIO pins
 
-### Fan
+### Fan.py
 This class actuates the GPIO pin associated with a fan
 
-### Pump
+### Pump.py
 This class, which is currently not in use, actuates an H-Bridge driven pump at its GPIO pins
 
-### Heater
+### Heater.py
 This class actuates the GPIO pin associated with a heater
 
-### SI7021
+### SI7021.py
 This legacy class contains all of the methods that an SI7021 can perform (ie read temperature or read humidity)
 
-### SHTC3
+### SHTC3.py
 This new class contains all of the methods that an SHTC3 can perform (ie read temperature or read humidity)
