@@ -48,8 +48,6 @@ class SHTC3(object):
         # repeat above steps for humidity data
         raw_humidity = (625 * raw_humidity) >> 12
         humidity = raw_humidity / 100.0
-        
-        print(temperature)
-        print(humidity)
+
         return [temperature, humidity]
 
