@@ -59,7 +59,6 @@ circFan.setState(target_fan) # Set circ fan state
 setpoint = (5/9)*(target_temp - 32) # Convert F to C
 
 temp = (sht.read_data())[0] # Get temp from SHTC3
-print(temp, "C")
 
 # Heater control code 
 if ( temp < setpoint): #Measured temp is below setpoint
