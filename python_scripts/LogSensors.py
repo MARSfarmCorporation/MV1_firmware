@@ -40,7 +40,10 @@ def log_sensors(test = False):
         if test:
             status = 'Test'
         insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'co2', co2, 'ppm', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
-
+    except Exception as e:
+        print("fault")
+        
+        
     #Inserting humidity and temp into database
     try:
         sensor_data = sht.read_data()
