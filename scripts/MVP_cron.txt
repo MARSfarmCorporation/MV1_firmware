@@ -32,6 +32,12 @@ CRON_LOG=/home/pi/Desktop/MarsFarmMini/logs/cron.log
 # upload image taken to amazon S3
 10 * * * * $MINI_SCRIPTS/S3.sh >> $CRON_LOG 2>&1
 
+# Check lights
+* * * * * python3 $PY_ACT_PATH/Light_Control.py
+
+#Check heater every 10 seconds
+* * * * * for i in {1..5}; do python3 $PY_ACT_PATH/Heating_Loop.py & sleep 10; done
+
 # Start pigpio service at reboot
 @reboot python3 $PY_ACT_PATH/boot_script.py
 
