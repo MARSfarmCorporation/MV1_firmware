@@ -2,6 +2,7 @@ trial = {
     "_id": {
         "$oid": "60db520a1a0f29f5a74a0f62"
     },
+    "trial_name": "Temperature and Light Testing",
     "device_id": "60f1a223786cb0a4a6a5a175",
     "start_date": 1628007453,
     "start_date_str": "2021-07-01 00:41",

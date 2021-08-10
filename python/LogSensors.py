@@ -15,12 +15,18 @@ import serial
 import string
 import time
 
+# Import dictionary data
+data = trial.trial
+
+# Get current time
+OBSERVATION_DATE = time.time() #change to date now
+
+# Get start date from JSON
+TRIAL_START_DATE = data['start_date']
 
 #Hardcoded Data
-TRIAL_NAME = "Test Trial 1"
-TRIAL_ID = "60db520a1a0f29f5a74a0f62"
-TRIAL_START_DATE = 1623621469
-OBSERVATION_DATE = time.time() #change to date now
+TRIAL_NAME = data['trial_name']
+TRIAL_ID = data['_id']['$oid'] # $oid
 
 def log_sensors(test = False):
 
