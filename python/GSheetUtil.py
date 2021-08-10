@@ -21,7 +21,7 @@ MY_SPREADSHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
 scopes = 'https://www.googleapis.com/auth/spreadsheets'
 
 #Generate your own credential file to replace this
-creds = ServiceAccountCredentials.from_json_keyfile_name('/home/pi/Desktop/MarsFarmMini/python_scripts/Marsfarm-SpreadSheet.json',scopes)
+creds = ServiceAccountCredentials.from_json_keyfile_name('/home/pi/Desktop/MarsFarmMini/python/Marsfarm-SpreadSheet.json',scopes)
 client = gspread.authorize(creds)
 sheet = client.open_by_key(MY_SPREADSHEET_ID).sheet1
 

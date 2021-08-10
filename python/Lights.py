@@ -27,7 +27,7 @@ class Light:
         #pi.set_PWM_dutycycle(self.gpioBlue,0)
         #pi.set_PWM_dutycycle(self.gpioWhite,0)
         
-    #Turn fan on and off
+    #Turn light on and off
     def setState(self,state):
         if state != 0:
             pi.set_PWM_dutycycle(self.gpioFarRed,self.farred)
@@ -39,7 +39,18 @@ class Light:
             pi.set_PWM_dutycycle(self.gpioRed,0)
             pi.set_PWM_dutycycle(self.gpioBlue,0)
             pi.set_PWM_dutycycle(self.gpioWhite,0)
-    
+            
+    #Custom mode, main function used for light control
+    def customMode(self, f, r, b, w):
+        self.farred = f;
+        self.red = r;
+        self.blue = b;
+        self.white = w;
+        
+        self.setState(1)
+        
+        
+    # Anything below here is for debugging or legacy for GBE
     #Off Mode
     def modeZero(self):
         #Set light variables
@@ -87,14 +98,6 @@ class Light:
         elif mode == 3:
             self.modeThree()
             
-    #Custom
-    def customMode(self, f, r, b, w):
-        self.farred = f;
-        self.red = r;
-        self.blue = b;
-        self.white = w;
-        
-        self.setState(1)
             
             
 

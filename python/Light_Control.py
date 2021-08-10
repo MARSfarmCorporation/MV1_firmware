@@ -35,7 +35,7 @@ for i in range(len(light_settings)):
     if ((current_time.hour*60) + current_time.minute) >= ((light_settings[i]['start_time'][0]*60) + light_settings[i]['start_time'][1]):
         target_light = light_settings[i]['setting']  # Save temp if the current time is greater than time from array
 
-lights = Lights.Light(26,5,13,19)
-lights.customMode(target_light[0], target_light[1], target_light[2], target_light[3]) 
+lights = Lights.Light(26,5,13,19) # Set GPIO pins and create light object
+lights.customMode(target_light[0], target_light[1], target_light[2], target_light[3]) # Tell light object to turn on specific colors from trial.py
 
 

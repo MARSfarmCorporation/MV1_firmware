@@ -31,7 +31,7 @@ def log_sensors(test = False):
     #Inserting co2 (ppm) into database
     try:
         co2 = get_co2(con)
-        if(int(co2) > 10000):
+        if(int(co2) > 3000):
             co2 = get_co2(con)
 
         status = 'Success'
