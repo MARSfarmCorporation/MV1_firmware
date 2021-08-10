@@ -14,6 +14,7 @@ from MHZ16 import get_co2
 import serial
 import string
 import time
+import trial
 
 # Import dictionary data
 data = trial.trial
