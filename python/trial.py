@@ -27,7 +27,7 @@ trial = {
             {"temperature": [
                  {
                      "start_time": [0, 0],
-                     "setting": 0
+                     "setting": 85
                  }
              ]
              },
@@ -38,7 +38,7 @@ trial = {
                  },
                  {
                     "start_time": [12, 0],
-                    "setting": [255, 255, 255, 255]
+                    "setting": [125, 200, 200, 100]
                  },
                  {
                     "start_time": [17, 15],
@@ -46,7 +46,7 @@ trial = {
                  },
                  {
                     "start_time": [18, 15],
-                    "setting": [255, 255, 255, 255]
+                    "setting": [125, 200, 200, 100]
                  },
                  {
                     "start_time": [19, 15],
@@ -54,7 +54,7 @@ trial = {
                  },
                  {
                     "start_time": [20, 15],
-                    "setting": [255, 255, 255, 255]
+                    "setting": [125, 200, 200, 100]
                  },
                  {
                     "start_time": [21, 15],
@@ -62,7 +62,7 @@ trial = {
                  },
                  {
                     "start_time": [22, 30],
-                    "setting": [255, 255, 255, 255]
+                    "setting": [125, 200, 200, 100]
                  },
                  {
                     "start_time": [23, 15],
