@@ -44,7 +44,7 @@ def on_message(client, userdata, msg):
         output = msg.payload
         print(output)
         with open("/home/pi/Desktop/MarsFarmMini/python/trial.py", "w") as f:
-            f.write(output.decode('utf8'))
+            f.write(output.decode('utf-8'))
             f.close()
             print("Done!")
     else:
