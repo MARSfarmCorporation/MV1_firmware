@@ -16,10 +16,10 @@ class Light:
         self.white = 0;
         
         #Setup PWM on selected pins
-        pi.set_PWM_frequency(self.gpioFarRed,1000)
-        pi.set_PWM_frequency(self.gpioRed,1000)
-        pi.set_PWM_frequency(self.gpioBlue,1000)
-        pi.set_PWM_frequency(self.gpioWhite,1000)
+        pi.set_PWM_frequency(self.gpioFarRed,10000)
+        pi.set_PWM_frequency(self.gpioRed,10000)
+        pi.set_PWM_frequency(self.gpioBlue,10000)
+        pi.set_PWM_frequency(self.gpioWhite,10000)
 
         #Turn off lights if they were on; Commented out to prevent flashing
         #pi.set_PWM_dutycycle(self.gpioFarRed,0)
