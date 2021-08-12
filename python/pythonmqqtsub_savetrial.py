@@ -43,7 +43,7 @@ def on_message(client, userdata, msg):
     if msg.topic == subscribe_topic:
         output = msg.payload
         print(output)
-        with open("trials.py", "w") as f:
+        with open("/home/pi/Desktop/MarsFarmMini/python/trial.py", "w") as f:
             f.write(str(output))
             f.close()
             print("Done!")
