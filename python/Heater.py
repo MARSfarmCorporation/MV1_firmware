@@ -11,6 +11,6 @@ class Heater:
     #Turn on and off heater
     def setState(self, state):
         if (state > 0):
-            pi.set_PWM_dutycycle(self.gpio,255) #PWM heater (ratio of 126/255: 50W)
+            pi.set_PWM_dutycycle(self.gpio,155) #PWM heater (ratio of 126/255: 50W)
         if (state == 0):
             pi.set_PWM_dutycycle(self.gpio,0) #PWM heater at 0
