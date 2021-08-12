@@ -28,44 +28,44 @@ class Light:
         #pi.set_PWM_dutycycle(self.gpioWhite,0)
         
     #Turn light on and off
-def setState(self, state):
-    if state != 0:
+    def setState(self, state):
+        if state != 0:
 
-        # If else statements allow lights to turn off fully; Issue with PWM not shutting of LED's all the way
+            # If else statements allow lights to turn off fully; Issue with PWM not shutting of LED's all the way
 
-        if self.farred > 0:
-            pi.set_PWM_dutycycle(self.gpioFarRed, self.farred)
+            if self.farred > 0:
+                pi.set_PWM_dutycycle(self.gpioFarRed, self.farred)
+            else:
+                pi.set_mode(self.gpioFarRed, pigpio.OUTPUT)  # Set light as output
+                pi.write(self.gpioFarRed, 0)  # Turn off light when initialized
+
+            if self.red > 0:
+                pi.set_PWM_dutycycle(self.gpioRed, self.red)
+            else:
+                pi.set_mode(self.gpioRed, pigpio.OUTPUT)  # Set light as output
+                pi.write(self.gpioRed, 0)  # Turn off light when initialized
+
+            if self.blue > 0:
+                pi.set_PWM_dutycycle(self.gpioBlue, self.blue)
+            else:
+                pi.set_mode(self.gpioBlue, pigpio.OUTPUT)  # Set light as output
+                pi.write(self.gpioBlue, 0)  # Turn off light when initialized
+
+            if self.white > 0:
+                pi.set_PWM_dutycycle(self.gpioWhite, self.white)
+            else:
+                pi.set_mode(self.gpioWhite, pigpio.OUTPUT)  # Set light as output
+                pi.write(self.gpioWhite, 0)  # Turn off light when initialized
+
         else:
             pi.set_mode(self.gpioFarRed, pigpio.OUTPUT)  # Set light as output
             pi.write(self.gpioFarRed, 0)  # Turn off light when initialized
-
-        if self.red > 0:
-            pi.set_PWM_dutycycle(self.gpioRed, self.red)
-        else:
             pi.set_mode(self.gpioRed, pigpio.OUTPUT)  # Set light as output
             pi.write(self.gpioRed, 0)  # Turn off light when initialized
-
-        if self.blue > 0:
-            pi.set_PWM_dutycycle(self.gpioBlue, self.blue)
-        else:
             pi.set_mode(self.gpioBlue, pigpio.OUTPUT)  # Set light as output
             pi.write(self.gpioBlue, 0)  # Turn off light when initialized
-
-        if self.white > 0:
-            pi.set_PWM_dutycycle(self.gpioWhite, self.white)
-        else:
             pi.set_mode(self.gpioWhite, pigpio.OUTPUT)  # Set light as output
             pi.write(self.gpioWhite, 0)  # Turn off light when initialized
-
-    else:
-        pi.set_mode(self.gpioFarRed, pigpio.OUTPUT)  # Set light as output
-        pi.write(self.gpioFarRed, 0)  # Turn off light when initialized
-        pi.set_mode(self.gpioRed, pigpio.OUTPUT)  # Set light as output
-        pi.write(self.gpioRed, 0)  # Turn off light when initialized
-        pi.set_mode(self.gpioBlue, pigpio.OUTPUT)  # Set light as output
-        pi.write(self.gpioBlue, 0)  # Turn off light when initialized
-        pi.set_mode(self.gpioWhite, pigpio.OUTPUT)  # Set light as output
-        pi.write(self.gpioWhite, 0)  # Turn off light when initialized
             
     #Custom mode, main function used for light control
     def customMode(self, f, r, b, w):
