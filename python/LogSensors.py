@@ -31,7 +31,7 @@ TRIAL_START_DATE = data['start_date']
 
 #Hardcoded Data
 TRIAL_NAME = data['trial_name']
-TRIAL_ID = data['_id']['$oid'] # $oid
+TRIAL_ID = data['_id'] # $oid
 
 def log_sensors(test = False):
 
