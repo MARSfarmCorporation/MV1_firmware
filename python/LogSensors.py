@@ -65,7 +65,7 @@ def log_sensors(test = False):
         for i in range(0,5):
             lights.customMode(0,0,100,0)
             sleep(1)
-            lights.customMode(0,0,100,0)
+            lights.customMode(0,0,0,0)
             sleep(1)
         
         #Return light to previous settings
