@@ -16,6 +16,9 @@ import string
 import time
 import trial
 import Lights
+import pigpio
+
+pi = pigpio.pi()
 
 # Import dictionary data
 data = trial.trial
