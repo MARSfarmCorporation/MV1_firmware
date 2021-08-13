@@ -21,8 +21,8 @@ data = trial.trial
 
 # Try to get device ID and trial ID from JSON
 try:
-    trial_id_num = data['_id']['$oid']
-    trial_id = str(data['_id']['$oid'])
+    trial_id_num = data['_id']
+    trial_id = str(data['_id'])
     device_id = str(data['device_id'])
     
 except Exception as e:
