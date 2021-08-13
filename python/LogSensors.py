@@ -15,6 +15,7 @@ import serial
 import string
 import time
 import trial
+import Lights
 
 # Import dictionary data
 data = trial.trial
@@ -48,7 +49,26 @@ def log_sensors(test = False):
             status = 'Test'
         insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'co2', co2, 'ppm', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
     except Exception as e:
-        print("fault")
+        # Blink Blue LED's if sensor error
+        lights = Lights.Light(26,5,13,19)
+
+        #Record previous light settings
+        farred = pi.get_PWM_dutycycle(26)
+        red = pi.get_PWM_dutycycle(5)
+        blue = pi.get_PWM_dutycycle(13)
+        white = pi.get_PWM_dutycycle(19)
+        
+        #Blink Blue light 5 times at 50%
+        for i in range(0,5):
+            lights.customMode(0,0,100,0)
+            sleep(1)
+            lights.customMode(0,0,100,0)
+            sleep(1)
+        
+        #Return light to previous settings
+        lights.customMode(farred,red,blue,white)
+
+        print(e)
         
         
     #Inserting humidity and temp into database
@@ -63,6 +83,25 @@ def log_sensors(test = False):
         #print(humid)
 
     except Exception as e:
+        # Blink Blue LED's if sensor error
+        lights = Lights.Light(26,5,13,19)
+
+        #Record previous light settings
+        farred = pi.get_PWM_dutycycle(26)
+        red = pi.get_PWM_dutycycle(5)
+        blue = pi.get_PWM_dutycycle(13)
+        white = pi.get_PWM_dutycycle(19)
+        
+        #Blink Blue light 5 times at 50%
+        for i in range(0,5):
+            lights.customMode(0,0,100,0)
+            sleep(1)
+            lights.customMode(0,0,100,0)
+            sleep(1)
+        
+        #Return light to previous settings
+        lights.customMode(farred,red,blue,white)
+        
         print(e)
 
     #Update google sheets
