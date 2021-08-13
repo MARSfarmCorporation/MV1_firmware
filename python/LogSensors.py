@@ -98,9 +98,9 @@ def log_sensors(test = False):
         #Blink Blue light 5 times at 50%
         for i in range(0,5):
             lights.customMode(0,0,100,0)
-            sleep(1)
+            time.sleep(1)
             lights.customMode(0,0,100,0)
-            sleep(1)
+            time.sleep(1)
         
         #Return light to previous settings
         lights.customMode(farred,red,blue,white)
