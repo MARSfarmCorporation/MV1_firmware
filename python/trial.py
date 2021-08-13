@@ -27,7 +27,7 @@ trial = {
             {"temperature": [
                  {
                      "start_time": [0, 0],
-                     "setting": 85
+                     "setting": 80
                  }
              ]
              },
