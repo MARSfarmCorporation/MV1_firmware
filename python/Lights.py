@@ -35,7 +35,7 @@ class Light:
             pi.set_PWM_dutycycle(self.gpioRed, self.red)
             pi.set_PWM_dutycycle(self.gpioBlue, self.blue)
             pi.set_PWM_dutycycle(self.gpioWhite, self.white)
-         else:
+        else:
             pi.set_PWM_dutycycle(self.gpioFarRed, 0)
             pi.set_PWM_dutycycle(self.gpioRed, 0)
             pi.set_PWM_dutycycle(self.gpioBlue, 0)
