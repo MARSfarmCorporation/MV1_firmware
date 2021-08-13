@@ -42,7 +42,7 @@ trial = {
                  },
                  {
                     "start_time": [12, 30],
-                    "setting": [0, 0, 0, 0]
+                    "setting": [0, 1, 0, 0]
                  },
                  {
                     "start_time": [18, 15],
