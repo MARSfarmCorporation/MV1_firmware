@@ -6,9 +6,7 @@ Please run LogSensors.py OWITH PYTHON3!!!!!
 Author: Tyler Richards
 """
 
-from Remote_MongoUtil import EnvironmentalObservation, insert_one
 from SHTC3 import *
-from GSheetUtil import update_sheet
 from MHZ16 import get_co2
 import serial
 import string
@@ -46,10 +44,11 @@ def log_sensors(test = False):
 
         status = 'Success'
         #print(status)
+        print("CO2:")
         print(co2)
         if test:
             status = 'Test'
-        insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'co2', co2, 'ppm', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
+
     except Exception as e:
         # Blink Blue LED's if sensor error
         lights = Lights.Light(26,5,13,19)
@@ -79,9 +78,9 @@ def log_sensors(test = False):
         temp = sensor_data[0]
         humid = sensor_data[1]
 
-        insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'humidity', humid, '%', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
-        insert_one(EnvironmentalObservation(OBSERVATION_DATE, 'temperature', temp, 'C', TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE))
+        print("TEMP:")
         print(temp)
+        print("HUMIDITY:")
         print(humid)
 
     except Exception as e:
@@ -106,22 +105,6 @@ def log_sensors(test = False):
         
         print(e)
 
-    #Update google sheets
-    #this part is for google sheet update
-    try:
-        update_sheet('Environment_Observation', 'CO2', co2, 'ppm')
-    except Exception as e:
-        update_sheet('Environment_Observation_ERROR', 'CO2', 0, 'ppm')
-
-    try:
-        update_sheet('Environment_Observation', 'Temperature', temp, 'Celcius')
-    except Exception as e:
-        update_sheet('Environment_Observation_ERROR', 'Temperature', '0', 'Celcius')
-
-    try:
-        update_sheet('Environment_Observation', 'Humidity', humid, 'Percentage')
-    except Exception as e:
-        update_sheet('Environment_Observation_ERROR', 'Humidity', 0, 'Percentage')
 
 def test():
     log_sensors(True)
