@@ -5,8 +5,8 @@ import time
 import datetime
 import Fan
 
-exhaustFan = Fan.Fan(16)
-circFan = Fan.Fan(20)
+exhaustFan = Fan.Fan(20)
+circFan = Fan.Fan(16)
 
 circFan.setState(1)
 
