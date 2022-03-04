@@ -28,12 +28,12 @@ class Pump:
         
     #Dispense 10mL of water
     def calibrate(self):
-        setState(1)#Begin pumping
+        self.setState(1)#Begin pumping
         time.sleep(10*0.54);#Dispense 10mL
-        setState(0) #End pumping
+        self.setState(0) #End pumping
         
     #Dispense some user defined amount of water
     def dispense(self, volume):
-        setState(1)#Begin pumping
+        self.setState(1)#Begin pumping
         time.sleep(volume * 0.54);#Pump volume number of mL
-        setState(0) #End pumping
+        self.setState(0) #End pumping
