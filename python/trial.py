@@ -35,7 +35,7 @@ trial = {
                   {
                      "start_time":[
                         11,
-                        10
+                        7
                      ],
                      "setting":20
                   }
