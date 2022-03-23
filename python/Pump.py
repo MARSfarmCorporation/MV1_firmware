@@ -34,6 +34,7 @@ class Pump:
         
     #Dispense some user defined amount of water
     def dispense(self, volume):
-        self.setState(1)#Begin pumping
-        time.sleep(volume * 0.54);#Pump volume number of mL
-        self.setState(0) #End pumping
+        if (volume > 0):
+            self.setState(1)#Begin pumping
+            time.sleep(volume * 0.54);#Pump volume number of mL
+            self.setState(0) #End pumping
