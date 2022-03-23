@@ -38,6 +38,13 @@ trial = {
                         7
                      ],
                      "setting":20
+                  },
+		  {
+                     "start_time":[
+                        12,
+                        8
+                     ],
+                     "setting":30
                   }
                ]
             },
