@@ -23,7 +23,7 @@ for i in range(len(phaseData)):
     if time.time() > (phaseData[i]['phase_start'] * 86400) + start_date:
         current_phase = phaseData[i]  # Save specific phase data
 
-pump_settings = current_phase['step'][2]['pump_mount']  # Store pump settings are variable
+pump_settings = current_phase['step'][2]['pump_amount']  # Store pump settings are variable
 
 # Variable to hold target settings
 target_pump = 0;
