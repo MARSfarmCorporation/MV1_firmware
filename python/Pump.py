@@ -7,7 +7,8 @@ pi = pigpio.pi()
 class Pump:
     def __init__(self, gpio_pinA, gpio_pinB):
         self.gpioA = gpio_pinA #Store pump GPIO
-        self.gpioB = gpio_pinB #Store pump GPIO    
+        self.gpioB = gpio_pinB #Store pump GPIO
+        self.pump_constant = 1 ; #The ml/s of the pump
         pi.set_mode(self.gpioA, pigpio.OUTPUT) #Set pump as output
         pi.set_mode(self.gpioB, pigpio.OUTPUT) #Set pump as output
         pi.write(self.gpioA,0) #Turn off pump when initialized
@@ -36,5 +37,5 @@ class Pump:
     def dispense(self, volume):
         if (volume > 0):
             self.setState(1)#Begin pumping
-            time.sleep(volume * 0.54);#Pump volume number of mL
+            time.sleep(volume*pump_constant);#Pump volume number of mL
             self.setState(0) #End pumping
