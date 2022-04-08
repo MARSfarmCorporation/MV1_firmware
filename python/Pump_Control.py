@@ -34,6 +34,7 @@ for i in range(len(pump_settings)):
     #Check array and see if it is time to dispense (could create problem, CHECK functionality)
     if ((current_time.hour*60) + current_time.minute) == ((pump_settings[i]['start_time'][0]*60) + pump_settings[i]['start_time'][1]): 
         target_pump = pump_settings[i]['setting']  # Save temp if the current time is equal to array time
-
-pump = Pump.Pump(24,23) # Set GPIO pins and create pump object
-pump.dispense(target_pump) # Tell pump object to dispense specified mL of water
+        
+if (pi.read(23)! || pi.read(24)!): # If pump isn't already actively pumping, pump water
+    pump = Pump.Pump(24,23) # Set GPIO pins and create pump object
+    pump.dispense(target_pump) # Tell pump object to dispense specified mL of water
