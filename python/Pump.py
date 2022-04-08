@@ -37,5 +37,5 @@ class Pump:
     def dispense(self, volume):
         if (volume > 0):
             self.setState(1)#Begin pumping
-            time.sleep(volume*pump_constant);#Pump volume number of mL
+            time.sleep(volume*self.pump_constant);#Pump volume number of mL
             self.setState(0) #End pumping
