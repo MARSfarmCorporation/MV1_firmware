@@ -75,10 +75,10 @@ trial = {
                         0
                      ],
                      "setting":[
-                        255,
-                        255,
-                        255,
-                        255
+                        205,
+                        205,
+                        205,
+                        205
                      ]
                   },
                   {
@@ -171,7 +171,7 @@ trial = {
       },
       {
          "name":"veg",
-         "phase_start":28,
+         "phase_start":70,
          "step":[
             {
                "circulation_fan":[
