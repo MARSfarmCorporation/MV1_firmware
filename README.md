@@ -67,3 +67,12 @@ This legacy class contains all of the methods that an SI7021 can perform (ie rea
 
 ### SHTC3.py
 This new class contains all of the methods that an SHTC3 can perform (ie read temperature or read humidity)
+
+**Links to testing information:**
+
+
+**Links to other documentation:**
+
+[How to create a new image on an SD card:](https://docs.google.com/document/d/1T9UipJatjMiOfbb7ay2Nh2nFmTY30WOMuiv9827T_lU/edit)
+[How to push local changes from a device to GitHub:](https://docs.google.com/document/d/1OTJcv9fFAd6GHeW61mBx-h2aYH95D1KO2G71raPEueY/edit)
+[How to test a finished production unit:](https://docs.google.com/document/d/1GzynpzX5hZFJA4CGZxr--B0ZOYwjwGt2JWh8CyWko7g/edit)
