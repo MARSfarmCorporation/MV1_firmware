@@ -4,8 +4,8 @@
     Responsible for connecting to and uploading image to Amazon S3
     
     Owner: MARSfarm Corporation
-    Author: Jackie Zhong(zy99120@gmail.com), Henry Borska(henryborska@wustl.edu)
-    Last Modified: 8/4/21
+    Author: Jackie Zhong(zy99120@gmail.com), Henry Borska(henryborska@wustl.edu), Peter Webb(peter@marsfarm.com)
+    Last Modified: 10/14/2022
 '''
 
 import glob
@@ -27,7 +27,7 @@ try:
     
 except Exception as e:
     current_time = datetime.datetime.now()
-    file = open('/home/pi/Desktop/MarsFarmMini/logs/S3.log', mode='a')
+    file = open('/home/pi/Desktop/MV1_firmware/logs/S3.log', mode='a')
     file.write("%s : %s" % (current_time, str(e)))
     file.close()    
 
@@ -39,7 +39,7 @@ def main():
     try:
         s3 = boto3.resource('s3')
 
-        list_of_files = glob.glob('/home/pi/Desktop/MarsFarmMini/pictures/*')
+        list_of_files = glob.glob('/home/pi/Desktop/MV1_firmware/pictures/*')
         latest_file = max(list_of_files, key=os.path.getctime) #get the latest taken picture
         data = open(latest_file, 'rb')
         name = os.path.basename(latest_file)
@@ -63,7 +63,7 @@ def main():
     except Exception as e:
         current_time = datetime.datetime.now()
         
-        file = open('/home/pi/Desktop/MarsFarmMini/logs/S3.log', mode='a')
+        file = open('/home/pi/Desktop/MV1_firmware/logs/S3.log', mode='a')
         file.write("%s : %s" % (current_time, str(e)))
         file.close()
 
