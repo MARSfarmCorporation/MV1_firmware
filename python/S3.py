@@ -5,71 +5,65 @@
     
     Owner: MARSfarm Corporation
     Author: Jackie Zhong(zy99120@gmail.com), Henry Borska(henryborska@wustl.edu), Peter Webb(peter@marsfarm.com)
-    Last Modified: 10/14/2022
+    Modified by PW - 10/14/2022
+    Modified by HW - 11.10.22
 '''
 
 import glob
 import os
 import boto3
-import datetime
-import trial
+from Trial_Util import Trial
+from datetime import datetime
 import time
-import datetime
+from Sys_Conf import IMAGE_DIR, S3_BUCKET
 
-# Import dictionary data
-data = trial.trial
-
+current_time = datetime.now().strftime('%Y-%m-%d_%H%M')
+print(current_time)
 # Try to get device ID and trial ID from JSON
 try:
-    trial_id_num = data['_id']
-    trial_id = str(data['_id'])
-    device_id = str(data['device_id'])
+    t = Trial()
+    trial_id_num = t.trial_id
+    trial_id = str(t.trial_id)
+    device_id = str(t.device_id)
     
 except Exception as e:
-    current_time = datetime.datetime.now()
-    file = open('/home/pi/Desktop/MV1_firmware/logs/S3.log', mode='a')
-    file.write("%s : %s" % (current_time, str(e)))
-    file.close()    
+    print("Failure getting Trial info")
+    print(str(e))
 
 # Look specifically at phase data, as that carries the information on what the device should be doing
-phaseData = data['phases']
-
+phaseData = t.phases
 def main():
     
     try:
         s3 = boto3.resource('s3')
 
-        list_of_files = glob.glob('/home/pi/Desktop/MV1_firmware/pictures/*')
+        list_of_files = glob.glob(IMAGE_DIR + '*')
+        #print(list_of_files, 'list of files as an array')
         latest_file = max(list_of_files, key=os.path.getctime) #get the latest taken picture
+        print(latest_file)
         data = open(latest_file, 'rb')
         name = os.path.basename(latest_file)
-        currTime = str(datetime.datetime.now())
-        
+
         #If bucket was not public, we could also add credentials in here
         if trial_id_num != 0:
-            s3.Bucket('henry-metadata-testing').put_object(Key=name,
+            s3.Bucket(S3_BUCKET).put_object(Key=name,
                                                            Body=data,
-                                                           Metadata={'currTime':currTime,
+                                                           Metadata={'currTime':current_time,
                                                                      'device_id':device_id,
                                                                      'trial_id':trial_id
                                                                     })
         else:
-             s3.Bucket('henry-metadata-testing').put_object(Key=name,
+             s3.Bucket(S3_BUCKET).put_object(Key=name,
                                                            Body=data,
-                                                           Metadata={'currTime':currTime,
+                                                           Metadata={'currTime':current_time,
                                                                      'device_id':device_id,
                                                                     })
         
     except Exception as e:
-        current_time = datetime.datetime.now()
-        
-        file = open('/home/pi/Desktop/MV1_firmware/logs/S3.log', mode='a')
-        file.write("%s : %s" % (current_time, str(e)))
-        file.close()
+        print(e)
+        print('Images pushed to S3.')
 
 
 if __name__ == "__main__":
     main()
-    print('Images pushed to s3.')
-
-
+    #print('Images pushed to s3.')

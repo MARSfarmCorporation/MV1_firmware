@@ -1,3 +1,13 @@
+'''
+class representation of the pump
+
+Author: Tyler Richards - 09.10.2021
+Modified By: Howard Webb - 11/2/2022
+
+NOTE: The pump was designed to be reversable, but not implemented
+needs more development to implement
+'''
+
 import pigpio
 import time
 

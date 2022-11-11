@@ -1,40 +1,27 @@
-import Pump
-import trial
-import time
-import datetime
+'''
+Controller function for the pump class
+Author: Tyler Richards - 05.10.2022
+Modified By: Howard Webb - 11/2/2022
+'''
+from Trial_Util import Trial
+from Pump import Pump
+from datetime import datetime
 
 # Import dictionary data
-data = trial.trial
+t = Trial()
 
 # Get current time
-current_time = datetime.datetime.now()
+time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
 
-# Get start date from JSON
-start_date = data['start_date']
+p = Pump()
 
-# Look specifically at phase data, as that carries the information on what the device should be doing
-phaseData = data['phases']
+# check to verify that pump is not already pumping to prevent overwrite
+if p.is_pumping():
+   print('Pump is already Pumping')
+   exit
 
-current_phase = []
-# Look through phase array
-for i in range(len(phaseData)):
-    # If current time is greater than the start day of the phase, then it is saved
-    # Loop is continued until current time is less than start day of phase
-    if time.time() > (phaseData[i]['phase_start'] * 86400) + start_date:
-        current_phase = phaseData[i]  # Save specific phase data
+# retrieve pump settings from trial
+ps = t.get_pump_setting()
 
-pump_settings = current_phase['step'][2]['pump_amount']  # Store pump settings are variable
-
-# Variable to hold target settings
-target_pump = 0;
-
-# Look through pump array and find most up to date pump setting
-# NOTE: This only works if times are SORTED in ascending order in JSON
-for i in range(len(pump_settings)):
-    #Check array and see if it is time to dispense (could create problem, CHECK functionality)
-    if ((current_time.hour*60) + current_time.minute) == ((pump_settings[i]['start_time'][0]*60) + pump_settings[i]['start_time'][1]): 
-        target_pump = pump_settings[i]['setting']  # Save temp if the current time is equal to array time
-        
-if (pi.read(23)! || pi.read(24)!): # If pump isn't already actively pumping, pump water
-    pump = Pump.Pump(24,23) # Set GPIO pins and create pump object
-    pump.dispense(target_pump) # Tell pump object to dispense specified mL of water
+p.dispense(ps)
+print('Pump dispersed ', ps, ' ML of water on ', time)

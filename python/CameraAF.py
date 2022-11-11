@@ -1,43 +1,26 @@
+'''
+Function to set lights and take an image using Arducam Autofocus 16 MB IMX519 Camera
+Author: Tyler Richards - 08.10.2020
+Modified By: Howard Webb - 11/2/2022
+'''
 import libcamera
 from time import sleep
-import datetime
+from datetime import datetime
 import os
 import glob
-import Lights
-import pigpio
+from Sys_Conf import IMAGE_DIR
+from Lights import Light
 
-pi = pigpio.pi()
-
-lights = Lights.Light(26,5,13,19)
-
-#Record previous light settings
-farred = pi.get_PWM_dutycycle(26)
-red = pi.get_PWM_dutycycle(5)
-blue = pi.get_PWM_dutycycle(13)
-white = pi.get_PWM_dutycycle(19)
-
-#Turn off light
-lights.customMode(0,0,0,0)
-
-#Clear previous photos from directory to prevent SD card from becoming full
-files = glob.glob('/home/pi/Desktop/MarsFarmMini/pictures/*.jpg')
-
-for f in files:
-    try:
-        os.remove(f) #Delete file in list
-    except OSError as e:
-        print("Error: %s : %s" % (f, e.strerror))#Throw error
-
-#Turn on white light at 50%
-lights.customMode(0,0,0,255)
-
-#Take picture
+# set light to white for taking image
+lights = Light()
+lights.white()
 sleep(2)
 
-###### libcamera script will go here ########
+#Take picture
+file_name = datetime.now().strftime('%Y-%m-%d_%H%M.jpg')
+cmd = '/usr/local/bin/libcamera-still -t 5000 --nopreview --width 1920 --height 1080 --continue-autofocus -o {}'.format(IMAGE_DIR + file_name)
+os.system(cmd)
+print('image saved to: ', IMAGE_DIR + file_name)
 
-camera.capture('/home/pi/Desktop/MarsFarmMini/pictures/' + format(datetime.datetime.now(), '%Y-%m-%d_%H%M') + '.jpg')
-camera.close()
-
-#Return light to previous settings
-lights.customMode(farred,red,blue,white)
+#Return light to current setting
+import Light_Control

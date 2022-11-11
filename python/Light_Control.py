@@ -1,41 +1,21 @@
+'''
+Controller function for the Lights
+Author: Tyler Richards - 08.10.2021
+Modified By: Howard Webb - 11/2/2022
+'''
 import Lights
-import trial
-import time
-import datetime
+from Trial_Util import Trial
+from datetime import datetime
 
-# Import dictionary data
-data = trial.trial
+t = Trial()
+# Get currrent light settings
+fr, r, b, w = t.get_light_values()
 
-# Get current time
-current_time = datetime.datetime.now()
+# Retrieve the current time for logging purposes
+time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# Get start date from JSON
-start_date = data['start_date']
-
-# Look specifically at phase data, as that carries the information on what the device should be doing
-phaseData = data['phases']
-
-current_phase = []
-# Look through phase array
-for i in range(len(phaseData)):
-    # If current time is greater than the start day of the phase, then it is saved
-    # Loop is continued until current time is less than start day of phase
-    if time.time() > (phaseData[i]['phase_start'] * 86400) + start_date:
-        current_phase = phaseData[i]  # Save specific phase data
-
-light_settings = current_phase['step'][3]['light_intensity']  # Store light settings are variable
-
-# Variable to hold target light settings, dummy variable turns on red slightly to indicate error
-target_light = [0, 10, 0, 0];
-
-# Look through light array and find most up to date light setting
-# NOTE: This only works if times are SORTED in ascending order in JSON
-for i in range(len(light_settings)):
-
-    if ((current_time.hour*60) + current_time.minute) >= ((light_settings[i]['start_time'][0]*60) + light_settings[i]['start_time'][1]):
-        target_light = light_settings[i]['setting']  # Save temp if the current time is greater than time from array
-
-lights = Lights.Light(26,5,13,19) # Set GPIO pins and create light object
-lights.customMode(target_light[0], target_light[1], target_light[2], target_light[3]) # Tell light object to turn on specific colors from trial.py
-
-
+print('far red, red, blue, and white LED settings received', fr, r, b, w)
+# Create light and set to current values
+lights = Lights.Light()
+lights.customMode(fr, r, b, w)
+print('lights set to trial settings at:', time)

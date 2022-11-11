@@ -3,9 +3,8 @@ SHTC3 humidity and temperature sensor
 Technical notes of commands and operation and from:
 https://www.mouser.com/datasheet/2/682/seri_s_a0003561073_1-2291167.pdf
 
- Author : Tyler Richards
- Date   : 08/09/2021
-
+Author : Tyler Richards - 08/09/2021
+Modified By: Howard Webb -  11/2/2022
 """
 
 import time
@@ -51,4 +50,26 @@ class SHTC3(object):
         humidity = raw_humidity / 100.0
 
         return [temperature, humidity]
-
+	
+    def get_tempC_humidity(self):
+        # return separated temperature and humidity values
+        data = self.read_data()
+        return data[0], data[1]
+	
+    def get_tempF_humidity(self):
+        # return temperature in Fahrenheit and humidity values
+        temperature, humidity = self.get_tempC_humidity()
+        tempf = round((1.8 * temperature) + 32, 2)
+        return tempf, humidity
+	
+def test():
+    print("Test SHTC3")
+    sensor = SHTC3()
+    temp, humidity = sensor.get_tempC_humidity()
+    print("TempC:", temp, "Humidity:", humidity)
+    tempF, humidity = sensor.get_tempF_humidity()
+    print("TempF:", tempF, "Humidity:", humidity)
+    print("Done")
+	
+if __name__ == "__main__":
+    test()

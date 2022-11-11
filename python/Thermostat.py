@@ -1,77 +1,62 @@
-import Heater
+from Heater import Heater
+from Exhaust_Fan import Exhaust_Fan
+from Circulation_Fan import Circulation_Fan
 from SHTC3 import *
-import trial
+from Trial_Util import Trial
+from GPIO_Conf import ON, OFF
 import time
-import datetime
-import Fan
+from datetime import datetime
 
-exhaustFan = Fan.Fan(20)
-circFan = Fan.Fan(16)
+class Thermostat(object):
+    
+    def __init__(self):
+        self.tu = Trial()
+        self.efan = Exhaust_Fan()
+        self.cfan = Circulation_Fan()
+        self.heater = Heater()
+        
+    def get_temp(self):
+        s = SHTC3()
+        temperature, humidity = s.get_tempF_humidity()
+        return temperature
+    
+    def get_Setpoint(self):
+        s = self.tu.get_setpoint()
+        return s
+        
+    def adjust(self):
+        # Control code
+        setpoint = self.get_Setpoint()
+        temp = self.get_temp()
+        print("Set", setpoint, "Temp", temp)
+        if ( temp < setpoint): #Measured temp is below setpoint
+            self.heater.on() #Turn on heater to raise temp   
+            self.cfan.on() # Set circ fan state
+            print("Heater: On, Circ_Fan: ON")
 
-circFan.setState(1)
+        if ( temp >= setpoint): #Measured temp is above setpoint
+            self.heater.off() #Turn off heater to lower temp
+            print("Heater: OFF")
 
-heater = Heater.Heater(21)
+        # Exhaust fan control code
+        if ( temp >= setpoint + 1): #Measured temp is above setpoint by too much
+            self.efan.on() #Turn on exhaust fan
+            print("Exhaust Fan: ON")
+        else:
+            self.efan.off() #Turn off fan
+            print("Exhaust Fan: OFF")
 
-sht=SHTC3()
 
-# Import dictionary data
-data = trial.trial
 
-# Get current time
-current_time = datetime.datetime.now()
-
-# Get start date from JSON
-start_date = data['start_date']
-
-# Look specifically at phase data, as that carries the information on what the device should be doing
-phaseData = data['phases']
-
-current_phase = []
-# Look through phase array
-for i in range(len(phaseData)):
-    # If current time is greater than the start day of the phase, then it is saved
-    # Loop is continued until current time is less than start day of phase
-    if time.time() > (phaseData[i]['phase_start'] * 86400) + start_date:
-        current_phase = phaseData[i]  # Save specific phase data
-
-temp_settings = current_phase['step'][1]['temperature']  # Store temperature settings as variable
-circ_settings = current_phase['step'][0]['circulation_fan']  # Store circulation fan settings as variable
-
-target_temp = 0  # Variable to hold target temperature
-target_fan = 1 # Variable to hold fan target
-
-# Look through temperature array and find most up to date temperature setting
-# NOTE: This only works if times are SORTED in ascending order in JSON
-for i in range(len(temp_settings)):
-
-    if ((current_time.hour*60) + current_time.minute) >= ((temp_settings[i]['start_time'][0]*60) + temp_settings[i]['start_time'][1]):
-        target_temp = temp_settings[i]['setting']  # Save temp if the current time is greater than time from array
-
-# Look through circ fan array and find most up to date setting
-# NOTE: This only works if times are SORTED in ascending order in JSON
-for i in range(len(circ_settings)):
-
-    if ((current_time.hour*60) + current_time.minute) >= ((circ_settings[i]['start_time'][0]*60) + circ_settings[i]['start_time'][1]):
-        target_fan = circ_settings[i]['setting']  # Save setting if the current time is greater than time from array
-
-circFan.setState(target_fan) # Set circ fan state
-
-setpoint = (5/9)*(target_temp - 32) # Convert F to C
-
-temp = (sht.read_data())[0] # Get temp from SHTC3
-
-# Heater control code 
-if ( temp < setpoint): #Measured temp is below setpoint
-    heater.setState(1) #Turn on heater to raise temp   
-    circFan.setState(1) # Set circ fan state
-
-if ( temp >= setpoint): #Measured temp is above setpoint
-    heater.setState(0) #Turn off heater to lower temp
-
-# Exhaust fan control code
-if ( temp >= setpoint + 1): #Measured temp is above setpoint by too much
-    exhaustFan.setState(1) #Turn on exhaust fan
-else:
-    exhaustFan.setState(0) #Turn off fan
-
+def test():
+    print("Thermostat Test")
+    t = Thermostat()
+    print("Adjust")
+    t.adjust()
+    print(datetime.now().isoformat())
+    print("Done")
+    
+if __name__=='__main__':
+    test()
   
+

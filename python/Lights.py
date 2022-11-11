@@ -1,3 +1,8 @@
+'''
+Low level light abstraction
+Author: Tyler Richards - 08.10.2021
+Modified By: Howard Webb - 11/2/2022
+'''
 import pigpio
 
 pi = pigpio.pi()
