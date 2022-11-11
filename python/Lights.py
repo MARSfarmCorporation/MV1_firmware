@@ -49,12 +49,12 @@ class Light:
     def customMode(self, fr, r, b, w):
         # main function for setting lights
         pi.set_PWM_dutycycle(self.gpioFarRed, fr)
-        pi.set_PWM_dutycycle(self.gpioRed, self._r)
-        pi.set_PWM_dutycycle(self.gpioBlue, self._b)
-        pi.set_PWM_dutycycle(self.gpioWhite, self._w)
+        pi.set_PWM_dutycycle(self.gpioRed, r)
+        pi.set_PWM_dutycycle(self.gpioBlue, b)
+        pi.set_PWM_dutycycle(self.gpioWhite, w)
         
     def white(self):
-        self.customMode(0,0,0,255)        
+        self.customMode(0,0,0,255)
         
     def off(self):
         self.customMode(0,0,0,0)
@@ -73,7 +73,7 @@ class Light:
             self.customMode(0,0,0,0)
             sleep(1)
         #Return light to previous settings
-        import Light_On
+        #import Light_On
         
 def test():
     print("Light Test")
