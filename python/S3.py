@@ -4,21 +4,20 @@
     Responsible for connecting to and uploading image to Amazon S3
     
     Owner: MARSfarm Corporation
-    Author: Jackie Zhong(zy99120@gmail.com), Henry Borska(henryborska@wustl.edu), Peter Webb(peter@marsfarm.com)
-    Modified by PW - 10/14/2022
-    Modified by HW - 11.10.22
+    Author: Jackie Zhong(zy99120@gmail.com), Henry Borska(henryborska@wustl.edu)
+    Last Modified: 8/4/21
 '''
 
 import glob
 import os
 import boto3
 from Trial_Util import Trial
-from datetime import datetime
 import time
+from datetime import datetime
 from Sys_Conf import IMAGE_DIR, S3_BUCKET
 
 current_time = datetime.now().strftime('%Y-%m-%d_%H%M')
-print(current_time)
+print('Attempting S3 connection at: ', current_time)
 # Try to get device ID and trial ID from JSON
 try:
     t = Trial()
@@ -32,6 +31,7 @@ except Exception as e:
 
 # Look specifically at phase data, as that carries the information on what the device should be doing
 phaseData = t.phases
+
 def main():
     
     try:
@@ -40,7 +40,7 @@ def main():
         list_of_files = glob.glob(IMAGE_DIR + '*')
         #print(list_of_files, 'list of files as an array')
         latest_file = max(list_of_files, key=os.path.getctime) #get the latest taken picture
-        print(latest_file)
+        print('latest image selected for upload to S3: ', latest_file)
         data = open(latest_file, 'rb')
         name = os.path.basename(latest_file)
 
@@ -67,3 +67,5 @@ def main():
 if __name__ == "__main__":
     main()
     #print('Images pushed to s3.')
+
+

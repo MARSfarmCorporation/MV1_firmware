@@ -69,7 +69,7 @@ def test():
    print("Co2", co2)
    print('testing get_temp_humidity function')
    temp, humid = get_temp_humidity()
-   print("Temp", temp, "Humidity", humidity)
+   print("Temp", temp, "Humidity", humid)
    print('testing save_db function by sending Co2')
    save_db(CO2, co2, PPM)
    print('save temp and humidity data to database')
@@ -83,7 +83,7 @@ def test():
    save_google_sheet(TEMP, temp, FAHRENHEIT)
    print("Save Humidity")
    save_google_sheet(HUMIDITY, humid, PERCENT)
-   print("Done") 
+   print("Done")
 
 if __name__=="__main__":
     test()
