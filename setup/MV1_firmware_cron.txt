@@ -40,10 +40,10 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 * * * * * for i in {1..5}; do python3 $PYTHON_PATH/Thermostat.py & sleep 10; done >> $LOG_PATH/Thermostat.log 2>&1 &
 
 # Start pigpio service, at reboot
-@reboot sudo pigpiod >> $LOG_PATH/boot.log 2>&1 &
+@reboot sleep 60; sudo pigpiod >> $LOG_PATH/boot.log 2>&1 &
 
 # Set up MAC address to remain static, at reboot
-@reboot sudo ifconfig eth0 down; sudo macchanger --mac=66:d0:72:62:31:25 eth0; sudo ifconfig eth0 up >> $CRON_LOG 2>&1
+@reboot sleep 60; sudo ifconfig eth0 down; sudo macchanger --mac=66:d0:72:62:31:25 eth0; sudo ifconfig eth0 up >> $CRON_LOG 2>&1
 
 # Start paho service to listen for device_id on MQTT server, continues to loop after starting at reboot
 @reboot sleep 240; python3 $PY_PATH/pythonmqttsub_savetrial.py >> $CRON_LOG 2>&1

@@ -2,8 +2,9 @@
 Responsible for connecting to google api and update google sheet
 
 Owner: MARSfarm Corporation
-Author: Jackie Zhong
-Last Modified: 6/30/20
+Author: Jackie Zhong - 6/30/20
+Modified By: Peter Webb -  10/30/21
+Modified By: Peter Webb -  11/10/22
 '''
 
 

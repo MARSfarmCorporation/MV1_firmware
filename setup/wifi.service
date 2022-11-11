@@ -1,9 +1,9 @@
 [Unit]
-Description=wifi-connect
+Description=MARSfarm V1 Wi-Fi Connect
 After=multi-user.target
 
 [Service]
-ExecStart=/bin/bash /home/pi/Desktop/MarsFarmMini/scripts/wifi.sh
+ExecStart=/bin/bash /home/pi/Desktop/MV1_firmware/scripts/wifi.sh
 Restart=on-failure
 User=pi
 

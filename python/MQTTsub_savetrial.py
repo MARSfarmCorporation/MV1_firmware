@@ -1,5 +1,10 @@
+'''
 # created on 07.20.2021 by Peter Webb in Sprint 5 of Summer 2021
 # script developed to test subscribing to MQTT topics and publishing JSON
+
+Author: Peter Webb - 07.20.2021
+Modified by: Peter Webb - 09.20.2022
+'''
 import paho.mqtt.client as mqttClient
 import Lights
 import time
