@@ -10,42 +10,52 @@ needs more development to implement
 
 import pigpio
 import time
+from GPIO_Conf import PUMP_POS, PUMP_GND, ON, OFF
 
 pi = pigpio.pi()
 
 
 class Pump:
-    def __init__(self, gpio_pinA, gpio_pinB):
-        self.gpioA = gpio_pinA #Store pump GPIO
-        self.gpioB = gpio_pinB #Store pump GPIO
+    def __init__(self, gpio_pinA=None, gpio_pinB=None):
+        self.gpioA = PUMP_POS #Store pump GPIO
+        self.gpioB = PUMP_GND #Store pump GPIO
         self.calibration = 0.7 ; #Rate of pumping, measured in ml/sec 
-        pi.set_mode(self.gpioA, pigpio.OUTPUT) #Set pump as output
-        pi.set_mode(self.gpioB, pigpio.OUTPUT) #Set pump as output
-        pi.write(self.gpioA,0) #Turn off pump when initialized
-        pi.write(self.gpioB,0) #Turn off pump when initialized
+        pi.set_mode(self.gpioA, OUTPUT) #Set pump as output
+        pi.set_mode(self.gpioB, OUTPUT) #Set pump as output
+        pi.write(self.gpioA,OFF) #Turn off pump when initialized
+        pi.write(self.gpioB,OFF) #Turn off pump when initialized
         
-    #Directly turn on and off pump
-    def setState(self, state):
-    
-        if (state == 1): #Forward
-            pi.write(self.gpioA,1) #set pump to state
-            pi.write(self.gpioB,0) #set pump to state
-        elif (state == -1): #Backward
-            pi.write(self.gpioA,0) #set pump to state
-            pi.write(self.gpioB,1) #set pump to state
-        else: #Stop pump
-            pi.write(self.gpioA,0) #set pump to state
-            pi.write(self.gpioB,0) #set pump to state
+
+    def on(self):
+        pi.write(self.gpioA,OFF) #set pump to state
+        pi.write(self.gpioB,ON) #set pump to state
+
+    def off(self):
+        pi.write(self.gpioA,OFF) #set pump to state
+        pi.write(self.gpioB,OFF) #set pump to state
         
     #Dispense 10mL of water
     def calibrate(self):
-        self.setState(1)#Begin pumping
-        time.sleep(10*0.54);#Dispense 10mL
-        self.setState(0) #End pumping
+        self.setState(ON)#Begin pumping
+        sleep(10*0.54);#Dispense 10mL
+        self.setState(OFF) #End pumping
         
     #Dispense some user defined amount of water
     def dispense(self, volume):
         if (volume > 0):
-            self.setState(1)#Begin pumping
-            time.sleep(volume*self.calibration);#Pump volume number of mL
-            self.setState(0) #End pumping
+            print("ON")
+            self.on()#Begin pumping
+            sleep(volume*self.calibration);#Pump volume number of mL
+            self.off() #End pumping
+            print("OFF")
+
+def test():
+#gpio pin 24 is "forward" on the pump and gpio pin 23 intended to be "reverse" is not being used
+    print("Test Pump")
+    print('Pumping 10 ML as test')
+    pump = Pump()
+    pump.dispense(10)
+    print("Done")
+
+if __name__ == "__main__":
+   test()

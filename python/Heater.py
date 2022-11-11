@@ -11,12 +11,12 @@ from time import sleep
 pi = pi()
 
 class Heater:
-    def __init__(self, gpio_pin):
-        self.gpio = gpio_pin #Store heater GPIO
-        pi.set_PWM_frequency(self.gpio,40000) #Set heater as 70kHz PWM channel
-        pi.set_PWM_dutycycle(self.gpio,0) #Turn off heater when initialized
-        
-on(self):
+    def __init__(self):
+        # Create heater in off state
+        pi.set_PWM_frequency(HEATER,40000) #Set heater as 70kHz PWM channel
+        pi.set_PWM_dutycycle(HEATER,OFF) #Turn off heater when initialized
+       
+    def on(self):
        #PWM heater (ratio of 126/255: 50W)
        pi.set_PWM_dutycycle(HEATER,140)
        
