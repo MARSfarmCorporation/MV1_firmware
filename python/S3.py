@@ -1,11 +1,10 @@
 '''
-    Created 6/11/20
-    
+    Created 
     Responsible for connecting to and uploading image to Amazon S3
-    
     Owner: MARSfarm Corporation
-    Author: Jackie Zhong(zy99120@gmail.com), Henry Borska(henryborska@wustl.edu)
-    Last Modified: 8/4/21
+    Author: Jackie Zhong(zy99120@gmail.com) - 6/11/20
+    Modified By: Henry Borska(henryborska@wustl.edu) - 8/4/21
+    Modified By: Peter Webb(peter@marsfarm.com) - 11.11.22
 '''
 
 import glob
@@ -60,12 +59,11 @@ def main():
                                                                     })
         
     except Exception as e:
-        print(e)
-        print('Images pushed to S3.')
+        print('S3 upload failed due to: ', e)
 
-
-if __name__ == "__main__":
+def test():
     main()
-    #print('Images pushed to s3.')
-
-
+    print('Images pushed to s3.')
+    
+if __name__ == "__main__":
+    test()

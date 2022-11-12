@@ -8,11 +8,11 @@ NOTE: The pump was designed to be reversable, but not implemented
 needs more development to implement
 '''
 
-import pigpio
-import time
+from pigpio import pi, OUTPUT
+from time import sleep
 from GPIO_Conf import PUMP_POS, PUMP_GND, ON, OFF
 
-pi = pigpio.pi()
+pi = pi()
 
 
 class Pump:
@@ -25,6 +25,10 @@ class Pump:
         pi.write(self.gpioA,OFF) #Turn off pump when initialized
         pi.write(self.gpioB,OFF) #Turn off pump when initialized
         
+    def is_pumping(self):
+        if pi.read(self.gpioA):
+           return True
+        return False
 
     def on(self):
         pi.write(self.gpioA,OFF) #set pump to state

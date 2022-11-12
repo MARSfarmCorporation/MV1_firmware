@@ -98,6 +98,7 @@ CENTIGRADE = "C"
 #CENTIMETER = "cm"
 MILIMETER = "mm"
 #CUBIC_CENTIMETER = "cm2"
+FAHRENHEIT = 'F'
 CUBIC_MILIMETER = "mm2"
 SCALE = "scale"
 GRAM = "gram"

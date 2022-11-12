@@ -4,31 +4,17 @@ Author: Henry Borska (henryborska@wustl.edu)
 Modified By: Howard Webb 11.10.22
 '''
 #Python version: 3.7.3
-#import csv
-#import collections
 import pymongo
 from pymongo import MongoClient
-#import time
-#import traceback
-#from dotenv import load_dotenv
-#load_dotenv()
-#import os
-#import sys
 from bson import ObjectId 
 from datetime import datetime 
 from dateutil import parser
 import math
-from Sys_Conf import MONGODB_RI, DB_NAME, COLLECTION_NAME
+from Sys_Conf import MONGODB_URI, DB_NAME, COLLECTION_NAME
 
-#Connecting pymongo to the proper collection in my database
-MONGODB_URI = "mongodb+srv://device_data-RW:TOtuVtPoO8ePI5Ms@testing.7ppqd.mongodb.net/web-application?retryWrites=true&w=majority"
-DB_NAME = "web-application"
-COLLECTION_NAME = "device-data"
-# myClient = pymongo.MongoClient((os.environ.get("MONGODB_URI")))
 myClient = pymongo.MongoClient(MONGODB_URI)
 db = myClient[DB_NAME]
 collection = db[COLLECTION_NAME] #which collection to add to
-
 
 #Defining a class for an Environmental Observation to insert
 class EnvironmentalObservation(object):
@@ -66,11 +52,12 @@ class EnvironmentalObservation(object):
         # Calculate day of trial - assume base 0
         sd = datetime.fromtimestamp(start_timestamp)
         od = datetime.fromtimestamp(observation_timestamp)
-        return (sd - od).days       
+        return (sd - od).days
 
     def calculateWeekNum(self, days):
         # Calculate week of trial - assume base 0
         return int(days/7)
+        
 
 # obs_to_add = EnvironmentalObservation(OBSERVATION_DATE, ATTRIBUTE, VALUE, UNIT, TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE)
 
@@ -107,3 +94,4 @@ if __name__=='__main__':
      test()
 #     insert_one(collection, obs_to_add)
 #     print("Document Inserted!")
+

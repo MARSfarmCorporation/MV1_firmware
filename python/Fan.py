@@ -1,10 +1,8 @@
 '''
 Base class for all fans
 No GPIO is defined here, it is set in the child class
-NOTE: This fan is on or off, no variable speed setting
-Variable speed can be done (see Test_Fan,py)
-Author: Howard Webb
-Date: 11/2/2022
+Author: Tyler Richards - 07.15.2021 
+Modified By: Howard Webb - 11/2/2022
 '''
 from pigpio import pi, OUTPUT
 from GPIO_Conf import ON, OFF, CIRCULATION_FAN
