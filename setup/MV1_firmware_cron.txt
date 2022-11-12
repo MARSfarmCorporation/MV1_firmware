@@ -25,7 +25,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 5 * * * * python3 $PYTHON_PATH/CameraAF.py >> $LOG_PATH/Webcam.log 2>&1 &
 
 # Upload most recent image to amazon S3, every hour, ten minutes after the hour
-10 * * * * $SCRIPT_PATH/S3.sh > $LOG_PATH/S3.log 2>&1 &
+10 * * * * python3 $PYTHON_PATH/S3.py > $LOG_PATH/S3.log 2>&1 &
 
 # Capture temperature, humidity, and Co2 sensor data, send it to MongoDB and Google Sheets, every hour, 2 minutes after the hour
 2 * * * * python3 $PYTHON_PATH/LogSensors.py >> $LOG_PATH/LogSensor.log 2>&1 &
@@ -43,9 +43,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 @reboot sleep 60; sudo pigpiod >> $LOG_PATH/boot.log 2>&1 &
 
 # Set up MAC address to remain static, at reboot
-@reboot sleep 60; sudo ifconfig eth0 down; sudo macchanger --mac=66:d0:72:62:31:25 eth0; sudo ifconfig eth0 up >> $CRON_LOG 2>&1
+@reboot sleep 60; sudo ifconfig eth0 down; sudo macchanger --mac=66:d0:72:62:31:25 eth0; sudo ifconfig eth0 up >> $CRON_LOG 2>&1 &
 
 # Start paho service to listen for device_id on MQTT server, continues to loop after starting at reboot
-@reboot sleep 240; python3 $PY_PATH/pythonmqttsub_savetrial.py >> $CRON_LOG 2>&1
-
-
+@reboot sleep 240; python3 $PY_PATH/pythonmqttsub_savetrial.py >> $CRON_LOG 2>&1 &
