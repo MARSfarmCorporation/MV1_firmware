@@ -63,7 +63,7 @@ def save_google_sheet(name, value, unit):
     update_sheet('Environment_Observation', name, value, unit)
 
 def test():
-   print('starting test')
+   print('starting test at: ', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
    print('testing get_co2 function')
    co2 =  get_co2()
    print("Co2", co2)

@@ -12,7 +12,7 @@ from Sys_Conf import IMAGE_DIR
 from Lights import Light
 
 # Retrieve the current time for logging purposes
-time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+time = datetime.now().strftime("%Y-%m-%d_%H_%M")
 
 # set light to white for taking image
 lights = Light()
@@ -20,12 +20,10 @@ lights.white()
 sleep(2)
 
 #Take picture
-file_name = (time, '.jpg')
+file_name = time + '.jpg'
 print('image will be saved to: ', IMAGE_DIR + file_name)
 cmd = '/usr/local/bin/libcamera-still -t 5000 --nopreview --width 1920 --height 1080 --continue-autofocus -o {}'.format(IMAGE_DIR + file_name)
 os.system(cmd)
 
 #Return light to current setting
-lights = Lights.Light()
-lights.customMode(fr, r, b, w)
-print('lights reset to trial settings at:', time)
+import Light_Control

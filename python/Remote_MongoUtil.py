@@ -52,11 +52,11 @@ class EnvironmentalObservation(object):
         # Calculate day of trial - assume base 0
         sd = datetime.fromtimestamp(start_timestamp)
         od = datetime.fromtimestamp(observation_timestamp)
-        return (sd - od).days
+        return abs((sd - od).days)
 
     def calculateWeekNum(self, days):
         # Calculate week of trial - assume base 0
-        return int(days/7)
+        return abs(int(days/7))
         
 
 # obs_to_add = EnvironmentalObservation(OBSERVATION_DATE, ATTRIBUTE, VALUE, UNIT, TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE)
@@ -70,11 +70,7 @@ def test():
     # observation_date assume to be datetime object
     #od = datetime.now().timestamp()
     d = datetime.now()
-    print(d)
     od = d.timestamp()
-    print(od)
-    
-    print(od)
     # attribute string
     attr = "Temperature"
     # value normally integer
