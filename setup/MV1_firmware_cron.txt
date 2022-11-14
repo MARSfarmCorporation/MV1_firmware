@@ -1,17 +1,14 @@
-# Crontab jobs used by the MARSfarm mini
+# Crontab jobs used by the MARSfarm
 # Author: Howard Webb
 # Date: 11/13/2017
-# Warning: This will overwrite any existing crontab, do not use if you use cron for other purposes
-
 #Modified by: Jackie Zhong(zy99120@gmail.com)
 #Modified by: Tyler Richards(richardstylerj20@gmail.com)
 #Modified by: Peter Webb(peter@marsfarm.com) - 07.28.22 & 11.01.22
 #Modified by: Howard Webb(webb.howard.m@gmail.com) - 11.10.22
 #Modified by: Peter Webb - 11.11.22
-
+#
 # Don't send email
 MAILTO=""
-
 
 PYTHON_PATH=/home/pi/Desktop/MV1_firmware/python
 SCRIPT_PATH=/home/pi/Desktop/MV1_firmware/scripts
