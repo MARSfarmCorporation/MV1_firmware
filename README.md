@@ -78,3 +78,6 @@ This new class contains all of the methods that an SHTC3 can perform (ie read te
 [MV1 - Google Drive Folder (contains all documentation from Summer 2021 onward: Hardware, Testing, Architecture, etc.)](https://drive.google.com/drive/folders/1UcjC2NI9v7W5HeeAPR9AMCb38wjZm8VN?usp=share_link)
 [Diagram of MongoDB database architecture in draw.io](https://viewer.diagrams.net/?page-id=DcuP4mfnnl_cNMED-0Ec&highlight=0000ff&edit=_blank&layers=1&nav=1#G1rRgNSRLPabvuNownhoeclYH5YoiKG7r2)
 [Diagram of entire Platform Architecture used for MV1 cloud: MongoDB, ExpressJS, ReactJS, and NodeJS (MERN) stack.](https://viewer.diagrams.net/?page-id=hUamuTZxWKs4uIfqG7RM&highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=hUamuTZxWKs4uIfqG7RM#G1rRgNSRLPabvuNownhoeclYH5YoiKG7r2)
+
+### Actuators ###
+[Heater - Information about testing and PWM / Duty cycle testing](https://docs.google.com/spreadsheets/d/1oFypIiIQ0HYoV11vfTSYGfxm0bYe1QiJ11H3ZHgr-O8/edit#gid=429470365&range=A1:F50)
