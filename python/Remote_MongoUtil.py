@@ -2,6 +2,7 @@
 Date: Jul 13, 2021
 Author: Henry Borska (henryborska@wustl.edu)
 Modified By: Howard Webb 11.10.22
+Modified By: Peter Webb 11.15.22
 '''
 #Python version: 3.7.3
 import pymongo
@@ -29,7 +30,7 @@ class EnvironmentalObservation(object):
         
         #self.observation_date = self.formatDate(observation_date)
         self.timestamp = observation_date
-        self.observation_date = self.formatDate(observation_date)
+        self.observation_date = self.formatDateObject(observation_date)
         self.attribute = attribute
         self.value = value
         self.unit = unit
@@ -43,10 +44,19 @@ class EnvironmentalObservation(object):
         self.model_name = "EnvironmentalObservation"
 
     #Converting date from unix timestamp to datetime object with ISO format for Mongo
+    #It is important to store this as an object so that the data retains the timezone of the local device
+    def formatDateObject(self, timestamp):
+        date = datetime.fromtimestamp(timestamp).isoformat()
+        #date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        datetime_object = parser.parse(date)
+        return datetime_object
+
+    #Converting date from unix timestamp readable string - added by HW
     def formatDate(self, timestamp):
-        date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
-        #datetime_object = parser.parse(date)
-        return date
+        date = datetime.fromtimestamp(timestamp).isoformat()
+        #date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        datetime_object = parser.parse(date)
+        return datetime
     
     def calculateDayNum(self, start_timestamp, observation_timestamp):
         # Calculate day of trial - assume base 0

@@ -37,7 +37,7 @@ def get_co2():
         co2 = 0
     return co2
 
-def save_db(value, name, unit):
+def save_db(name, value, unit):
      try:
         insert_one(EnvironmentalObservation(observation_date, name, value, unit, t.trial_id, t.trial_name, t.start_date))
      except Exception as e:
