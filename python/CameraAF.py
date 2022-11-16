@@ -12,7 +12,7 @@ from Sys_Conf import IMAGE_DIR
 from Lights import Light
 
 # Retrieve the current time for logging purposes
-time = datetime.now().strftime("%Y-%m-%d_%H_%M")
+time = datetime.now().strftime("%Y-%m-%d_%H%M")
 
 # set light to white for taking image
 lights = Light()
