@@ -23,7 +23,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 5 * * * * python3 $PYTHON_PATH/CameraAF.py >> $LOG_PATH/Webcam.log 2>&1 &
 
 # Upload most recent image to amazon S3, every hour, ten minutes after the hour
-10 * * * * python3 $PYTHON_PATH/S3.py >> $LOG_PATH/S3.log 2>&1 &
+10 * * * * python3 $PYTHON_PATH/Remote_S3Util.py >> $LOG_PATH/S3.log 2>&1 &
 
 # Capture temperature, humidity, and Co2 sensor data, send it to MongoDB and Google Sheets, every hour, 2 minutes after the hour
 2 * * * * python3 $PYTHON_PATH/LogSensors.py >> $LOG_PATH/LogSensor.log 2>&1 &

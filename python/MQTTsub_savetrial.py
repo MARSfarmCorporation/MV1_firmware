@@ -4,18 +4,22 @@
 
 Author: Peter Webb - 07.20.2021
 Modified by: Peter Webb - 09.20.2022
+Modified by: Peter Webb - 11.21.2022
 '''
 import paho.mqtt.client as mqttClient
 import Lights
 import time
 import ssl
 import trial
+from Sys_Conf import DEVICE_ID
 
 # Import dictionary data
 data = trial.trial
 
-# define local device which should be passed in eventually
-deviceID = data['device_id']
+# REPLACED with hardcoded device for provisioning in production
+#define local device which should be passed in eventually
+#deviceID = data['device_id'] 
+deviceID = DEVICE_ID
 
 context = ssl.create_default_context()
 # create connection
@@ -48,7 +52,7 @@ def on_message(client, userdata, msg):
     if msg.topic == subscribe_topic:
         output = msg.payload
         print(output)
-        with open("/home/pi/Desktop/MarsFarmMini/python/trial.py", "w") as f:
+        with open("/home/pi/Desktop/MV1_firmware/python/trial.py", "w") as f:
             f.write(output.decode('utf-8'))
             f.close()
             print("Done!")

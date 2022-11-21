@@ -27,7 +27,6 @@ class EnvironmentalObservation(object):
         # trial_id is string
         # trial_name is string
         # trial_start_date as timestamp
-        
         #self.observation_date = self.formatDate(observation_date)
         self.timestamp = observation_date
         self.observation_date = self.formatDateObject(observation_date)
@@ -53,10 +52,8 @@ class EnvironmentalObservation(object):
 
     #Converting date from unix timestamp readable string - added by HW
     def formatDate(self, timestamp):
-        date = datetime.fromtimestamp(timestamp).isoformat()
-        #date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
-        datetime_object = parser.parse(date)
-        return datetime
+        date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        return date
     
     def calculateDayNum(self, start_timestamp, observation_timestamp):
         # Calculate day of trial - assume base 0
@@ -74,6 +71,7 @@ class EnvironmentalObservation(object):
 def insert_one(observation):
     collection.insert_one(observation.__dict__)
 
+### this needs to be cleaned up ####
 def test():
     from Trial_Util import Trial
     t = Trial()

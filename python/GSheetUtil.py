@@ -15,16 +15,17 @@ from httplib2 import Http
 from oauth2client import file, client, tools  
 from oauth2client.service_account import ServiceAccountCredentials  
 import datetime
+from Sys_Conf import GOOGLE_SHEET_ID, DEVICE_ID
 
 #change the spreadsheet ID to your own spreadsheet's
-#MY_SPREADSHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
-MY_SPREADSHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
+MY_SPREADSHEET_ID = GOOGLE_SHEET_ID
 scopes = 'https://www.googleapis.com/auth/spreadsheets'
 
 #Generate your own credential file to replace this
 creds = ServiceAccountCredentials.from_json_keyfile_name('/home/pi/Desktop/MV1_firmware/python/Marsfarm-SpreadSheet.json',scopes)
 client = gspread.authorize(creds)
 sheet = client.open_by_key(MY_SPREADSHEET_ID).sheet1
+#sheet = client.open_by_key(MY_SPREADSHEET_ID).device
 
 def update_sheet(observationType, datatype, value, unit):
      
