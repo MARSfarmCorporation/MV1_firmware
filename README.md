@@ -61,23 +61,29 @@ This legacy class contains all of the methods that an SI7021 can perform (ie rea
 ### SHTC3.py
 This new class contains all of the methods that an SHTC3 can perform (ie read temperature or read humidity)
 
-**Links to testing information:**
+Links to Documentation
+========================
 
-### MARSfarm Software Documentation - For Development###
-[How to push local changes from a device to GitHub:](https://docs.google.com/document/d/1OTJcv9fFAd6GHeW61mBx-h2aYH95D1KO2G71raPEueY/edit)
-[Common UNIX commands used when doing development](https://docs.google.com/document/d/1t68rj5UdpKkYAFzWZ84S6eEUnVqLPd1YFjAgU8UK7nY/edit)
+Product Design (MV1 only)
+------------------------------
+ * [MV1 - Google Drive Folder (contains all documentation from Summer 2021 onward: Hardware, Testing, Architecture, etc.)](https://drive.google.com/drive/folders/1UcjC2NI9v7W5HeeAPR9AMCb38wjZm8VN?usp=share_link)
+  * [Diagram of entire Platform Architecture used for MV1 cloud: MongoDB, ExpressJS, ReactJS, and NodeJS (MERN) stack.](https://viewer.diagrams.net/?page-id=hUamuTZxWKs4uIfqG7RM&highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=hUamuTZxWKs4uIfqG7RM#G1rRgNSRLPabvuNownhoeclYH5YoiKG7r2)
+* [Diagram of MongoDB database architecture in draw.io](https://viewer.diagrams.net/?page-id=DcuP4mfnnl_cNMED-0Ec&highlight=0000ff&edit=_blank&layers=1&nav=1#G1rRgNSRLPabvuNownhoeclYH5YoiKG7r2)
 
-### MARSfarm Software Documentation - For Production ###
-[How to create a new image on an SD card:](https://docs.google.com/document/d/1T9UipJatjMiOfbb7ay2Nh2nFmTY30WOMuiv9827T_lU/edit)
-[How to test a finished production unit:](https://docs.google.com/document/d/1GzynpzX5hZFJA4CGZxr--B0ZOYwjwGt2JWh8CyWko7g/edit)
 
-### General MV1 Documentation - including hardware, cloud architecture, and web application ###
-[Link to Catch All Board documentation](https://docs.google.com/document/d/1rYqv2FnSNgXrrBOkOoK7FdZ9B48B3JKYJkC4YfoGmYI/edit?usp=sharing)
-[Link to Production Board documentation](https://docs.google.com/document/d/18hr8wcDvSWbsPwOnVfIchaOfuOhui3_LxkCoquSs5Wg/edit?usp=sharing)
-[Link to Light Board documentation](https://docs.google.com/document/d/1j48XNIAOSjZMT99Io0jHe7IRb-LhJGaQ8D5Ax2oAHz0/edit?usp=sharing)
-[MV1 - Google Drive Folder (contains all documentation from Summer 2021 onward: Hardware, Testing, Architecture, etc.)](https://drive.google.com/drive/folders/1UcjC2NI9v7W5HeeAPR9AMCb38wjZm8VN?usp=share_link)
-[Diagram of MongoDB database architecture in draw.io](https://viewer.diagrams.net/?page-id=DcuP4mfnnl_cNMED-0Ec&highlight=0000ff&edit=_blank&layers=1&nav=1#G1rRgNSRLPabvuNownhoeclYH5YoiKG7r2)
-[Diagram of entire Platform Architecture used for MV1 cloud: MongoDB, ExpressJS, ReactJS, and NodeJS (MERN) stack.](https://viewer.diagrams.net/?page-id=hUamuTZxWKs4uIfqG7RM&highlight=0000ff&edit=_blank&layers=1&nav=1&page-id=hUamuTZxWKs4uIfqG7RM#G1rRgNSRLPabvuNownhoeclYH5YoiKG7r2)
+Hardware Development (MV1 only)
+---------------
+ * [Link to Catch All Board documentation (not in use, only used for dev)](https://docs.google.com/document/d/1rYqv2FnSNgXrrBOkOoK7FdZ9B48B3JKYJkC4YfoGmYI/edit?usp=sharing)
+ * [Link to Production Board documentation](https://docs.google.com/document/d/18hr8wcDvSWbsPwOnVfIchaOfuOhui3_LxkCoquSs5Wg/edit?usp=sharing)
+ * [Link to Light Board documentation](https://docs.google.com/document/d/1j48XNIAOSjZMT99Io0jHe7IRb-LhJGaQ8D5Ax2oAHz0/edit?usp=sharing)
+ * [Heater - Information about testing and PWM / Duty cycle testing](https://docs.google.com/spreadsheets/d/1oFypIiIQ0HYoV11vfTSYGfxm0bYe1QiJ11H3ZHgr-O8/edit#gid=429470365&range=A1:F50)
 
-### Actuators ###
-[Heater - Information about testing and PWM / Duty cycle testing](https://docs.google.com/spreadsheets/d/1oFypIiIQ0HYoV11vfTSYGfxm0bYe1QiJ11H3ZHgr-O8/edit#gid=429470365&range=A1:F50)
+Firmware Development (general)
+-----------------------
+ * [How to push local changes from a device to GitHub:](https://docs.google.com/document/d/1OTJcv9fFAd6GHeW61mBx-h2aYH95D1KO2G71raPEueY/edit)
+ * [Common UNIX commands used when doing development](https://docs.google.com/document/d/1t68rj5UdpKkYAFzWZ84S6eEUnVqLPd1YFjAgU8UK7nY/edit)
+
+Production (MV1 only)
+-------------------------------
+ * [How to create a new image on an SD card:](https://docs.google.com/document/d/1T9UipJatjMiOfbb7ay2Nh2nFmTY30WOMuiv9827T_lU/edit)
+ * [How to test a finished production unit:](https://docs.google.com/document/d/1GzynpzX5hZFJA4CGZxr--B0ZOYwjwGt2JWh8CyWko7g/edit)
