@@ -31,7 +31,7 @@ def update_sheet(observationType, datatype, value, unit):
      
      date = (datetime.datetime.now() - datetime.datetime(1899, 12, 30))
      date_seconds = (date.total_seconds() / 86400)
-     row = [date_seconds, observationType, datatype,value,unit]
+     row = [date_seconds, observationType, datatype,value,unit,DEVICE_ID]
      sheet.insert_row(row)
      
 def test():

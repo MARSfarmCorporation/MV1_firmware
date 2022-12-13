@@ -13,68 +13,51 @@ import boto3
 from Trial_Util import Trial
 import time
 from datetime import datetime
-from Sys_Conf import IMAGE_DIR, S3_BUCKET
+from Sys_Conf import IMAGE_DIR, S3_BUCKET, DEVICE_ID
+
+current_time = datetime.now().strftime('%Y-%m-%d_%H%M')
+print('Attempting S3 connection at: ', current_time)
+# Try to get device ID and trial ID from JSON
+try:
+    t = Trial()
+    trial_id_num = t.trial_id
+    trial_id = str(t.trial_id)
+    device_id = str(DEVICE_ID)
+    sd = t.start_date
+    od = datetime.now().timestamp()
+    #print('sd', sd, 'od', od)
+    sd2 = datetime.fromtimestamp(sd)
+    od2 = datetime.fromtimestamp(od)
+    #print('sd2', sd2, 'od2', od2)
+
+    day_number_int = abs((sd2 - od2).days)
+    #print('day number', day_number_int)
+    day_number_str = str(day_number_int)
+    #print('day number string', day_number_str)
+
+
+except Exception as e:
+    print("Failure getting Trial info")
+    print(str(e))
 
 # Look specifically at phase data, as that carries the information on what the device should be doing
-# COMMENTED OUT 11.16.22 --- DELETE IF NOT NEEDED ---- #phaseData = t.phases
+phaseData = t.phases
 
-#defining a function for an S3 connection
-# THIS MAY BE CHANGED TO A CLASS IN THE FUTURE
-
-def s3_upload(self)
-    observation_date = datetime.now().timestamp()
+def main():
     
-# Try to get fields from Trial and calculate others required
     try:
-        t = Trial()
-        trial_id_num = t.trial_id
-        trial_id = str(t.trial_id)
-        device_id = str(t.device_id)
-        observation_timestamp = formatDateObject(observation_date)
-        start_timestamp = formatDateObject(t.trial_start_date)
-        day_number = calculateDayNum(start_timestamp, observation_timestamp)
-        print('Imported fields from ', trial_id, ' and calculated number of days: ', day_number)
-
-    except Exception as e:
-        print("Failure getting Trial info")
-        print(str(e))
-
-    try
         s3 = boto3.resource('s3')
-        print('Uploading most recent image from this directory: ', IMAGE_DIR, 'into s3 Bucket: ', S3_BUCKET)
-    except Exception as e:
-        print('Connection to create s3_upload image upload error: ', e)
 
-def selectImage(self, timestamp):
-    try:
         list_of_files = glob.glob(IMAGE_DIR + '*')
         #print(list_of_files, 'list of files as an array')
         latest_file = max(list_of_files, key=os.path.getctime) #get the latest taken picture
         print('latest image selected for upload to S3: ', latest_file)
         data = open(latest_file, 'rb')
         name = os.path.basename(latest_file)
-    except Exception as e:
-        print(' failed due to: ', e)
-   
-def formatDateObject(self, timestamp):
-    date = datetime.fromtimestamp(timestamp).isoformat()
-    datetime_object = parser.parse(date)
-    return datetime_object
+        s3_dir = (device_id + '/')
+        s3_path = (s3_dir + name)
+        print('path of upload in s3: ', s3_path)
 
-def calculateDayNum(self, start_timestamp, observation_timestamp):
-    # Calculate day of trial - assume base 0
-    sd = datetime.fromtimestamp(start_timestamp)
-    od = datetime.fromtimestamp(observation_timestamp)
-    return abs((sd - od).days)
-
-
-# Retitled from "main" to "image_upload" on 11/16/2022 by PW
-def image_upload(current_time, device_id, trial_id, day_number):
-    su = s3_upload()
-    current_time = observation_timestamp
-    trial_id = trial_id_num
-    day_number = s3.day_number
-    try:
         #If bucket was not public, we could also add credentials in here
         if trial_id_num != 0:
             s3.Bucket(S3_BUCKET).put_object(Key=name,
@@ -82,24 +65,22 @@ def image_upload(current_time, device_id, trial_id, day_number):
                                                            Metadata={'currTime':current_time,
                                                                      'device_id':device_id,
                                                                      'trial_id':trial_id,
-                                                                     'day_number':day_number
+								     'day_number':day_number_str,
                                                                     })
         else:
              s3.Bucket(S3_BUCKET).put_object(Key=name,
                                                            Body=data,
                                                            Metadata={'currTime':current_time,
                                                                      'device_id':device_id,
-                                                                     'day_number':day_number
                                                                     })
-        #### ADD TEST LOG RECORD HERE
+        print('s3 upload COMPLETE - metadata sent... Current Time: ', current_time, ' Device ID: ', device_id, 'Trial ID: ', trial_id, 'Day Number: ', day_number_str)
+
     except Exception as e:
-        print('Image upload failed due to: ', e)
+        print('S3 upload failed due to: ', e)
 
 def test():
-   print('Attempting S3 connection at: ', observation_date_string)
-   print('connection to s3')
-   s3 = s3_upload()
-   s3.image_upload(su.observation_timestamp, su.device_id, su.trial_id_num, su.day_number)
-    
+    main()
+    print('Images pushed to s3.')
+
 if __name__ == "__main__":
     test()

@@ -9,17 +9,14 @@ Mostly directory paths
 DEVICE_ID = '60f1a223786cb0a4a6a5a175'
 #Used for Remote_GoogleSheet.py
 GOOGLE_SHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
-
 #TBD ----- NOT WORKING YET Used for Ethernet Connection - may change this in cron instead
 #MAC_ADDRESS = 
 
-'''
-VARIABLES SET DURING PRODUCTION PROVISIONING
+#VARIABLES ASSIGNED DURING PROVISIONING
 - MARSfarm Serial Number: 
 - Organization Name:
 - Provisioning Date: 
 - Image Name:
-'''
 
 #Variables below are not intended to change during provisioning
 
