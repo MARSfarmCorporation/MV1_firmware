@@ -15,7 +15,7 @@ pi = pi()
 class Heater:
     def __init__(self):
         # Create heater in off state
-        We have to change sample rate to 1 microsecond so that it is able to provide a 40 KHz signal (faster switching of the heater)
+        #We have to change sample rate to 1 microsecond so that it is able to provide a 40 KHz signal (faster switching of the heater)
         pi.set_PWM_frequency(HEATER,40000) #Set heater as 40kHz PWM channel 
         pi.set_PWM_dutycycle(HEATER,OFF) #Turn off heater when initialized
        

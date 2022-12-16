@@ -2,6 +2,12 @@
 #Global variables for the system
 Mostly directory paths
 '''
+#Complete DURING PROVISIONING
+#- MARSfarm Serial Number:
+#- Organization Name:
+#- Provisioning Date:
+#- Image Name:
+
 
 #VARIABLES SET DURING PRODUCTION PROVISIONING
 
@@ -11,12 +17,6 @@ DEVICE_ID = '60f1a223786cb0a4a6a5a175'
 GOOGLE_SHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
 #TBD ----- NOT WORKING YET Used for Ethernet Connection - may change this in cron instead
 #MAC_ADDRESS = 
-
-#VARIABLES ASSIGNED DURING PROVISIONING
-- MARSfarm Serial Number: 
-- Organization Name:
-- Provisioning Date: 
-- Image Name:
 
 #Variables below are not intended to change during provisioning
 
