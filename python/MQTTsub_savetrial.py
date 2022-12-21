@@ -76,7 +76,7 @@ try:
 
     # Loop forever so script doesn't end
     while True:
-        time.sleep(1)
+        time.sleep(60)
 
 except Exception as e:
     print(e)

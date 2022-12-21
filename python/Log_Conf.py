@@ -92,6 +92,11 @@ EDIBLE_MASS = "edible_mass"
 INEDIBLE_MASS = "inedible_mass"
 CO2 = "CO2"
 
+# Attributes added to format data for React front-end
+DB_TEMP = "temperature"
+DB_CO2 = "co2"
+DB_HUMIDITY = "humidity"
+
 # Units
 PERCENT = "%"
 CENTIGRADE = "C"

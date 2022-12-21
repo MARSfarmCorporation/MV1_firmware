@@ -17,7 +17,7 @@ import serial
 from datetime import datetime
 from Trial_Util import Trial
 from Lights import Light
-from Log_Conf import TEMP, CO2, HUMIDITY, FAHRENHEIT, PPM, PERCENT
+from Log_Conf import TEMP, DB_TEMP, CO2, DB_CO2, DB_HUMIDITY, HUMIDITY, FAHRENHEIT, PPM, PERCENT
 
 # Import dictionary data
 t = Trial()
@@ -71,11 +71,11 @@ def test():
    temp, humid = get_temp_humidity()
    print("Temp", temp, "Humidity", humid)
    print('testing save_db function by sending Co2')
-   save_db(CO2, co2, PPM)
+   save_db(DB_CO2, co2, PPM)
    print('save temp and humidity data to database')
-   save_db(TEMP, temp, FAHRENHEIT)
+   save_db(DB_TEMP, temp, FAHRENHEIT)
    print("Save Humidity")
-   save_db(HUMIDITY, humid, PERCENT)
+   save_db(DB_HUMIDITY, humid, PERCENT)
    print("Save Sheet Function")
    print("Save CO2")
    save_google_sheet(CO2, co2, PPM)

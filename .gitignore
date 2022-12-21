@@ -11,3 +11,7 @@ logs/*
 !logs/.gitkeep 
 
 .aws
+
+# added by pw locally 12.21.22
+
+python/trial.py
