@@ -22,7 +22,10 @@ try:
     t = Trial()
     trial_id_num = t.trial_id
     trial_id = str(t.trial_id)
+    #print('trial ID', trial_id_num,  'as string', trial_id)
     device_id = str(DEVICE_ID)
+    #print('device ID', DEVICE_ID,  'as string', device_id)
+    #print('bucket name', S3_BUCKET, 'image directory', IMAGE_DIR)
     sd = t.start_date
     od = datetime.now().timestamp()
     #print('sd', sd, 'od', od)
@@ -30,11 +33,14 @@ try:
     od2 = datetime.fromtimestamp(od)
     #print('sd2', sd2, 'od2', od2)
 
-    day_number_int = abs((sd2 - od2).days)
-    #print('day number', day_number_int)
-    day_number_str = str(day_number_int)
-    #print('day number string', day_number_str)
+    #day_number_int = abs((sd2 - od2).days)
 
+    day_number_int = 7   # used for testing of day_number format for metadata upload --- test day options of 0, 3, 10, 45, 103)
+    #print('day number', day_number_int)
+    day_number_str_nozero = str(day_number_int)
+    #print('day number string - NO ZERO', day_number_str_nozero)
+    day_number_str = day_number_str_nozero.zfill(2)
+    #print('day number string - WITH LEADING 0', day_number_str)
 
 except Exception as e:
     print("Failure getting Trial info")
@@ -44,7 +50,7 @@ except Exception as e:
 phaseData = t.phases
 
 def main():
-    
+
     try:
         s3 = boto3.resource('s3')
 
@@ -54,15 +60,19 @@ def main():
         print('latest image selected for upload to S3: ', latest_file)
         data = open(latest_file, 'rb')
         name = os.path.basename(latest_file)
-        s3_dir = (device_id + '/')
-        s3_path = (s3_dir + name)
-        print('path of upload in s3: ', s3_path)
+        #print('data', data, 'name', name)
+        
+        #TO BE ADDED LATER FOR OPTIMIZATION OF S3 ACCESS
+        #s3_dir = (device_id + '/')
+        #s3_path = (s3_dir + name)
+        #print('path of upload in s3: ', s3_path)
 
         #If bucket was not public, we could also add credentials in here
         if trial_id_num != 0:
             s3.Bucket(S3_BUCKET).put_object(Key=name,
                                                            Body=data,
-                                                           Metadata={'currTime':current_time,
+                                                           Metadata={
+                                                                     'currTime':current_time,
                                                                      'device_id':device_id,
                                                                      'trial_id':trial_id,
 								     'day_number':day_number_str,
@@ -80,7 +90,7 @@ def main():
 
 def test():
     main()
-    print('Images pushed to s3.')
+    print('S3 "main" function complete.')
 
 if __name__ == "__main__":
     test()
