@@ -33,9 +33,9 @@ try:
     od2 = datetime.fromtimestamp(od)
     #print('sd2', sd2, 'od2', od2)
 
-    #day_number_int = abs((sd2 - od2).days)
+    day_number_int = abs((sd2 - od2).days)
 
-    day_number_int = 7   # used for testing of day_number format for metadata upload --- test day options of 0, 3, 10, 45, 103)
+    #day_number_int = 7   # used for testing of day_number format for metadata upload --- test day options of 0, 3, 10, 45, 103)
     #print('day number', day_number_int)
     day_number_str_nozero = str(day_number_int)
     #print('day number string - NO ZERO', day_number_str_nozero)
