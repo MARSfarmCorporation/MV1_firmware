@@ -9,6 +9,7 @@ Modified by: Peter Webb - 11.21.2022
 import paho.mqtt.client as mqttClient
 import Lights
 import time
+from datetime import datetime
 import ssl
 import trial
 from Sys_Conf import DEVICE_ID
@@ -18,7 +19,7 @@ data = trial.trial
 
 # REPLACED with hardcoded device for provisioning in production
 #define local device which should be passed in eventually
-#deviceID = data['device_id'] 
+#deviceID = data['device_id']
 deviceID = DEVICE_ID
 
 context = ssl.create_default_context()
@@ -32,13 +33,13 @@ password = "marsfarmtesting"
 # define topic
 msg_root_topic = "marsfarm"
 subscribe_topic = (msg_root_topic + "/" + deviceID)
-
+ct = datetime.now().strftime('%Y-%m-%d_%H%M')
 
 # print(subscribe_topic)
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("Connected to broker")
+        print("Connected to broker at: " + ct)
         global Connected  # Use global variable
         Connected = True  # Signal connection
         client.subscribe(subscribe_topic)
@@ -61,7 +62,7 @@ def on_message(client, userdata, msg):
 
 try:
     print("Client Created")
-    client = mqttClient.Client("Test")  # create new instance
+    client = mqttClient.Client("MV1")  # create new instance
     client.username_pw_set(user, password=password)  # set username and password
     client.on_connect = on_connect
     print("Initialize connect")
@@ -81,13 +82,13 @@ try:
 except Exception as e:
     print(e)
     # Record previous light settings
-    farred = pi.get_PWM_dutycycle(26)
-    red = pi.get_PWM_dutycycle(5)
-    blue = pi.get_PWM_dutycycle(13)
-    white = pi.get_PWM_dutycycle(19)
+    #farred = pi.get_PWM_dutycycle(26)
+    #red = pi.get_PWM_dutycycle(5)
+    #blue = pi.get_PWM_dutycycle(13)
+    #white = pi.get_PWM_dutycycle(19)
 
     # Turn on red light at 100% to signify error
-    lights.customMode(0, 255, 0, 0)
-    sleep(10)
+    #lights.customMode(0, 255, 0, 0)
+    #sleep(10)
     # Return light to previous settings
-    lights.customMode(farred, red, blue, white)
+    #lights.customMode(farred, red, blue, white)
