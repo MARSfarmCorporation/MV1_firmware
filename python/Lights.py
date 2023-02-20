@@ -63,7 +63,7 @@ class Light:
         self.blink(0, 0, 100, 0)
         
     def blink_red(self):
-        self.blink(0, 100, 0, 0)
+        self.blink(0, 50, 0, 0)
         
     def blink(self, fr=0, r=0, b=0, w=100):
         # Used to indicate an error
