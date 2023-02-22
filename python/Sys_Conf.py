@@ -29,7 +29,7 @@ PYTHON_DIR = "/home/pi/Desktop/MV1_firmware/python/"
 # Currently keeping images in the legacy location
 #IMAGE_DIR = "/home/pi/Desktop/MV1_firmware/pictures/"
 
-S3_BUCKET = 'henry-metadata-testing'
+S3_BUCKET = 'mv1-production'
 
 # Mongo settings
 MONGODB_URI = "mongodb+srv://device_data-RW:TOtuVtPoO8ePI5Ms@testing.7ppqd.mongodb.net/web-application?retryWrites=true&w=majority"

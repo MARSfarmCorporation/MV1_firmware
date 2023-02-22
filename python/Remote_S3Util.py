@@ -63,13 +63,13 @@ def main():
         #print('data', data, 'name', name)
         
         #TO BE ADDED LATER FOR OPTIMIZATION OF S3 ACCESS
-        #s3_dir = (device_id + '/')
-        #s3_path = (s3_dir + name)
+        s3_dir = (device_id + '/')
+        s3_path = (s3_dir + name)
         #print('path of upload in s3: ', s3_path)
 
         #If bucket was not public, we could also add credentials in here
         if trial_id_num != 0:
-            s3.Bucket(S3_BUCKET).put_object(Key=name,
+            s3.Bucket(S3_BUCKET).put_object(Key=s3_path,
                                                            Body=data,
                                                            Metadata={
                                                                      'currTime':current_time,
@@ -78,12 +78,13 @@ def main():
 								     'day_number':day_number_str,
                                                                     })
         else:
-             s3.Bucket(S3_BUCKET).put_object(Key=name,
+             s3.Bucket(S3_BUCKET).put_object(Key=s3_path,
                                                            Body=data,
                                                            Metadata={'currTime':current_time,
                                                                      'device_id':device_id,
                                                                     })
-        print('s3 upload COMPLETE - metadata sent... Current Time: ', current_time, ' Device ID: ', device_id, 'Trial ID: ', trial_id, 'Day Number: ', day_number_str)
+        print('image uploaded to this location', s3_path, 'in S3 bucket', S3_BUCKET)
+        print('s3 image metadata uploaded Current Time: ', current_time, ' Device ID: ', device_id, 'Trial ID: ', trial_id, 'Day Number: ', day_number_str)
 
     except Exception as e:
         print('S3 upload failed due to: ', e)
