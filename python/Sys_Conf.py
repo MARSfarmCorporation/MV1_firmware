@@ -12,14 +12,14 @@ Mostly directory paths
 
 #Used for MQTT only - EVERYWHERE ELSE SHOULD USE Trial_Util.py
 # ADD THIS TO S3 AS WELL
- DEVICE_ID = ''
+DEVICE_ID = '60f1a223786cb0a4a6a5a175'
 # Example - DEVICE_ID = '60f1a223786cb0a4a6a5a175'
 # Used for Remote_GoogleSheet.py
- GOOGLE_SHEET_ID = ''
+GOOGLE_SHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
 # Example GOOGLE_SHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
 
 #TBD ----- NOT WORKING YET Used for Ethernet Connection - may change this in cron instead
-#MAC_ADDRESS = 
+#MAC_ADDRESS =
 
 #Variables below are not intended to change during provisioning
 

@@ -1,5 +1,6 @@
 [Unit]
-Description=MARSfarm V1 Wi-Fi Connect
+#Description=MARSfarm V1 Wi-Fi Connect
+Description=wifi-connect
 After=multi-user.target
 
 [Service]
