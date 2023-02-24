@@ -39,7 +39,8 @@ ct = datetime.now().strftime('%Y-%m-%d_%H%M')
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("Connected to broker at: " + ct)
+        brokertime = datetime.now().strftime('%Y-%m-%d_%H%M')
+        print("Connected to broker at: " + brokertime)
         global Connected  # Use global variable
         Connected = True  # Signal connection
         client.subscribe(subscribe_topic)
