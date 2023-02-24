@@ -12,12 +12,13 @@ Modified By Howard Webb - 11.10.2022
 from Remote_MongoUtil import EnvironmentalObservation, insert_one
 from SHTC3 import SHTC3
 from GSheetUtil import update_sheet
-from MHZ16 import get_co2 as MHZ16
+from MHZ16 import MHZ16
 import serial
 from datetime import datetime
 from Trial_Util import Trial
 from Lights import Light
 from Log_Conf import TEMP, DB_TEMP, CO2, DB_CO2, DB_HUMIDITY, HUMIDITY, FAHRENHEIT, PPM, PERCENT
+import time
 
 # Import dictionary data
 t = Trial()
@@ -26,15 +27,20 @@ t = Trial()
 observation_date = datetime.now().timestamp()
 
 def get_co2():
-    con = serial.Serial("/dev/ttyAMA0", 9600, timeout=5)
+    #con = serial.Serial("/dev/ttyAMA0", 9600, timeout=5)
     #accessing MHZ16 sensor using serial
     try:
-        co2 = MHZ16(con)
-        if(int(co2) > 3000):
-            co2 = MHZ16(con)
+        co2Sensor = MHZ16()
+        co2 = co2Sensor.get_co2()
+        counter = 0 # COUNTER DOES NOT CURRENTLY WORK used for loop control of get_co2 to prevent error in first sensor reading
+        #co2 = 20000 # used for testing control loop
+        if int(co2) > 3000 and counter < 5:
+            print(co2, counter)
+            counter += 1
+            co2 = 450
     except Exception as e:
         print(e)
-        co2 = 0
+        co2 = 500
     return co2
 
 def save_db(name, value, unit):
@@ -65,7 +71,7 @@ def save_google_sheet(name, value, unit):
 def test():
    print('starting test at: ', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
    print('testing get_co2 function')
-   co2 =  get_co2()
+   co2 = get_co2()
    print("Co2", co2)
    print('testing get_temp_humidity function')
    temp, humid = get_temp_humidity()
