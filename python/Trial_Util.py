@@ -23,7 +23,7 @@ class Trial(object):
         self.start_date = self.trial['start_date']
         self.phases = self.trial['phases']
         self.phase_count = 0
-        self.current_phase = self.get_current_phase()
+        self.current_phase = self.get_current_phase() - 1
 
         #print(self.start_date)
     
