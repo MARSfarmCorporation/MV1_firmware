@@ -42,7 +42,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 @reboot sudo pigpiod -s1 >> $LOG_PATH/boot_pigpio.log 2>&1 &
 
 # Set up MAC address to remain static, 1 minute after reboot
-@reboot sleep 30; sudo ifconfig eth0 down; sudo macchanger --mac=68:e1:70:23:b1:01 eth0; sudo ifconfig eth0 up >> $LOG_PATH/boot_ethernet.log 2>&1 &
+@reboot sleep 30; sudo ifconfig eth0 down; sudo macchanger --mac=68:e1:70:23:b1:35 eth0; sudo ifconfig eth0 up >> $LOG_PATH/boot_ethernet.log 2>&1 &
 
 # After ehternet setup has had chance to run, the wifi service will be created at 2 minutes after reboot for 
 @reboot sleep 120; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
