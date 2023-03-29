@@ -63,7 +63,7 @@ def on_message(client, userdata, msg):
 
 try:
     print("Client Created")
-    client = mqttClient.Client("MV1")  # create new instance
+    client = mqttClient.Client("MV1-Basil")  # create new instance
     client.username_pw_set(user, password=password)  # set username and password
     client.on_connect = on_connect
     print("Initialize connect")
