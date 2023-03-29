@@ -12,14 +12,14 @@ Mostly directory paths
 
 #Used for MQTT only - EVERYWHERE ELSE SHOULD USE Trial_Util.py
 # ADD THIS TO S3 AS WELL
-DEVICE_ID = '60f1a223786cb0a4a6a5a175'
-# Example - DEVICE_ID = '60f1a223786cb0a4a6a5a175'
+DEVICE_ID = '6423953c35c8a81c4d15e729'
+# Device ID for "MV1-Basil"
 # Used for Remote_GoogleSheet.py
-GOOGLE_SHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
-# Example GOOGLE_SHEET_ID = '1MbRqOJNc0r9TPLMbF1aurRuqOKW9dOkEYR2dR2dP5Ps'
+GOOGLE_SHEET_ID = '10ed3ea0NzxGotbzXoLQ68f2Z93XeAJOMpBTi1FLEC70'
+# Google Sheet for "MV1 - Google Sheet - MV1_firmware_Sage_02_24_23" https://docs.google.com/spreadsheets/d/10ed3ea0NzxGotbzXoLQ68f2Z93XeAJOMpBTi1FLEC70/edit#gid=0
 
-#TBD ----- NOT WORKING YET Used for Ethernet Connection - may change this in cron instead
-#MAC_ADDRESS =
+#TBD ----- NOT WORKING YET Used for Ethernet Connection - you must also run "crontab Desktop/MV1_firmware/setup/MV1_firmware_cron.txt"
+#MAC_ADDRESS = 68:e1:70:23:b1:01
 
 #Variables below are not intended to change during provisioning
 
