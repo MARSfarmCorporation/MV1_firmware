@@ -3,31 +3,30 @@
 Mostly directory paths
 '''
 #Complete DURING PROVISIONING
-#- MARSfarm Serial Number:
-#- Organization Name:
-#- Provisioning Date:
-#- Image Name:
+#- Image Creation Date: 04.05.23
+#- Image Name: Basil
 
 #VARIABLES SET DURING PRODUCTION PROVISIONING
 
-#Used for MQTT only - EVERYWHERE ELSE SHOULD USE Trial_Util.py
-# ADD THIS TO S3 AS WELL
+#Used for client_id in MQTT
+SERIAL_NUMBER = 'MV1-BASIL'
+
+#Used for MQTT only - EVERYWHERE ELSE SHOULD USE Trial_Util.py -- will ADD THIS TO S3 AS WELL
 DEVICE_ID = '6423953c35c8a81c4d15e729'
-# Device ID for "MV1-Basil"
+# MQTT Device ID for "MV1-Basil"
+
 # Used for Remote_GoogleSheet.py
 GOOGLE_SHEET_ID = '10ed3ea0NzxGotbzXoLQ68f2Z93XeAJOMpBTi1FLEC70'
 # Google Sheet for "MV1 - Google Sheet - MV1_firmware_Sage_02_24_23" https://docs.google.com/spreadsheets/d/10ed3ea0NzxGotbzXoLQ68f2Z93XeAJOMpBTi1FLEC70/edit#gid=0
 
-#TBD ----- NOT WORKING YET Used for Ethernet Connection - you must also run "crontab Desktop/MV1_firmware/setup/MV1_firmware_cron.txt"
-#MAC_ADDRESS = 68:e1:70:23:b1:01
+# Used in Ethernet.py to assign new static MAC address
+MAC_ADDRESS = '68:e1:70:23:b2:01'
 
-#Variables below are not intended to change during provisioning
+#VARIABLES SET DURING IMAGE CREATION
 
 #Directory Paths
-
 IMAGE_DIR = "/home/pi/Desktop/MV1_firmware/pictures/"
 PYTHON_DIR = "/home/pi/Desktop/MV1_firmware/python/"
-
 
 # Currently keeping images in the legacy location
 #IMAGE_DIR = "/home/pi/Desktop/MV1_firmware/pictures/"

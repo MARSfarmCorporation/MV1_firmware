@@ -12,14 +12,12 @@ import time
 from datetime import datetime
 import ssl
 import trial
-from Sys_Conf import DEVICE_ID
+from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
 # Import dictionary data
 data = trial.trial
 
 # REPLACED with hardcoded device for provisioning in production
-#define local device which should be passed in eventually
-#deviceID = data['device_id']
 deviceID = DEVICE_ID
 
 context = ssl.create_default_context()
@@ -62,8 +60,8 @@ def on_message(client, userdata, msg):
         print("not this device")
 
 try:
-    print("Client Created")
-    client = mqttClient.Client("MV1-Basil")  # create new instance
+    print("Client Created With ID: ", SERIAL_NUMBER)
+    client = mqttClient.Client(SERIAL_NUMBER)  # create new instance
     client.username_pw_set(user, password=password)  # set username and password
     client.on_connect = on_connect
     print("Initialize connect")
