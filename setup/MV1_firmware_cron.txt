@@ -8,6 +8,7 @@
 #Modified by: Howard Webb(webb.howard.m@gmail.com) - 11.10.22
 #Modified by: Peter Webb - 11.14.22
 #Modified by: Peter Webb - 02.21.23
+#Modified by: Peter Webb - 04.05.23
 
 # Don't send email
 MAILTO=""
@@ -41,12 +42,12 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 # Start pigpio service, at reboot, the "-s1" is necessary to set sample rate faster for Heater.py to set frequency 
 @reboot sudo pigpiod -s1 >> $LOG_PATH/boot_pigpio.log 2>&1 &
 
-# Set up MAC address to remain static, 1 minute after reboot
-@reboot sleep 30; sudo ifconfig eth0 down; sudo macchanger --mac=68:e1:70:23:b1:35 eth0; sudo ifconfig eth0 up >> $LOG_PATH/boot_ethernet.log 2>&1 &
+# Set up MAC address to remain static, 20 seconds after reboot
+@reboot sleep 30; sudo ifconfig eth0 down; sudo macchanger --mac=68:e1:70:23:b2:01 eth0; sudo ifconfig eth0 up >> $LOG_PATH/boot_ethernet.log 2>&1 &
 
-# After ehternet setup has had chance to run, the wifi service will be created at 2 minutes after reboot for 
-@reboot sleep 120; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
+# After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
+@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
 
-# Start paho service to listen for device_id on MQTT server, 3 minutes after reboot - script continues to loop after starting at boot
-@reboot sleep 180; python3 $PYTHON_PATH/MQTTsub_savetrial.py >> $LOG_PATH/boot_MQTT.log 2>&1 &
+# Start paho service to listen for device_id on MQTT server, 1 minute after reboot - script continues to loop after starting at boot
+@reboot sleep 60; python3 $PYTHON_PATH/MQTTsub_savetrial.py >> $LOG_PATH/boot_MQTT.log 2>&1 &
 # WARNING: This should probably be changed and tested to only run for an hour after boot so as to prevent long-term wear
