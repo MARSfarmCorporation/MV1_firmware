@@ -30,8 +30,8 @@ if(int(t_r) < 255):
   r = t_r
 
 # blue
-b = 255
-if(int(t_b) < 255):
+b = 200
+if(int(t_b) < 200):
   b = t_b
 
 # white is not needed, 255 is under 75C
