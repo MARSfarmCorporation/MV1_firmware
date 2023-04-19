@@ -1,5 +1,6 @@
 '''
 Author: Howard Webb - 11/2/2022
+Updated by: Peter Webb - 04/19/2023 - Fixed phase error
 '''
 
 from trial import trial as data
@@ -23,21 +24,26 @@ class Trial(object):
         self.start_date = self.trial['start_date']
         self.phases = self.trial['phases']
         self.phase_count = 0
-        self.current_phase = self.get_current_phase() - 1
+        self.current_phase = self.get_current_phase()
 
         #print(self.start_date)
     
     def get_current_phase(self):
         # Get the current phase from trial.py
         #print("Phases", self.phases)
-        #print(self.start_date)
         self.phase_count = len(self.phases)
         for i in range(len(self.phases)):
             # If current time is greater than the start day of the phase, then it is saved
             # Loop is continued until current time is less than start day of phase
+            print(time())
+            print("Phase Start Day", self.phases[i]['phase_start'])
+            print("Start Date (readable)", datetime.fromtimestamp(self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
+            print("Current Time (readable)", datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S"))
+            print("Phase Start Date (readable)", datetime.fromtimestamp((self.phases[i]['phase_start'] * 86400) + self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
             if time() > (self.phases[i]['phase_start'] * 86400) + self.start_date:
                 current_phase = self.phases[i]  # Save specific phase data
-        
+        print("Current Phase", current_phase)
+        print("Return Value", i)
         return i
 
     def get_light_values(self, phase=None):
