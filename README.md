@@ -3,7 +3,7 @@
 Scripts and code related to running the new implementation of the MarsFarm datalogging software
 This all runs locally on a provisioned Raspberry Pi
 
-## Python scripts and their function
+## Python scripts and their function 
 
 ### CameraAF.py
 Sets the focal distance and orientation of the ArduCam and takes a photo. Also flashes the LED's white to while taking photo
