@@ -23,7 +23,8 @@ class Heater:
        
     def on(self):
        #turn on PWM heater (ratio of 126/255: 50W)
-       pi.set_PWM_dutycycle(HEATER,140)
+       #ratio of 175/255: 82W
+       pi.set_PWM_dutycycle(HEATER,175)
        
     def off(self):
        # turn off the heater 
