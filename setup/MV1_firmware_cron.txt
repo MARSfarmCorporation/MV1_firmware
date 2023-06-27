@@ -28,7 +28,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 10 * * * * python3 $PYTHON_PATH/Remote_S3Util.py >> $LOG_PATH/S3.log 2>&1 &
 
 # Capture temperature, humidity, and Co2 sensor data, send it to MongoDB and Google Sheets, every hour, 2 minutes after the hour
-2 * * * * python3 $PYTHON_PATH/LogSensors.py >> $LOG_PATH/LogSensor.log 2>&1 &
+8 * * * * python3 $PYTHON_PATH/LogSensors.py >> $LOG_PATH/LogSensor.log 2>&1 &
 
 # Check trial settings, to determine LED channel values, every minute
 * * * * * python3 $PYTHON_PATH/Light_Control.py >> $LOG_PATH/Light.log 2>&1 &
