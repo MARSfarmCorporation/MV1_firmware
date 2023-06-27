@@ -1,12 +1,18 @@
 [Unit]
 #Description=MARSfarm V1 Wi-Fi Connect
+# description of the unit file, providing a bref summary of the serivce
 Description=wifi-connect
+# specifies that this serivec should be started after the multi-user.target has been reached
 After=multi-user.target
 
 [Service]
+# specifies the command to be executed when the service is started
 ExecStart=/bin/bash /home/pi/Desktop/MV1_firmware/scripts/wifi.sh
+# specifies that the service should be restarted if it fails
 Restart=on-failure
+# specifies the user under which the service should be run
 User=pi
 
 [Install]
+# specifies the target that this service should be associated with
 WantedBy=multi-user.target

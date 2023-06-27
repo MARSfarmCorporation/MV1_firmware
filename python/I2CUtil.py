@@ -8,16 +8,20 @@
 
 from periphery import I2C as pI2C
 
+# wrapper class for commonly used I2C message functions from periphery library
 class I2C(object):
 
+    #intializes the I2C object 
    def __init__(self, addr):
-      self._path = "/dev/i2c-1"
-      self._addr = addr
-      self._i2c = pI2C(self._path)
+      self._path = "/dev/i2c-1"  # path to the I2C device file 
+      self._addr = addr # address of the I2C device
+      self._i2c = pI2C(self._path) # initialize the I2C object using the device file path
 
+    # closes the I2C connection when exiting the context 
    def __exit__(self, exc_type, exc_value, traceback):
       self._i2c.close()
 
+    #sends and recieves mutliple messages over I2C 
    def get_msg(self, cmds, size):
        """Send and receive multiple messages
            Should return the welcome message
@@ -36,10 +40,10 @@ class I2C(object):
    #    for cmd in cmds:
    #        print "Cmd: ", hex(cmd)
    #    print "Buffer:", size        
-       msgs = [self._i2c.Message(cmds), self._i2c.Message(bytearray([0x00 for x in range(size)]), read=True)]
+       msgs = [self._i2c.Message(cmds), self._i2c.Message(bytearray([0x00 for x in range(size)]), read=True)] #sends commands, recieves data
        try:
-           self._i2c.transfer(self._addr, msgs)
-           ret = msgs[1].data
+           self._i2c.transfer(self._addr, msgs) # perform the I2C transfer
+           ret = msgs[1].data # get the received data from the second message
    #        for data in ret:
    #            print "Data:", hex(data)
            return msgs
@@ -47,7 +51,7 @@ class I2C(object):
            print (e)
            return None
 
-
+    # writes data to the I2C device 
    def msg_write(self, cmds):
        """Write to sensor
            Args:
@@ -71,6 +75,7 @@ class I2C(object):
            print (e)
            return None
 
+    # reads data from the I2C device 
    def msg_read(self, size):
        """Read existing data
            Args:
@@ -97,6 +102,7 @@ class I2C(object):
            print (e)
            return None    
 
+    # converts two byte buffers into a single word value 
 def bytesToWord(high, low):
    """Convert two byte buffers into a single word value
        shift the first byte into the work high position

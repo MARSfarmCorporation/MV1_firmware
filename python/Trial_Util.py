@@ -40,6 +40,7 @@ class Trial(object):
             print("Start Date (readable)", datetime.fromtimestamp(self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
             print("Current Time (readable)", datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S"))
             print("Phase Start Date (readable)", datetime.fromtimestamp((self.phases[i]['phase_start'] * 86400) + self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
+            # check if the current time is greater than the start day of the phase
             if time() > (self.phases[i]['phase_start'] * 86400) + self.start_date:
                 current_phase = self.phases[i]  # Save specific phase data
         print("Current Phase", current_phase)
@@ -60,8 +61,9 @@ class Trial(object):
         lights = None
         current_time = datetime.now()
 
-        
+    
         for i in range(len(light_settings)):
+            # check if the current time is greater than the start time of the light setting 
             if ((current_time.hour*60) + current_time.minute) >= ((light_settings[i]['start_time'][0]*60) + light_settings[i]['start_time'][1]):
                 lights = light_settings[i]['setting']  # Save temp if the current time is greater than time from array
         # break out inividual valuse fr, r, b, w
@@ -78,7 +80,7 @@ class Trial(object):
         temp_settings = self.phases[phase]['step'][1]['temperature']  # Store light settings are variable
             
         for i in range(len(temp_settings)):
-
+            # check if the current time is greater than the start time of the temperature setting 
             if ((current_time.hour*60) + current_time.minute) >= ((temp_settings[i]['start_time'][0]*60) + temp_settings[i]['start_time'][1]):
                 target_temp = temp_settings[i]['setting']  # Save temp if the current time is greater than time from array
             
@@ -160,7 +162,7 @@ class Trial(object):
         json_format = json.dumps(json_object, indent=2)
         print(json_format)
     
-
+# test for trial
 def test():
     print("Trial Object Test")
     t = Trial()

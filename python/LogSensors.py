@@ -11,7 +11,7 @@ Modified By Howard Webb - 11.10.2022
 
 from Remote_MongoUtil import EnvironmentalObservation, insert_one
 from SHTC3 import SHTC3
-from GSheetUtil import update_sheet
+from GSheetUtil import update_sheet 
 from MHZ16 import MHZ16
 import serial
 from datetime import datetime
@@ -21,6 +21,7 @@ from Log_Conf import TEMP, DB_TEMP, CO2, DB_CO2, DB_HUMIDITY, HUMIDITY, FAHRENHE
 import time
 
 # Import dictionary data
+# The 't' dictionary object is used to store trial information
 t = Trial()
 
 # Get current time
@@ -30,10 +31,11 @@ def get_co2():
     #con = serial.Serial("/dev/ttyAMA0", 9600, timeout=5)
     #accessing MHZ16 sensor using serial
     try:
-        co2Sensor = MHZ16()
-        co2 = co2Sensor.get_co2()
+        co2Sensor = MHZ16() # initialize the MHZ16 CO2 sensor 
+        co2 = co2Sensor.get_co2() # read CO2 data from the sensor 
         counter = 0 # COUNTER DOES NOT CURRENTLY WORK used for loop control of get_co2 to prevent error in first sensor reading
         #co2 = 20000 # used for testing control loop
+        # check if CO2 reading is above a threshold and counter is within limit
         if int(co2) > 3000 and counter < 5:
             print(co2, counter)
             counter += 1
@@ -43,6 +45,7 @@ def get_co2():
         co2 = 500
     return co2
 
+# save sensor data to the remote MongoDB database
 def save_db(name, value, unit):
      try:
         insert_one(EnvironmentalObservation(observation_date, name, value, unit, t.trial_id, t.trial_name, t.start_date))
@@ -55,8 +58,8 @@ def save_db(name, value, unit):
 def get_temp_humidity():
     #accessing SHTC3 sensor to read temperature and humidity data
     try:
-        sensor = SHTC3()
-        temp, humid = sensor.get_tempF_humidity()
+        sensor = SHTC3()  
+        temp, humid = sensor.get_tempF_humidity() # read the temperature and humidity sensor 
     except Exception as e:
         print(e)
         # if sensor does not return a value, LED will blink red
@@ -68,6 +71,7 @@ def save_google_sheet(name, value, unit):
     #Update google sheets with sensor data
     update_sheet('Environment_Observation', name, value, unit)
 
+# perfrom a test of the sensor data logging 
 def test():
    print('starting test at: ', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
    print('testing get_co2 function')

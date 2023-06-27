@@ -52,22 +52,23 @@ phaseData = t.phases
 def main():
 
     try:
-        s3 = boto3.resource('s3')
+        s3 = boto3.resource('s3') # creating a connection to Amazon S3
 
-        list_of_files = glob.glob(IMAGE_DIR + '*')
+        list_of_files = glob.glob(IMAGE_DIR + '*') # get a list of the files in the specified directory
         #print(list_of_files, 'list of files as an array')
         latest_file = max(list_of_files, key=os.path.getctime) #get the latest taken picture
         print('latest image selected for upload to S3: ', latest_file)
-        data = open(latest_file, 'rb')
-        name = os.path.basename(latest_file)
+        data = open(latest_file, 'rb') # open the latest file in binary mode
+        name = os.path.basename(latest_file) # extract the name of the file 
         #print('data', data, 'name', name)
         
         #TO BE ADDED LATER FOR OPTIMIZATION OF S3 ACCESS
-        s3_dir = (device_id + '/')
-        s3_path = (s3_dir + name)
+        s3_dir = (device_id + '/') # directory structure in S3 bucket
+        s3_path = (s3_dir + name) # path of the file in S3 bucket
         #print('path of upload in s3: ', s3_path)
 
         #If bucket was not public, we could also add credentials in here
+        # upload the file to S3 bucket with metadata
         if trial_id_num != 0:
             s3.Bucket(S3_BUCKET).put_object(Key=s3_path,
                                                            Body=data,
@@ -75,7 +76,7 @@ def main():
                                                                      'currTime':current_time,
                                                                      'device_id':device_id,
                                                                      'trial_id':trial_id,
-								     'day_number':day_number_str,
+								                                     'day_number':day_number_str,
                                                                     })
         else:
              s3.Bucket(S3_BUCKET).put_object(Key=s3_path,

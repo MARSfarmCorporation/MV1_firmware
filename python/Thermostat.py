@@ -47,7 +47,7 @@ class Thermostat(object):
             print("Exhaust Fan: OFF")
 
 
-
+# testing the thermostat
 def test():
     print("Thermostat Test")
     t = Thermostat()

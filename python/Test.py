@@ -5,6 +5,7 @@ Author: Howard Webb
 '''
 print("\System Configuration Testing")
 
+# importing and testing the 'test' function from the 'Trial_Util' module 
 from Trial_Util import test
 test()
 

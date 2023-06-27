@@ -24,16 +24,21 @@ scopes = 'https://www.googleapis.com/auth/spreadsheets'
 #Generate your own credential file to replace this
 creds = ServiceAccountCredentials.from_json_keyfile_name('/home/pi/Desktop/MV1_firmware/python/Marsfarm-SpreadSheet.json',scopes)
 client = gspread.authorize(creds)
+
+# open the first sheet of the specified spreadsheet
 sheet = client.open_by_key(MY_SPREADSHEET_ID).sheet1
 #sheet = client.open_by_key(MY_SPREADSHEET_ID).device
 
+# define a function to update the google sheet
 def update_sheet(observationType, datatype, value, unit):
-     
+     # calculate the current date and time 
      date = (datetime.datetime.now() - datetime.datetime(1899, 12, 30))
      date_seconds = (date.total_seconds() / 86400)
-     row = [date_seconds, observationType, datatype,value,unit,DEVICE_ID]
-     sheet.insert_row(row)
-     
+
+     row = [date_seconds, observationType, datatype,value,unit,DEVICE_ID] # create a row of data to insert into the sheet
+     sheet.insert_row(row) # insert the row into the sheet 
+    
+# define a test function to demonstrate updating the sheet 
 def test():
     test_date = (datetime.datetime.now() - datetime.datetime(1899, 12, 30))
     test_seconds = (test_date.total_seconds() / 86400)

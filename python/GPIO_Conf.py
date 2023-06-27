@@ -3,6 +3,9 @@ Name assignments for GPIO pins
 Keep in order so can make sure not assigning two function to the same pin
 Author:  Howard Webb - 11/2/2022
 '''
+# assigning the GPIO pin numbers to names for easier reference 
+# the names indicate the function or purpose of the respective pin 
+
 LIGHT_RED = 5
 LIGHT_BLUE = 13
 

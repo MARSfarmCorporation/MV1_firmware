@@ -12,10 +12,12 @@ from pigpio import pi, OUTPUT
 from time import sleep
 from GPIO_Conf import PUMP_POS, PUMP_GND, ON, OFF
 
+# create a new instance of the pigpio.pi class
 pi = pi()
 
 
 class Pump:
+    #intialize the pump object 
     def __init__(self, gpio_pinA=None, gpio_pinB=None):
         self.gpioA = PUMP_POS #Store pump GPIO
         self.gpioB = PUMP_GND #Store pump GPIO
@@ -26,14 +28,17 @@ class Pump:
         pi.write(self.gpioB,OFF) #Turn off pump when initialized
         
     def is_pumping(self):
+        # check if pump is currently pumping
         if pi.read(self.gpioA):
            return True
         return False
 
+    # turn on the pump
     def on(self):
         pi.write(self.gpioA,OFF) #set pump to state
         pi.write(self.gpioB,ON) #set pump to state
 
+    # turn off the pump
     def off(self):
         pi.write(self.gpioA,OFF) #set pump to state
         pi.write(self.gpioB,OFF) #set pump to state
@@ -53,6 +58,7 @@ class Pump:
             self.off() #End pumping
             print("OFF")
 
+# test the pump class
 def test():
 #gpio pin 24 is "forward" on the pump and gpio pin 23 intended to be "reverse" is not being used
     print("Test Pump")

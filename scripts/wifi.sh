@@ -22,9 +22,11 @@ wget --spider http://google.com 2>&1
 # 4. Is there an active WiFi connection?
 # iwgetid -r
 
+# check the exit code of the previous command (wget). If it's 0, the request was successful, indicating an internet connection.
 if [ $? -eq 0 ]; then
     printf 'Skipping WiFi Connect\n'
 else
+    # if the exit code is not 0, start the wifi-connect service to establish a WiFi connection. 
     printf 'Starting WiFi Connect\n'
     sudo wifi-connect
 fi

@@ -20,6 +20,7 @@ data = trial.trial
 # REPLACED with hardcoded device for provisioning in production
 deviceID = DEVICE_ID
 
+# create an SSL context 
 context = ssl.create_default_context()
 # create connection
 Connected = False
@@ -35,23 +36,25 @@ ct = datetime.now().strftime('%Y-%m-%d_%H%M')
 
 # print(subscribe_topic)
 
+# callback function called when the client succesfully connects to the broker
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         brokertime = datetime.now().strftime('%Y-%m-%d_%H%M')
         print("Connected to broker at: " + brokertime)
         global Connected  # Use global variable
         Connected = True  # Signal connection
-        client.subscribe(subscribe_topic)
+        client.subscribe(subscribe_topic) # subscribe to the specific topic
         print("Subscribed to topic: " + subscribe_topic)
     else:
         print("Connection failed")
 
-
+# callback function called when a new message is received on a subscribed topic 
 def on_message(client, userdata, msg):
     #    print(msg.topic+" "+str(msg.payload))
     if msg.topic == subscribe_topic:
         output = msg.payload
         print(output)
+        # write the received payload to a file
         with open("/home/pi/Desktop/MV1_firmware/python/trial.py", "w") as f:
             f.write(output.decode('utf-8'))
             f.close()
@@ -60,6 +63,7 @@ def on_message(client, userdata, msg):
         print("not this device")
 
 try:
+    # create an MQTT client instance
     print("Client Created With ID: ", SERIAL_NUMBER)
     client = mqttClient.Client(SERIAL_NUMBER)  # create new instance
     client.username_pw_set(user, password=password)  # set username and password

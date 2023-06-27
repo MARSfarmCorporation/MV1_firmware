@@ -13,6 +13,7 @@ FIELD = "field"
 PLOT = "plot"
 NAME = "name"
 
+#Trial
 TRIAL = "trial"
 ID = "id"
 
@@ -37,6 +38,7 @@ SUCCESS = "Success"
 FAILURE = "Failure"
 COMMENT = "comment"
 
+#Values
 VALUE = "value"
 UNIT = "unit"
 COUNT = "count"
@@ -45,19 +47,23 @@ SCORE = "score"
 MISSING_DATA = "missing_data"
 INVALID_DATA = "invalid_data"
 
+# Date and time
 START_DATE = "start_date"
 END_DATE = "end_date"
 START_DATE_STR = "start_date_str"
 END_DATE_STR = "end_date_str"
 
+# Elevation
 ELEVATION = "elevation"
 TYPE = "type"
 GBE_ID = "GBE_Id"
 
+# Phenotype and environmental observations
 PHENOTYPE_OBSERVATION = "Phenotype_Observation"
 ENVIRONMENT_OBSERVATION = "Environment_Observation"
 AGRONOMIC_ACTIVITY = "Agronomic_Activity"
 
+# Week
 WEEK = "week"
 #TIME = "Time"
 

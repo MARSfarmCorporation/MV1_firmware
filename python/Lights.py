@@ -7,9 +7,10 @@ import pigpio
 from GPIO_Conf import LIGHT_FAR_RED, LIGHT_RED, LIGHT_BLUE, LIGHT_WHITE
 from time import sleep
 # pi needs to be outside the class
-
+# intialize pigpio library
 pi = pigpio.pi()
 
+# intialize the light class
 class Light:
     def __init__( self, gpio_pin_far_red=0, gpio_pin_red=0, gpio_pin_blue=0, gpio_pin_white=0):
         # input parameters are ignored and may be removed in future release
@@ -74,7 +75,8 @@ class Light:
             sleep(1)
         #Return light to previous settings
         #import Light_On
-        
+
+# test the light class by turning on/off and blinking the light
 def test():
     print("Light Test")
     # values are dummy, since not used

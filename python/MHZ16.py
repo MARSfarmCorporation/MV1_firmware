@@ -19,17 +19,21 @@ import string
 import sys
 import time
 
+# open a serial connection to the sensor 
 con = serial.Serial("/dev/ttyAMA0", 9600, timeout=5)
 
 class MHZ16(object):
 
     def __init__(self):
+        # open a serial connection to the sensor
         self.con = serial.Serial("/dev/ttyAMA0", 9600, timeout=5)
         self.counter = 0 # used for loop control of get_co2
 
+    # send a command to the sensor to calibrate the span
     def calibrate_span(self):
         self.con.write(bytearray(b'\xff\x01\x88\x07\xd0\x00\x00\x00\xa0'))
 
+    # send a command to the sensor to calibrate the zero point 
     def calibrate_zero(self):
         self.con.write(bytearray(b'\xff\x01\x87\x00\x00\x00\x00\x00\x78'))
 
@@ -49,6 +53,7 @@ class MHZ16(object):
            #self.get_co2()
        return co2
 
+# tests the CO2 sensor 
 def test():
     print("MHZ16 (Co2) Testing")
     c = MHZ16()

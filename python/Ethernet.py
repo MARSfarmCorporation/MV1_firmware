@@ -18,8 +18,8 @@ time = datetime.now().strftime("%Y-%m-%d_%H%M")
 #third to last group of digits is the year
 
 #cmd = ('sudo macchanger --mac=' + MAC_ADDRESS + ' eth0')
-cmd = str('sudo macchanger --mac='+MAC_ADDRESS+' eth0')
-print('Attempting to run command ', cmd, ' at this time: ', time)
+cmd = str('sudo macchanger --mac='+MAC_ADDRESS+' eth0') # create a command string to change the MAC address using the MAC_ADDRESS variable 
+print('Attempting to run command ', cmd, ' at this time: ', time) 
 os.system(cmd)
 
 #flash lights red and blue to confirm ethernet connection

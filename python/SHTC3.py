@@ -61,7 +61,8 @@ class SHTC3(object):
         temperature, humidity = self.get_tempC_humidity()
         tempf = round((1.8 * temperature) + 32, 2)
         return tempf, humidity
-	
+
+# test function
 def test():
     print("Test SHTC3")
     sensor = SHTC3()

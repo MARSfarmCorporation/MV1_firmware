@@ -9,7 +9,7 @@ import Lights
 from Trial_Util import Trial
 from datetime import datetime
 
-t = Trial()
+t = Trial() # create an instance of the trial class
 # Get currrent light settings
 t_fr, t_r, t_b, t_w = t.get_light_values()
 

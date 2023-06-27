@@ -13,7 +13,9 @@ from dateutil import parser
 import math
 from Sys_Conf import MONGODB_URI, DB_NAME, COLLECTION_NAME
 
+# establishing a connection to the MongoDB server
 myClient = pymongo.MongoClient(MONGODB_URI)
+# accessing the database and collection
 db = myClient[DB_NAME]
 collection = db[COLLECTION_NAME] #which collection to add to
 
@@ -68,10 +70,12 @@ class EnvironmentalObservation(object):
 
 # obs_to_add = EnvironmentalObservation(OBSERVATION_DATE, ATTRIBUTE, VALUE, UNIT, TRIAL_ID, TRIAL_NAME, TRIAL_START_DATE)
 
+# function to insert a single observation into the MongoDB collection
 def insert_one(observation):
     collection.insert_one(observation.__dict__)
 
 ### this needs to be cleaned up ####
+# tests code 
 def test():
     from Trial_Util import Trial
     t = Trial()

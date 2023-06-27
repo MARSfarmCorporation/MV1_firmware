@@ -18,6 +18,7 @@
 #framebuffer_height=720
 
 # uncomment if hdmi display is not detected and composite is being output
+# force HDMI hotplug detection
 #hdmi_force_hotplug=1
 
 # uncomment to force a specific HDMI mode (this will force VGA)
@@ -88,6 +89,7 @@ arm_boost=1
 dtoverlay=vc4-kms-v3d,cma-128
 
 [all]
-dtoverlay=imx519
-arm_boost=1
-dtoverlay=vc4-kms-v3d,cma-128
+dtoverlay=imx519 # load imx519 overlay (related to a camera module)
+arm_boost=1 # enable ARM processor boost 
+dtoverlay=vc4-kms-v3d,cma-128 # Load vc4-kms-v3d overlay for 3D acceleration and video playback, Allocate 128MB of memory for the Graphics Co-Processor (GCP) CMA heap
+# dtoverlay=vc4-kms-v3d,cma-128
