@@ -41,11 +41,10 @@ class Trial(object):
             print("Current Time (readable)", datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S"))
             print("Phase Start Date (readable)", datetime.fromtimestamp((self.phases[i]['phase_start'] * 86400) + self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
             # check if the current time is greater than the start day of the phase
-            if time() > (self.phases[i]['phase_start'] * 86400) + self.start_date:
-                current_phase = self.phases[i]  # Save specific phase data
+            if time() > (self.phases[i]['phase_start'] * 86400 + self.start_date):
+                current_phase = i  # Save specific phase data
         print("Current Phase", current_phase)
-        print("Return Value", i)
-        return i
+        return current_phase
 
     def get_light_values(self, phase=None):
         # set the light schedule (cron times)
@@ -178,11 +177,11 @@ def test():
     print("Start Date", t.start_date)
     print("Phase Count:",t.phase_count)
     phase = t.get_current_phase()
-    print("Current Phase #", phase)
+    print("Current Phase no", phase)
     #print("Current Phase", t.phases[phase])    
     #print("Light", t.phases[phase]['step'][3]['light_intensity'])
     fr, r, b, w = t.get_light_values()
-    print("Light fr:", "R", r, "B", b, "W", w)
+    print("Light fr:", fr, "R", r, "B", b, "W", w)
     target_temp = t.get_setpoint()
     print("Setpoint", target_temp)
     circ_fan = t.get_fan_setting()
