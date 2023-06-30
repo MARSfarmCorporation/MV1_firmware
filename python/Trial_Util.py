@@ -35,15 +35,15 @@ class Trial(object):
         for i in range(len(self.phases)):
             # If current time is greater than the start day of the phase, then it is saved
             # Loop is continued until current time is less than start day of phase
-            print(time())
-            print("Phase Start Day", self.phases[i]['phase_start'])
-            print("Start Date (readable)", datetime.fromtimestamp(self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
-            print("Current Time (readable)", datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S"))
-            print("Phase Start Date (readable)", datetime.fromtimestamp((self.phases[i]['phase_start'] * 86400) + self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
+            #print(time())
+            #print("Phase Start Day", self.phases[i]['phase_start'])
+            #print("Start Date (readable)", datetime.fromtimestamp(self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
+            #print("Current Time (readable)", datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S"))
+            #print("Phase Start Date (readable)", datetime.fromtimestamp((self.phases[i]['phase_start'] * 86400) + self.start_date).strftime("%Y-%m-%d %H:%M:%S"))
             # check if the current time is greater than the start day of the phase
             if time() > (self.phases[i]['phase_start'] * 86400 + self.start_date):
                 current_phase = i  # Save specific phase data
-        print("Current Phase", current_phase)
+        #print("Current Phase", current_phase)
         return current_phase
 
     def get_light_values(self, phase=None):
