@@ -21,7 +21,10 @@ class Thermostat(object):
         return temperature
     
     def get_Setpoint(self):
-        s = self.tu.get_setpoint()
+        t_s = self.tu.get_setpoint()
+        s = 90
+        if(int(t_s) < 90):
+          s = t_s
         return s
         
     def adjust(self):
