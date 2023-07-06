@@ -9,18 +9,18 @@ Mostly directory paths
 #VARIABLES SET DURING PRODUCTION PROVISIONING
 
 #Used for client_id in MQTT
-SERIAL_NUMBER = 'MV1-BASIL'
+SERIAL_NUMBER = 'MV1-STRAWBERRY'
 
 #Used for MQTT only - EVERYWHERE ELSE SHOULD USE Trial_Util.py -- will ADD THIS TO S3 AS WELL
-DEVICE_ID = '6423953c35c8a81c4d15e729'
+DEVICE_ID = '649b525fb9dd96d7ed5863fb'
 # MQTT Device ID for "MV1-Basil"
 
 # Used for Remote_GoogleSheet.py
-GOOGLE_SHEET_ID = '10ed3ea0NzxGotbzXoLQ68f2Z93XeAJOMpBTi1FLEC70'
+GOOGLE_SHEET_ID = '1X4x39glFVM3r5ltNebwFC5dZpB5PE3p10DgJhIfSiyE'
 # Google Sheet for "MV1 - Google Sheet - MV1_firmware_Sage_02_24_23" https://docs.google.com/spreadsheets/d/10ed3ea0NzxGotbzXoLQ68f2Z93XeAJOMpBTi1FLEC70/edit#gid=0
 
 # Used in Ethernet.py to assign new static MAC address
-MAC_ADDRESS = '68:e1:70:23:b2:01'
+MAC_ADDRESS = '68:e1:70:23:b1:80'
 
 #VARIABLES SET DURING IMAGE CREATION
 
