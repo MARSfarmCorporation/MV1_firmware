@@ -42,6 +42,8 @@ def get_co2():
             co2 = 450
     except Exception as e:
         print(e)
+        l = Light()
+        l.blink_red()
         co2 = 500
     return co2
 
@@ -64,12 +66,17 @@ def get_temp_humidity():
         print(e)
         # if sensor does not return a value, LED will blink red
         l = Light()
-        l.blink_red()
+        l.blink_red(10, 2)
     return temp, humid
 
 def save_google_sheet(name, value, unit):
     #Update google sheets with sensor data
-    update_sheet('Environment_Observation', name, value, unit)
+    try:
+        update_sheet('Environment_Observation', name, value, unit)
+    except Exception as e:
+        print(e)
+        l = Light()
+        l.blink_blue(10, 2)
 
 # perfrom a test of the sensor data logging 
 def test():

@@ -11,6 +11,7 @@ import glob
 import os
 import boto3
 from Trial_Util import Trial
+from Lights import Light
 import time
 from datetime import datetime
 from Sys_Conf import IMAGE_DIR, S3_BUCKET, DEVICE_ID
@@ -89,6 +90,8 @@ def main():
 
     except Exception as e:
         print('S3 upload failed due to: ', e)
+        l = Light()
+        l.blink_blue()
 
 def test():
     main()

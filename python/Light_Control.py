@@ -7,6 +7,7 @@ Modified By: Peter Webb - 04/2/2023 - V0.6 Brain Hardware - Set max light_intens
 '''
 import Lights
 from Trial_Util import Trial
+from GPIO_Conf import MAX_FAR_RED, MAX_RED, MAX_BLUE, MAX_WHITE
 from datetime import datetime
 
 t = Trial() # create an instance of the trial class
@@ -20,27 +21,31 @@ print('far red, red, blue, and white LED settings received', t_fr, t_r, t_b, t_w
 # V0.5 Brain PCBA Boards Only --- Modify light_intensity settings from recipe to be limited to max PWM possible without resistors exceeding 75C
 
 # far-red
-fr = 100
-if(int(t_fr) < 100):
+fr = MAX_FAR_RED
+if(int(t_fr) < MAX_FAR_RED):
   fr = t_fr
 
 # red
-r = 255
-if(int(t_r) < 255):
+r = MAX_RED
+if(int(t_r) < MAX_RED):
   r = t_r
 
 # blue
-b = 200
-if(int(t_b) < 200):
+b = MAX_BLUE
+if(int(t_b) < MAX_BLUE):
   b = t_b
 
 # white is not needed, 255 is under 75C
-w = 200
-if(int(t_b) < 200):
+w = MAX_WHITE
+if(int(t_b) < MAX_WHITE):
   w = t_w
 
 
 # Create light and set to current values
-lights = Lights.Light()
-lights.customMode(fr, r, b, w)
-print('far red, red, blue, and white LED settings', fr, r, b, w, 'implemented at:', time)
+def test():
+    lights = Lights.Light()
+    lights.customMode(fr, r, b, w)
+    print('far red, red, blue, and white LED settings', fr, r, b, w, 'implemented at:', time)
+
+if __name__=='__main__':
+    test()

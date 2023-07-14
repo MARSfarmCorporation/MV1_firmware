@@ -49,6 +49,8 @@ class I2C(object):
            return msgs
        except Exception as e:
            print (e)
+           #l = Light() #already done in LogSensors
+           #l.blink_red()
            return None
 
     # writes data to the I2C device 
@@ -73,6 +75,8 @@ class I2C(object):
 
        except Exception as e:
            print (e)
+           #l = Light() #already done in LogSensors
+           #l.blink_red()
            return None
 
     # reads data from the I2C device 
@@ -100,6 +104,8 @@ class I2C(object):
 
        except Exception as e:
            print (e)
+           #l = Light() #already done in LogSensors
+           #l.blink_red()
            return None    
 
     # converts two byte buffers into a single word value 

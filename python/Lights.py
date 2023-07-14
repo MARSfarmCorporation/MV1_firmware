@@ -60,21 +60,23 @@ class Light:
     def off(self):
         self.customMode(0,0,0,0)
         
-    def blink_blue(self):
-        self.blink(0, 0, 100, 0)
+    def blink_blue(self, num=5, spd=1):
+        self.blink(num, spd, 0, 0, 100, 0)
         
-    def blink_red(self):
-        self.blink(0, 50, 0, 0)
+    def blink_red(self, num=5, spd=1):
+        self.blink(num, spd, 0, 50, 0, 0)
         
-    def blink(self, fr=0, r=0, b=0, w=100):
+    def blink(self, num=5, spd=1, fr=0, r=0, b=0, w=100):
         # Used to indicate an error
-        for i in range(0,5):
+        for i in range(0,num):
             self.customMode(fr, r, b, w)
-            sleep(1)
+            sleep(1/spd)
             self.customMode(0,0,0,0)
-            sleep(1)
+            sleep(1/spd)
         #Return light to previous settings
         #import Light_On
+        from Light_Control import test
+        test()
 
 # test the light class by turning on/off and blinking the light
 def test():

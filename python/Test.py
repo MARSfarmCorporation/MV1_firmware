@@ -69,7 +69,8 @@ from Thermostat import test
 test()
 
 # Function, not object
-import Light_Control
+from Light_Control import test
+test()
 
 import Pump_Control
 

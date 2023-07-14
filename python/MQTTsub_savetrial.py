@@ -7,7 +7,7 @@ Modified by: Peter Webb - 09.20.2022
 Modified by: Peter Webb - 11.21.2022
 '''
 import paho.mqtt.client as mqttClient
-import Lights
+from Lights import Light
 import time
 from datetime import datetime
 import ssl
@@ -59,6 +59,8 @@ def on_message(client, userdata, msg):
             f.write(output.decode('utf-8'))
             f.close()
             print("Done!")
+        l = Light()
+        l.blink()
     else:
         print("not this device")
 
@@ -84,6 +86,8 @@ try:
 
 except Exception as e:
     print(e)
+    l = Light()
+    l.blink_blue(5, 0.25)
     # Record previous light settings
     #farred = pi.get_PWM_dutycycle(26)
     #red = pi.get_PWM_dutycycle(5)

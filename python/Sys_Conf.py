@@ -22,6 +22,9 @@ GOOGLE_SHEET_ID = '1X4x39glFVM3r5ltNebwFC5dZpB5PE3p10DgJhIfSiyE'
 # Used in Ethernet.py to assign new static MAC address
 MAC_ADDRESS = '68:e1:70:23:b1:80'
 
+# Hardware version
+VERSION = "V0.6"
+
 #VARIABLES SET DURING IMAGE CREATION
 
 #Directory Paths
