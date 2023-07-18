@@ -22,6 +22,13 @@ elif VERSION == "V0.5":
   MAX_RED = 120
   MAX_BLUE = 50
   MAX_WHITE = 255
+else:
+  print("Version not set")
+  HEATER_PWM = 0
+  MAX_FAR_RED = 0
+  MAX_RED = 0
+  MAX_BLUE = 0
+  MAX_WHITE = 0
 
 LIGHT_RED = 5
 LIGHT_BLUE = 13

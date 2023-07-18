@@ -18,7 +18,7 @@ t_fr, t_r, t_b, t_w = t.get_light_values()
 time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 print('far red, red, blue, and white LED settings received', t_fr, t_r, t_b, t_w)
-# V0.5 Brain PCBA Boards Only --- Modify light_intensity settings from recipe to be limited to max PWM possible without resistors exceeding 75C
+# Modify light_intensity settings from recipe to be limited to max PWM possible without resistors exceeding 75C
 
 # far-red
 fr = MAX_FAR_RED
@@ -35,7 +35,7 @@ b = MAX_BLUE
 if(int(t_b) < MAX_BLUE):
   b = t_b
 
-# white is not needed, 255 is under 75C
+# white
 w = MAX_WHITE
 if(int(t_b) < MAX_WHITE):
   w = t_w
