@@ -51,7 +51,7 @@ lock_interface = threading.Lock()
 device_cert = "/home/pi/certs/device.pem.crt.crt"
 private_key = "/home/pi/certs/private.pem.key"
 ca_cert = "/home/pi/certs/AmazonRootCA1.pem"
-iot_endpoint = "https://cflwxka0nrnjy.credentials.iot.us-east-2.amazonaws.com/role-aliases/websocket-role-alias-5/credentials"
+iot_endpoint = "https://cflwxka0nrnjy.credentials.iot.us-east-2.amazonaws.com/role-aliases/websocket-test-15min/credentials"
 thing_name = args.client_id
 curl_command = ["curl", "--cert", device_cert, "--key", private_key, "-H", "x-amzn-iot-thingname: " + thing_name, "--cacert", ca_cert, iot_endpoint]
 
