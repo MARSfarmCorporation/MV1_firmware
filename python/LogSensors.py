@@ -9,7 +9,7 @@ Modified By Tyler Richards - 08.10.2021
 Modified By Howard Webb - 11.10.2022
 """
 
-from Remote_MongoUtil import EnvironmentalObservation, insert_one
+#from Remote_MongoUtil import EnvironmentalObservation, insert_one
 from SHTC3 import SHTC3
 from GSheetUtil import update_sheet 
 from MHZ16 import MHZ16
@@ -47,14 +47,14 @@ def get_co2():
     return co2
 
 # save sensor data to the remote MongoDB database
-def save_db(name, value, unit):
-     try:
-        insert_one(EnvironmentalObservation(observation_date, name, value, unit, t.trial_id, t.trial_name, t.start_date))
-     except Exception as e:
-        print(e)
-        # if data does not save to database, LED will blink blue
-        l = Light()
-        l.blink_blue()
+#def save_db(name, value, unit):
+#     try:
+#        insert_one(EnvironmentalObservation(observation_date, name, value, unit, t.trial_id, t.trial_name, t.start_date))
+#     except Exception as e:
+#        print(e)
+#        # if data does not save to database, LED will blink blue
+#        l = Light()
+#        l.blink_blue()
 
 def get_temp_humidity():
     #accessing SHTC3 sensor to read temperature and humidity data
@@ -82,14 +82,14 @@ def test():
    temp, humid = get_temp_humidity()
    print("Temp", temp, "Humidity", humid)
    print('testing save_db function by sending Co2')
-   save_db(DB_CO2, co2, PPM)
-   enqueue("co2", co2, "ppm", observation_date, "EnvironmentalObservation")
+   #save_db(DB_CO2, co2, PPM)
+   enqueue(DB_CO2, co2, PPM, observation_date, "EnvironmentalObservation")
    print('save temp and humidity data to database')
-   save_db(DB_TEMP, temp, FAHRENHEIT)
-   enqueue("temperature", temp, "C", observation_date, "EnvironmentalObservation")
+   #save_db(DB_TEMP, temp, FAHRENHEIT)
+   enqueue(DB_TEMP, temp, FAHRENHEIT, observation_date, "EnvironmentalObservation")
    print("Save Humidity")
-   save_db(DB_HUMIDITY, humid, PERCENT)
-   enqueue("humidity", humid, "%", observation_date,"EnvironmentalObservation")
+   #save_db(DB_HUMIDITY, humid, PERCENT)
+   enqueue(DB_HUMIDITY, humid, PERCENT, observation_date,"EnvironmentalObservation")
    print("Save Sheet Function")
    print("Save CO2")
    save_google_sheet(CO2, co2, PPM)

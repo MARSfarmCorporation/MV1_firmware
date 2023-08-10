@@ -223,7 +223,7 @@ def job_thread_fn(job_id, job_document):
                 #subprocess.run(['bash', step["action"]["input"]["path"]+step["action"]["input"]["handler"]], check=True)
                 print("I don't want to actually do a reboot until it gets implemented properly")
             if(step["action"]["name"] == "OTA_Update"):
-                subprocess.run(['bash', step["action"]["input"]["path"]+"ota_update.sh"], check=True)
+                subprocess.run(['bash', "/home/pi/Desktop/MV1_firmware/scripts/ota_update.sh"], check=True)
             if(step["action"]["name"] == "download-file.sh"):
                 response = requests.get(step["action"]["input"]["args"][0])
                 with open(step["action"]["input"]["args"][1]+job_id,"w") as f:
@@ -501,7 +501,7 @@ def user_input_thread_fn():
 
 def on_trial_received(topic, payload):
     print(payload)
-    with open("/home/pi/Desktop/trial.py", "w") as f:
+    with open("/home/pi/Desktop/MV1_firmware/python/trial.py", "w") as f:
         f.write(payload.decode("utf-8"))
         f.close()
     print("Implemented new trial")
