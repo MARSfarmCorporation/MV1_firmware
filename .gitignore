@@ -6,6 +6,7 @@ pictures/*
 
 # exclude everything
 logs/*
+python/__pycache__/*
 
 # exception to the rule
 !logs/.gitkeep 
