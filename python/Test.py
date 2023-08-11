@@ -73,6 +73,7 @@ import Light_Control
 
 import Pump_Control
 
+sleep(10)
 with open("/home/pi/Desktop/MV1_firmware/logs/queue.txt", "r") as f:
     queue = f.read()
 with open("/home/pi/Desktop/MV1_firmware/logs/cache.txt", "r") as f:
