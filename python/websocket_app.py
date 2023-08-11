@@ -21,7 +21,7 @@ from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 parser = argparse.ArgumentParser(description="Send and receive messages through and MQTT connection.")
 parser.add_argument("--endpoint", action="store", type=str, default="a28ud61a8gem1b-ats.iot.us-east-2.amazonaws.com", help="")
 parser.add_argument("--signing_region", action="store", type=str, default="us-east-2", help="")
-parser.add_argument("--client_id", action="store", type=str, default="mf-strawberry-test", help="")
+parser.add_argument("--client_id", action="store", type=str, default=SERIAL_NUMBER, help="")
 args = parser.parse_args()
 
 is_sample_done = threading.Event()
