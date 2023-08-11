@@ -73,4 +73,13 @@ import Light_Control
 
 import Pump_Control
 
+with open("/home/pi/Desktop/MV1_firmware/logs/queue.txt", "r") as f:
+    queue = f.read()
+with open("/home/pi/Desktop/MV1_firmware/logs/cache.txt", "r") as f:
+    cache = f.read()
+if(queue != "" and queue != "\n" and cache != "" and cache != "\n"):
+    print("Websocket is running")
+else:
+    print("Websocket is not running")
+
 print("Testing Complete")
