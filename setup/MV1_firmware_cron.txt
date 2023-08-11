@@ -40,7 +40,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 * * * * * for i in {1..5}; do python3 $PYTHON_PATH/Thermostat.py & sleep 10; done >> $LOG_PATH/Thermostat.log 2>&1 &
 
 # Refresh the websocket connection every 4 hours
-40 * * * * sudo systemctl restart websocket.service
+40 */4 * * * sudo systemctl restart websocket.service
 
 # Start pigpio service, at reboot, the "-s1" is necessary to set sample rate faster for Heater.py to set frequency 
 @reboot sudo pigpiod -s1 >> $LOG_PATH/boot_pigpio.log 2>&1 &
