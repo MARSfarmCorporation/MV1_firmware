@@ -79,7 +79,7 @@ with open("/home/pi/Desktop/MV1_firmware/logs/queue.txt", "r") as f:
     queue = f.read()
 with open("/home/pi/Desktop/MV1_firmware/logs/cache.txt", "r") as f:
     cache = f.read()
-if((queue == "" or queue != "\n") and (cache != "" or cache == "\n")):
+if((queue == "" or queue != "\n") and (cache == "" or cache == "\n")):
     print("Websocket is running")
 else:
     print("Websocket is not running")
