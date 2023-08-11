@@ -74,6 +74,7 @@ import Light_Control
 import Pump_Control
 
 from time import sleep
+print("Sleeping for 10 seconds to allow the websocket to clear the queue and cache")
 sleep(10)
 with open("/home/pi/Desktop/MV1_firmware/logs/queue.txt", "r") as f:
     queue = f.read()
