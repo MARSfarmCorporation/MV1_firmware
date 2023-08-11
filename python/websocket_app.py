@@ -17,13 +17,14 @@ import traceback
 from uuid import uuid4
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
-# argParse stuff
+# This initializes argparse, which takes in command lines inputs. If you want to run it to a different endpoint or signing region, this gives a way to.
 parser = argparse.ArgumentParser(description="Send and receive messages through and MQTT connection.")
 parser.add_argument("--endpoint", action="store", type=str, default="a28ud61a8gem1b-ats.iot.us-east-2.amazonaws.com", help="")
 parser.add_argument("--signing_region", action="store", type=str, default="us-east-2", help="")
 parser.add_argument("--client_id", action="store", type=str, default=SERIAL_NUMBER, help="")
 args = parser.parse_args()
 
+# This is an event that is triggered when the connection is lost, leading to the while loop being broken and the program ending.
 is_sample_done = threading.Event()
 
 trial_topic = "trial/" + DEVICE_ID
@@ -32,6 +33,7 @@ mqtt_connection = None
 jobs_client = None
 jobs_thing_name = args.client_id
 
+# This creates certain variables that can be used across different threads (where the different functions live)
 class LockedData:
     def __init__(self):
         self.lock = threading.Lock()
@@ -42,12 +44,12 @@ class LockedData:
         self.is_next_job_waiting = False
         self.got_job_response = False
 
-
 locked_data = LockedData()
 
+# This can probably be deleted
 lock_interface = threading.Lock()
 
-# Adjust the paths for the certificate and key files as needed
+# This builds the curl command used to obtain the credentials for building the websocket. Adjust the paths for the certificate and key files as needed.
 device_cert = "/home/pi/certs/device.pem.crt.crt"
 private_key = "/home/pi/certs/private.pem.key"
 ca_cert = "/home/pi/certs/AmazonRootCA1.pem"
@@ -64,6 +66,7 @@ except subprocess.CalledProcessError as e:
     print("Error executing the curl command:")
     print(e.output.decode("utf-8"))
 
+# Initializing shadow variables
 shadow_thing_name = thing_name
 shadow_property = "color"
 SHADOW_VALUE_DEFAULT = "off"
@@ -76,6 +79,7 @@ def on_connection_interrupted(connection, error, **kwargs):
 def on_connection_resumed(connection, return_code, session_present, **kwargs):
     print("Connection resumed. return_code: {} session_present: {}".format(return_code, session_present))
 
+# Handles exiting the script.
 def exit(msg_or_exception):
     if isinstance(msg_or_exception, Exception):
         print("Exiting sample due to exception.")
@@ -96,6 +100,7 @@ def on_disconnected(disconnect_future):
     print("Disconnected.")
     is_sample_done.set()
 
+# Start of the job future chain
 def try_start_next_job():
     print("Trying to start the next job...")
     with locked_data.lock:
@@ -115,7 +120,7 @@ def try_start_next_job():
     publish_future = jobs_client.publish_start_next_pending_job_execution(request, mqtt.QoS.AT_LEAST_ONCE)
     publish_future.add_done_callback(on_publish_start_next_pending_job_execution)
 
-
+# Part of the job future chain
 def done_working_on_job():
     with locked_data.lock:
         locked_data.is_working_on_job = False
@@ -127,7 +132,7 @@ def done_working_on_job():
 # A list to hold all the pending jobs
 available_jobs = []
 
-
+# Handles informing the AWS cloud of execution status
 def on_get_pending_job_executions_accepted(response):
     # type: (iotjobs.GetPendingJobExecutionsResponse) -> None
     with locked_data.lock:
@@ -143,13 +148,13 @@ def on_get_pending_job_executions_accepted(response):
             print("No pending or queued jobs found!")
         locked_data.got_job_response = True
 
-
+# Handles informing the AWS cloud of execution status
 def on_get_pending_job_executions_rejected(error):
     # type: (iotjobs.RejectedError) -> None
     print(f"Request rejected: {error.code}: {error.message}")
     exit("Get pending jobs request rejected!")
 
-
+# Handles informing the AWS cloud of execution status
 def on_next_job_execution_changed(event):
     # type: (iotjobs.NextJobExecutionChangedEvent) -> None
     try:
@@ -175,7 +180,7 @@ def on_next_job_execution_changed(event):
     except Exception as e:
         exit(e)
 
-
+# Handles informing the AWS cloud of execution status
 def on_publish_start_next_pending_job_execution(future):
     # type: (Future) -> None
     try:
@@ -186,7 +191,7 @@ def on_publish_start_next_pending_job_execution(future):
     except Exception as e:
         exit(e)
 
-
+# Handles informing the AWS cloud of execution status
 def on_start_next_pending_job_execution_accepted(response):
     # type: (iotjobs.StartNextJobExecutionResponse) -> None
     try:
@@ -207,13 +212,13 @@ def on_start_next_pending_job_execution_accepted(response):
     except Exception as e:
         exit(e)
 
-
+# Handles informing the AWS cloud of execution status
 def on_start_next_pending_job_execution_rejected(rejected):
     # type: (iotjobs.RejectedError) -> None
     exit("Request to start next pending job rejected with code:'{}' message:'{}'".format(
         rejected.code, rejected.message))
 
-
+# This executes the job. If you need to change anything about jobs, it will almost certainly be here.
 def job_thread_fn(job_id, job_document):
     try:
         print("Starting local work on job...")
@@ -243,7 +248,7 @@ def job_thread_fn(job_id, job_document):
     except Exception as e:
         exit(e)
 
-
+# Handles informing the AWS cloud of execution status
 def on_publish_update_job_execution(future):
     # type: (Future) -> None
     try:
@@ -253,7 +258,7 @@ def on_publish_update_job_execution(future):
     except Exception as e:
         exit(e)
 
-
+# Handles informing the AWS cloud of execution status
 def on_update_job_execution_accepted(response):
     # type: (iotjobs.UpdateJobExecutionResponse) -> None
     try:
@@ -262,7 +267,7 @@ def on_update_job_execution_accepted(response):
     except Exception as e:
         exit(e)
 
-
+# Handles informing the AWS cloud of execution status
 def on_update_job_execution_rejected(rejected):
     # type: (iotjobs.RejectedError) -> None
     exit("Request to update job status was rejected. code:'{}' message:'{}'.".format(
@@ -499,6 +504,7 @@ def user_input_thread_fn():
             print("Exception on input thread (CI)")
             exit(e)
 
+# This is the callback function for when a trial is received. It saves the trial to the the trial.py file.
 def on_trial_received(topic, payload):
     print(payload)
     with open("/home/pi/Desktop/MV1_firmware/python/trial.py", "w") as f:
@@ -506,6 +512,7 @@ def on_trial_received(topic, payload):
         f.close()
     print("Implemented new trial")
 
+# This is the callback function for when a tunnel tokn is receieved. It launches the local proxy with the token.
 def on_tunnel_notify(topic, payload):
     print(payload)
     tunnel_token = payload.decode("utf-8").split(",")[0].split(":")[1]
@@ -513,13 +520,9 @@ def on_tunnel_notify(topic, payload):
     print("Launched tunnel")
 
 if __name__ == '__main__':
-    # Create the proxy options if the data is present in cmdData
+    # Create the proxy options if the data is present in cmdData. [we do not use this]
     proxy_options = None
-    #if cmdData.input_proxy_host is not None and cmdData.input_proxy_port != 0:
-    #    proxy_options = http.HttpProxyOptions(
-    #        host_name=cmdData.input_proxy_host,
-    #        port=cmdData.input_proxy_port)
-
+   
     # Create a default credentials provider and a MQTT connection from the command line data
     credentials_provider = auth.AwsCredentialsProvider.new_static(credentials['accessKeyId'],credentials['secretAccessKey'],credentials['sessionToken'])
     print(credentials_provider)
@@ -535,17 +538,14 @@ if __name__ == '__main__':
         keep_alive_secs=30)
     print(mqtt_connection)
 
-    #if not cmdData.input_is_ci:
+    # This initializes the MQTT connection.
     print(f"Connecting to {iot_endpoint} with client ID '{args.client_id}'...")
-    #else:
-    #    print("Connecting to endpoint with client ID...")
-
     connect_future = mqtt_connection.connect()
     print(connect_future)
     jobs_client = iotjobs.IotJobsClient(mqtt_connection)
     shadow_client = iotshadow.IotShadowClient(mqtt_connection)
     print(jobs_client)
-    # Future.result() waits until a result is available
+    # Future.result() waits until a result is available. The script will not progress until it succeeds or fails.
     connect_future.result()
     print("Connected!")
     
@@ -713,6 +713,7 @@ if __name__ == '__main__':
         #user_input_thread.start()
     except Exception as e:
         exit(e)
+    # This creates the subscription to get a new trial
     try:
         print("Subscribing to topic '{}'...".format(trial_topic))
         subscribe_future, packet_id = mqtt_connection.subscribe(
@@ -721,6 +722,7 @@ if __name__ == '__main__':
             callback=on_trial_received)
     except Exception as e:
         exit(e)
+    # This creates the subscription to get the token for the tunnel
     try:
         print("Subscribing to topic '{}'...".format(tunnel_topic))
         subscribe_future, packet_id = mqtt_connection.subscribe(
@@ -729,30 +731,36 @@ if __name__ == '__main__':
             callback=on_tunnel_notify)
     except Exception as e:
         exit(e)
+    # This is the main loop of the program. All the other callback/future "chains" live asynchronously to this.
     while not is_sample_done.is_set():
         sleep(10)
+        # This locks the queue file and gets its contents
         with open("/home/pi/Desktop/MV1_firmware/logs/queue.txt", "r") as f:
             fcntl.flock(f, fcntl.LOCK_EX)
             contents = f.read()
+        # This puts the contents of the queue onto the end of the cache. It then reads in the full cache.
         with open("/home/pi/Desktop/MV1_firmware/logs/cache.txt", "a+") as f:
             f.write(contents+"\n")
             f.seek(0)
             contents = f.read()
+        # This deletes the contents of the queue and then unlocks it.
         with open("/home/pi/Desktop/MV1_firmware/logs/queue.txt", "w") as f:
             f.seek(0)
             f.truncate()
             fcntl.flock(f, fcntl.LOCK_UN)
         if contents != "" and contents != "\n":
             contents = contents.split("\n")
+            # This iterates through the entire contents of the cache
             for i in range(len(contents)-1):
-                if contents[i] != "" and contents[i] != "\n":
+                if contents[i] != "" and contents[i] != "\n": # We don't want to upload a blank line
                     message = contents[i].split(";")
                     msg_topic = message[0]
                     msg_payload = message[1]
                     print("Publishing message to topic '{}': {}".format(msg_topic, msg_payload))
                     message_json = json.dumps(msg_payload)
                     mqtt_connection.publish( topic=msg_topic, payload=message_json, qos=mqtt.QoS.AT_LEAST_ONCE)
-                    sleep(0.2)
+                    sleep(0.2) # This should probably be replaced with a callback that waits until the previous message is successfully uploaded
+        # This deletes the contents of the cache, only after the entire thing has been successfully uploaded.
         with open("/home/pi/Desktop/MV1_firmware/logs/cache.txt", "w") as f:
             f.seek(0)
             f.truncate()
