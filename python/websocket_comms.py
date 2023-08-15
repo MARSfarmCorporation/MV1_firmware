@@ -10,6 +10,7 @@ import threading
 import argparse
 import traceback
 import requests
+import datetime
 from uuid import uuid4
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
@@ -57,6 +58,23 @@ def get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoin
         return response.json()['credentials']
     else:
         response.raise_for_status()
+
+# Function to refresh the credentials
+def refresh_credentials():
+    while not is_sample_done.is_set():
+        # Get the new credentials
+        new_credentials = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
+        
+        # Update the credentials provider
+        credentials_provider.set_credentials(new_credentials['accessKeyId'], new_credentials['secretAccessKey'], new_credentials['sessionToken'])
+        
+        # Calculate the time until the next refresh (11 hours before expiration)
+        expiration_time = datetime.datetime.strptime(new_credentials['expiration'], "%Y-%m-%dT%H:%M:%SZ")
+        refresh_time = expiration_time - datetime.timedelta(hours=11)
+        sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
+
+        # Sleep until it's time to refresh
+        sleep(max(sleep_time, 0))
 
 def on_connection_interrupted(connection, error, **kwargs):
     print("Connection interrupted. error: {}".format(error))
@@ -129,6 +147,10 @@ if __name__ == '__main__':
 
     connect_future.result()
     print("Connected!")
+
+    # Start the refresh thread
+    refresh_thread = threading.Thread(target=refresh_credentials)
+    refresh_thread.start()
 
     # Subscribe to the topic
     subscribe_future, packet_id = mqtt_connection.subscribe(
