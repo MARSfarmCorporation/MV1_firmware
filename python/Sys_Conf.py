@@ -7,7 +7,7 @@ Mostly directory paths
 #- Image Name: Basil
 
 #VARIABLES SET DURING PRODUCTION PROVISIONING
-
+#test comment
 #Used for client_id in MQTT
 SERIAL_NUMBER = 'MV1-STRAWBERRY'
 
