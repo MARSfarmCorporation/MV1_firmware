@@ -31,11 +31,7 @@ class LockedData:
     def __init__(self):
         self.lock = threading.Lock()
         self.disconnect_called = False
-        self.shadow_value = None
-        self.request_tokens = set()
-        self.is_working_on_job = False
-        self.is_next_job_waiting = False
-        self.got_job_response = False
+        self.reconnection_attempts = 0
 
 locked_data = LockedData()
 
@@ -65,8 +61,16 @@ def get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoin
 def on_connection_interrupted(connection, error, **kwargs):
     print("Connection interrupted. error: {}".format(error))
 
+    with locked_data.lock:
+        locked_data.reconnection_attempts += 1
+        if locked_data.reconnection_attempts > 5:  # Change 5 to any threshold you prefer
+            exit("Exceeded maximum reconnection attempts.")
+
 def on_connection_resumed(connection, return_code, session_present, **kwargs):
     print("Connection resumed. return_code: {} session_present: {}".format(return_code, session_present))
+
+    with locked_data.lock:
+        locked_data.reconnection_attempts = 0  # Reset the counter upon successful reconnection
 
 def exit(msg_or_exception):
     if isinstance(msg_or_exception, Exception):
