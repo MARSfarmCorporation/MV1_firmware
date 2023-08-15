@@ -106,6 +106,7 @@ if __name__ == '__main__':
     proxy_options = None
    
     credentials = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
+    print(credentials)
     
     credentials_provider = auth.AwsCredentialsProvider.new_static(credentials['accessKeyId'], credentials['secretAccessKey'], credentials['sessionToken'])
     print(credentials_provider)
