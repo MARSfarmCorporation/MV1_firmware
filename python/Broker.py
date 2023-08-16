@@ -1,6 +1,7 @@
 import sqlite3
 import time
 import json
+import socket
 
 # This function handles inbound messages and sorts them via their topic. It then updates the status in the database.
 def process_inbound_message(cursor, id, topic, payload):
@@ -36,31 +37,31 @@ def process_outbound_message(cursor, id, topic, payload):
         client_socket.close()
         
         # Update the status in the database
-        cursor.execute("UPDATE mqtt_queue SET status = 'Outbound - Sent' WHERE id = ?", (id,))
+        cursor.execute("UPDATE message_queue SET status = 'Outbound - Sent' WHERE id = ?", (id,))
     except Exception as e:
         print(f"Error sending outbound message: {e}")
-        cursor.execute("UPDATE mqtt_queue SET status = 'Outbound - Unsendable' WHERE id = ?", (id,))
+        cursor.execute("UPDATE message_queue SET status = 'Outbound - Unsendable' WHERE id = ?", (id,))
 
 def main():
     conn = sqlite3.connect('message_queue.db')
     cursor = conn.cursor()
 
-    while True:
-        cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status IN ('Inbound - Unsorted', 'Outbound - Unsent')")
-        messages = cursor.fetchall()
+    try:
+        while True:
+            cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status IN ('Inbound - Unsorted', 'Outbound - Unsent')")
+            messages = cursor.fetchall()
 
-        for message in messages:
-            id, topic, payload, status = message
-            if status == 'Inbound - Unsorted':
-                process_inbound_message(topic, payload)
-            elif status == 'Outbound - Unsent':
-                process_outbound_message(topic, payload)
-                cursor.execute("UPDATE message_queue SET status = 'Outbound - Sent' WHERE id = ?", (id,))
+            for message in messages:
+                id, topic, payload, status = message
+                if status == 'Inbound - Unsorted':
+                    process_inbound_message(cursor, id, topic, payload)
+                elif status == 'Outbound - Unsent':
+                    process_outbound_message(cursor, id, topic, payload)
 
-        conn.commit()
-        time.sleep(0.25) # Sleep for 0.25 seconds to prevent excessive CPU usage
-
-    conn.close()
+            conn.commit()
+            time.sleep(0.25) # Sleep for 0.25 seconds to prevent excessive CPU usage
+    finally:
+        conn.close()
 
 if __name__ == "__main__":
     main()
