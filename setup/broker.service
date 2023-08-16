@@ -1,0 +1,14 @@
+[Unit]
+Description=Broker Service
+After=websocket_comms.service
+BindsTo=websocket_comms.service
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/Desktop/MV1_firmware/python
+ExecStart=/usr/bin/python3 /home/pi/Desktop/MV1_firmware/python/broker.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
