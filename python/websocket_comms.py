@@ -14,7 +14,7 @@ import traceback
 import signal
 import socket
 import json
-import requests
+import subprocess
 import datetime
 from uuid import uuid4
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
@@ -47,44 +47,22 @@ ca_cert = "/home/pi/certs/AmazonRootCA1.pem"
 iot_endpoint = "https://cflwxka0nrnjy.credentials.iot.us-east-2.amazonaws.com/role-aliases/websocket-role-alias-5/credentials"
 thing_name = args.client_id
 
-# Function to get the temporary credentials from the AWS IoT Core
-def get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name):
-    headers = {
-        "x-amzn-iot-thingname": thing_name
-    }
+# Function to get the temporary credentials from the AWS IoT Core using curl
+def get_iot_temporary_credentials():
+    curl_command = ["curl", "--cert", device_cert, "--key", private_key, "-H", "x-amzn-iot-thingname: " + thing_name, "--cacert", ca_cert, iot_endpoint]
+    output = subprocess.check_output(curl_command, stderr=subprocess.DEVNULL).decode("utf-8")
+    return json.loads(output)['credentials']
 
-    response = requests.get(
-        iot_endpoint,
-        cert=(device_cert, private_key),
-        headers=headers,
-        verify=ca_cert
-    )
-
-    if response.status_code == 200:
-        return response.json()['credentials']
-    else:
-        response.raise_for_status()
-
-class CustomAwsCredentialsProvider(auth.AwsCredentialsProvider):
-    def __init__(self, aws_credentials_fetcher):
-        super().__init__()
-        self.aws_credentials_fetcher = aws_credentials_fetcher
-
-    def new_credentials(self):
-        return self.aws_credentials_fetcher()
-
-def custom_credentials_provider():
-    credentials_data = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
-    return auth.AwsCredentials(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
-
-credentials_provider = CustomAwsCredentialsProvider(aws_credentials_fetcher=custom_credentials_provider)
+# Create the credentials provider
+credentials_data = get_iot_temporary_credentials()
+credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
 
 def refresh_credentials():
     global credentials_provider
     while not is_sample_done.is_set():
         # Get the new credentials
-        credentials_data = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
-        credentials_provider = CustomAwsCredentialsProvider(aws_credentials_fetcher=lambda: auth.AwsCredentials(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken']))
+        credentials_data = get_iot_temporary_credentials()
+        credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
         
         # Calculate the time until the next refresh (11 hours before expiration)
         expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
