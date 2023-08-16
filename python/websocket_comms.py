@@ -19,6 +19,15 @@ import datetime
 from uuid import uuid4
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
+# Custom AWS Credentials Provider
+class CustomAwsCredentialsProvider(auth.AwsCredentialsProvider):
+    def __init__(self, credentials):
+        super().__init__()
+        self.credentials = credentials
+
+    def new_credentials(self):
+        return self.credentials
+
 # Parse command line arguments for the AWS IoT Core endpoint, signing region, and client ID
 parser = argparse.ArgumentParser(description="Send and receive messages through an MQTT connection.")
 parser.add_argument("--endpoint", action="store", type=str, default="a28ud61a8gem1b-ats.iot.us-east-2.amazonaws.com", help="")
@@ -62,24 +71,21 @@ def get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoin
 
     if response.status_code == 200:
         credentials_data = response.json()['credentials']
-        return auth.AwsCredentials.new(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
+        return CustomAwsCredentialsProvider(auth.AwsCredentials(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken']))
     else:
         response.raise_for_status()
 
-credentials_provider = auth.StaticAwsCredentialsProvider.new(get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name))
+credentials_provider = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
 
 # Function to refresh the credentials
 def refresh_credentials():
     global credentials_provider
     while not is_sample_done.is_set():
         # Get the new credentials
-        new_credentials = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
-        
-        # Update the credentials provider
-        credentials_provider = auth.StaticAwsCredentialsProvider.new(new_credentials)
+        credentials_provider = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
         
         # Calculate the time until the next refresh (11 hours before expiration)
-        expiration_time = datetime.datetime.strptime(new_credentials.expiration, "%Y-%m-%dT%H:%M:%SZ")
+        expiration_time = datetime.datetime.strptime(credentials_provider.credentials.expiration, "%Y-%m-%dT%H:%M:%SZ")
         refresh_time = expiration_time - datetime.timedelta(hours=11)
         sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
 
@@ -238,11 +244,8 @@ def unix_socket_server():
 if __name__ == '__main__':
     proxy_options = None
    
-    credentials = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
-    print(credentials)
-    
-    credentials_provider = auth.StaticAwsCredentialsProvider.new(credentials)
-    print(credentials_provider)
+    credentials_provider = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
+    print(credentials_provider.credentials)
     
     mqtt_connection = mqtt_connection_builder.websockets_with_default_aws_signing(
         endpoint=args.endpoint,
