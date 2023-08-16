@@ -65,26 +65,19 @@ def get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoin
     else:
         response.raise_for_status()
 
-class CustomAwsCredentialsProvider(auth.AwsCredentialsProvider):
-    def __init__(self, aws_credentials_fetcher):
-        super().__init__()
-        self.aws_credentials_fetcher = aws_credentials_fetcher
-
-    def new_credentials(self):
-        return self.aws_credentials_fetcher()
-
 def custom_credentials_provider():
     credentials_data = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
     return auth.AwsCredentials(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
 
-credentials_provider = CustomAwsCredentialsProvider(aws_credentials_fetcher=custom_credentials_provider)
+credentials_provider = auth.AwsCredentialsProvider.new(aws_credentials_fetcher=custom_credentials_provider)
 
+# Function to refresh the credentials
 def refresh_credentials():
     global credentials_provider
     while not is_sample_done.is_set():
         # Get the new credentials
         credentials_data = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
-        credentials_provider = CustomAwsCredentialsProvider(aws_credentials_fetcher=lambda: auth.AwsCredentials(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken']))
+        credentials_provider = auth.AwsCredentialsProvider.new(aws_credentials_fetcher=lambda: auth.AwsCredentials(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken']))
         
         # Calculate the time until the next refresh (11 hours before expiration)
         expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
@@ -245,7 +238,10 @@ def unix_socket_server():
 
 if __name__ == '__main__':
     proxy_options = None
-
+   
+    credentials_provider = get_iot_temporary_credentials(device_cert, private_key, ca_cert, iot_endpoint, thing_name)
+    print(credentials_provider.credentials)
+    
     mqtt_connection = mqtt_connection_builder.websockets_with_default_aws_signing(
         endpoint=args.endpoint,
         region=args.signing_region,
