@@ -2,12 +2,13 @@ import sqlite3
 import time
 import json
 import socket
+from Sys_Conf import DEVICE_ID
 
 # This function handles inbound messages and sorts them via their topic. It then updates the status in the database.
 def process_inbound_message(cursor, id, topic, payload):
     try:
         # Takes 'trial' topics from the queue and writes the payload to trial.py
-        if topic == 'trial':
+        if topic == 'trial/' + DEVICE_ID:
             with open('trial.py', 'w') as file:
                 file.write(payload)
             cursor.execute("UPDATE message_queue SET status = 'Inbound - Sorted' WHERE id = ?", (id,))
