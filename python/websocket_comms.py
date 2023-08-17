@@ -274,7 +274,7 @@ if __name__ == '__main__':
 
     # Subscribe to the trial topic
     subscribe_future, packet_id = mqtt_connection.subscribe(
-        topic=trial_topic
+        topic=trial_topic,
         qos=mqtt.QoS.AT_LEAST_ONCE,
         callback=on_message_received
     )
