@@ -4,6 +4,10 @@ import json
 import socket
 from Sys_Conf import DEVICE_ID
 
+###########################################################################################################################
+# INBOUND MESSAGE HANDLING
+###########################################################################################################################
+
 # This function handles inbound messages and sorts them via their topic. It then updates the status in the database.
 def process_inbound_message(cursor, id, topic, payload):
     try:
@@ -18,6 +22,10 @@ def process_inbound_message(cursor, id, topic, payload):
     except Exception as e:
         print(f"Error processing inbound message: {e}")
         cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable' WHERE id = ?", (id,))
+
+###########################################################################################################################
+# OUTBOUND MESSAGE HANDLING + SOCKET
+###########################################################################################################################
 
 # This function handles outbound messages and sends them to the websocket server. It then updates the status in the database.
 def process_outbound_message(cursor, id, topic, payload):
@@ -42,6 +50,10 @@ def process_outbound_message(cursor, id, topic, payload):
     except Exception as e:
         print(f"Error sending outbound message: {e}")
         cursor.execute("UPDATE message_queue SET status = 'Outbound - Unsendable' WHERE id = ?", (id,))
+
+###########################################################################################################################
+# MESSAGE_QUEUE POLLING
+###########################################################################################################################
 
 def main():
     conn = sqlite3.connect('message_queue.db')

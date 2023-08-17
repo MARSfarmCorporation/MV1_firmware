@@ -148,7 +148,7 @@ def on_message_received(topic, payload, **kwargs):
 
     mqtt_connection.publish(
         topic="log/response",
-        payload="Trial received for device: " + SERIAL_NUMBER,
+        payload="Data received for device: " + SERIAL_NUMBER + ", on Topic: " + topic,
         qos=mqtt.QoS.AT_LEAST_ONCE
     )
     print("Response sent")
@@ -246,7 +246,7 @@ def unix_socket_server():
     server_socket.close()
 
 ###########################################################################################################################
-# MAIN CONNECTION AND SUBSCRIPTIONS
+# MAIN SCRIPT CONNECTION
 ###########################################################################################################################
 
 if __name__ == '__main__':
@@ -271,6 +271,10 @@ if __name__ == '__main__':
     connect_future.result()
     print("Connected!")
 
+    ###########################################################################################################################
+    # MAIN SCRIPT THREADS
+    ###########################################################################################################################
+
     # Start the refresh thread
     refresh_thread = threading.Thread(target=refresh_credentials)
     refresh_thread.start()
@@ -278,6 +282,10 @@ if __name__ == '__main__':
     # Start the Unix socket server in a separate thread.
     unix_socket_server_thread = threading.Thread(target=unix_socket_server)
     unix_socket_server_thread.start()
+
+    ###########################################################################################################################
+    # MAIN SCRIPT SUBSCRIPTIONS
+    ###########################################################################################################################
 
     # Subscribe to the trial topic
     subscribe_future, packet_id = mqtt_connection.subscribe(
