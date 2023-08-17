@@ -40,6 +40,10 @@ class LockedData:
 
 locked_data = LockedData()
 
+###########################################################################################################################
+# CREDENTIALS
+###########################################################################################################################
+
 # AWS IoT Core credentials
 device_cert = "/home/pi/certs/device.pem.crt.crt"
 private_key = "/home/pi/certs/private.pem.key"
@@ -71,6 +75,10 @@ def refresh_credentials():
 
         # Sleep until it's time to refresh
         sleep(max(sleep_time, 0))
+
+###########################################################################################################################
+# CONNECTIONS AND SHUTDOWN
+###########################################################################################################################
 
 # Callback when connection is accidentally lost.
 def on_connection_interrupted(connection, error, **kwargs):
@@ -107,6 +115,32 @@ def exit(msg_or_exception):
 def on_disconnected(disconnect_future):
     print("Disconnected.")
     is_sample_done.set()
+
+# performs graceful shutdown when SIGINT or SIGTERM signal is received
+def shutdown_server(signum, frame):
+    print("Shutting down server...")
+    
+    # Signal the refresh thread to stop
+    is_sample_done.set()
+
+    # Disconnect from MQTT
+    exit("Shutting down due to signal.")
+
+    # Close the server socket
+    server_socket.close()
+
+    # Remove the Unix socket file
+    socket_file = "/tmp/websocket_comms.sock"
+    if os.path.exists(socket_file):
+        os.remove(socket_file)
+
+    # Exit the program
+    sys.exit(0)
+
+
+###########################################################################################################################
+# MESSAGE HANDLERS
+###########################################################################################################################
 
 # Callback to handle incoming messages
 def on_message_received(topic, payload, **kwargs):
@@ -145,26 +179,9 @@ def handle_outbound_message(outbound_message):
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
 
-# performs graceful shutdown when SIGINT or SIGTERM signal is received
-def shutdown_server(signum, frame):
-    print("Shutting down server...")
-    
-    # Signal the refresh thread to stop
-    is_sample_done.set()
-
-    # Disconnect from MQTT
-    exit("Shutting down due to signal.")
-
-    # Close the server socket
-    server_socket.close()
-
-    # Remove the Unix socket file
-    socket_file = "/tmp/websocket_comms.sock"
-    if os.path.exists(socket_file):
-        os.remove(socket_file)
-
-    # Exit the program
-    sys.exit(0)
+###########################################################################################################################
+# SOCKETS
+###########################################################################################################################
 
 # Create the server socket outside of the unix_socket_server function
 server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -221,6 +238,10 @@ def unix_socket_server():
     # Close the socket
     server_socket.close()
 
+###########################################################################################################################
+# MAIN CONNECTION AND SUBSCRIPTIONS
+###########################################################################################################################
+
 if __name__ == '__main__':
     proxy_options = None
 
@@ -251,9 +272,9 @@ if __name__ == '__main__':
     unix_socket_server_thread = threading.Thread(target=unix_socket_server)
     unix_socket_server_thread.start()
 
-    # Subscribe to the topic
+    # Subscribe to the trial topic
     subscribe_future, packet_id = mqtt_connection.subscribe(
-        topic="testing/test",
+        topic=trial_topic
         qos=mqtt.QoS.AT_LEAST_ONCE,
         callback=on_message_received
     )
