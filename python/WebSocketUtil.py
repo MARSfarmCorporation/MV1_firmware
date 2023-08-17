@@ -13,15 +13,11 @@ def enqueue(name, value, unit, observation_date, model):
 
     payload = {
         "timestamp": observation_date,
-        "observation_date": {
-            "$date": formatted_date
-        },
+        "observation_date": formatted_date,
         "attribute": name,
         "value": value,
         "unit": unit,
-        "trial_id": {
-            "$oid": t.trial_id
-        },
+        "trial_id": t.trial_id,
         "trial_name": t.trial_name,
         "trial_start_date": formatted_start,
         "day_number": day,
