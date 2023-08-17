@@ -146,14 +146,15 @@ def shutdown_server(signum, frame):
 def on_message_received(topic, payload, **kwargs):
     print(f"Received message from topic '{topic}': {payload.decode('utf-8')}")
 
+    # Publish a response to the log/response topic for this device
     mqtt_connection.publish(
-        topic="log/response",
+        topic="log/response/" + DEVICE_ID,
         payload="Data received for device: " + SERIAL_NUMBER + ", on Topic: " + topic,
         qos=mqtt.QoS.AT_LEAST_ONCE
     )
     print("Response sent")
 
-    # Convert the payload to a JSON string
+    # Convert the payload to a JSON string and set the default inbound status
     payload_json = payload.decode('utf-8')
     status = "Inbound - Unsorted"
 
