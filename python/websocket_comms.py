@@ -232,7 +232,7 @@ def unix_socket_server():
             # Combine the chunks and decode the message
             outbound_message = b''.join(chunks).decode()
 
-            # Handle the message
+            # Passes file to the outbound message handler
             handle_outbound_message(json.loads(outbound_message))
 
         except Exception as e:
@@ -288,7 +288,7 @@ if __name__ == '__main__':
     # MAIN SCRIPT SUBSCRIPTIONS
     ###########################################################################################################################
 
-    # Subscribe to the trial topic
+    # Subscribe to the trial topic, sends incoming messages to the on_message_received callback
     subscribe_future, packet_id = mqtt_connection.subscribe(
         topic=trial_topic,
         qos=mqtt.QoS.AT_LEAST_ONCE,
