@@ -7,7 +7,12 @@ from Trial_Util import Trial
 from Pump import Pump
 from datetime import datetime
 from WebSocketUtil import enqueue
-import sqlite3
+
+#############################################
+# Global Variables
+#############################################
+
+mqtt_topic = "devicedata"
 
 # Import dictionary data
 t = Trial()
@@ -31,21 +36,7 @@ p.dispense(ps) # dispensing specified amount of water
 if (ps > 0):
 
     # Creating the payload via the enqueue function
-    payload = enqueue("pump", ps, "mL", observation_date, "PumpObservation")
-
-    # Connecting to the SQLite database
-    conn = sqlite3.connect('message_queue.db')
-    cursor = conn.cursor()
-
-    # Inserting the payload into the message_queue table
-    cursor.execute("""
-    INSERT INTO message_queue (topic, payload, status)
-    VALUES (?, ?, ?)
-    """, ("devicedata", payload, "Outbound - Unsent"))
-
-    conn.commit()
-    conn.close()
-
+    enqueue(mqtt_topic,"pump", ps, "mL", observation_date, "PumpObservation")
 print('Pump dispersed ', ps, ' ML of water on ', time)
 
 def test_pump(amount):
@@ -63,19 +54,5 @@ def test_pump(amount):
 
     if amount > 0:
         # Creating the payload via the enqueue function
-        payload = enqueue("pump", amount, "mL", observation_date, "PumpObservation")
-
-        # Connecting to the SQLite database
-        conn = sqlite3.connect('message_queue.db')
-        cursor = conn.cursor()
-
-        # Inserting the payload into the message_queue table
-        cursor.execute("""
-        INSERT INTO message_queue (topic, payload, status)
-        VALUES (?, ?, ?)
-        """, ("devicedata", payload, "Outbound - Unsent"))
-
-        conn.commit()
-        conn.close()
-
+        enqueue(mqtt_topic,"pump", amount, "mL", observation_date, "PumpObservation")
     print('Test pump dispersed', amount, 'ML of water')

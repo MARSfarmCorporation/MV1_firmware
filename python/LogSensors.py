@@ -21,6 +21,9 @@ from Lights import Light
 from Log_Conf import TEMP, DB_TEMP, CO2, DB_CO2, DB_HUMIDITY, HUMIDITY, FAHRENHEIT, PPM, PERCENT
 import time
 
+# Global Variables
+mqtt_topic = "devicedata"
+
 # Import dictionary data
 # The 't' dictionary object is used to store trial information
 t = Trial()
@@ -83,13 +86,13 @@ def test():
    print("Temp", temp, "Humidity", humid)
    print('testing save_db function by sending Co2')
    #save_db(DB_CO2, co2, PPM)
-   enqueue(DB_CO2, co2, PPM, observation_date, "EnvironmentalObservation")
+   enqueue(mqtt_topic, DB_CO2, co2, PPM, observation_date, "EnvironmentalObservation")
    print('save temp and humidity data to database')
    #save_db(DB_TEMP, temp, FAHRENHEIT)
-   enqueue(DB_TEMP, temp, FAHRENHEIT, observation_date, "EnvironmentalObservation")
+   enqueue(mqtt_topic, DB_TEMP, temp, FAHRENHEIT, observation_date, "EnvironmentalObservation")
    print("Save Humidity")
    #save_db(DB_HUMIDITY, humid, PERCENT)
-   enqueue(DB_HUMIDITY, humid, PERCENT, observation_date,"EnvironmentalObservation")
+   enqueue(mqtt_topic, DB_HUMIDITY, humid, PERCENT, observation_date,"EnvironmentalObservation")
    print("Save Sheet Function")
    print("Save CO2")
    save_google_sheet(CO2, co2, PPM)
