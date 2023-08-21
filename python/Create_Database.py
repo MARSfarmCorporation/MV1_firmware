@@ -9,7 +9,19 @@ def create_database():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         topic TEXT,
         payload TEXT,
-        status TEXT CHECK(status IN ('Inbound - Unsorted', 'Inbound - Sorted', 'Outbound - Unsent', 'Outbound - Sent', 'Inbound - Unsortable')),
+        status TEXT CHECK(status IN (
+                   'Inbound - Unsorted', 
+                   'Inbound - Sorted', 
+                   'Outbound - Unsent', 
+                   'Outbound - Sent', 
+                   'Inbound - Unsortable', 
+                   'Inbound - Unsortable - Job Error 1', 
+                   'Inbound - Unsortable - Job Error 2', 
+                   'Inbound - Unsortable - Job Error Unknown', 
+                   'Inbound - Unsortable - Timeout', 
+                   'Inbound - Unsortable - Unknown'
+                   'Inbound - Unsortable - Unrecognized Topic'
+                   )),
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     """)
