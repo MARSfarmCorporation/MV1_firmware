@@ -17,18 +17,30 @@ job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 ###########################################################################################################################
 
 def spawn_job_agent(cursor, id, payload):
-    # Start the Job_Agent.py process and pass the payload
-    result = subprocess.run(['python3', 'Job_Agent.py', payload])
+    try:
+        # Start the Job_Agent.py process and pass the payload
+        result = subprocess.run(['python3', 'Job_Agent.py', payload],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                timeout=60)
 
-    # Check the return code to determine the status
-    if result.returncode == 0:
-        cursor.execute("UPDATE message_queue SET status = 'Inbound - Sorted' WHERE id = ?", (id,))
-    elif result.returncode == 1:
-        cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error 1' WHERE id = ?", (id,))
-    elif result.returncode == 2:
-        cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error 2' WHERE id = ?", (id,))
-    else:
-        cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error Unknown' WHERE id = ?", (id,))
+        # Check the return code to determine the status
+        if result.returncode == 0:
+            cursor.execute("UPDATE message_queue SET status = 'Inbound - Sorted' WHERE id = ?", (id,))
+        elif result.returncode == 1:
+            cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error 1' WHERE id = ?", (id,))
+        elif result.returncode == 2:
+            cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error 2' WHERE id = ?", (id,))
+        else:
+            cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error Unknown' WHERE id = ?", (id,))
+    
+    except subprocess.TimeoutExpired as e:
+        print(f"Error executing the script: {e}")
+        cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Timeout' WHERE id = ?", (id,))
+
+    except Exception as e:
+        print(f"Error executing the script: {e}")
+        cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Unknown' WHERE id = ?", (id,))
 
 def trial_handler(payload):
     # Write the payload to trial.py

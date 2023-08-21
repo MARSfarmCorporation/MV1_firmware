@@ -40,7 +40,7 @@ def main():
         job_status = job_details['status']
         job_document = job_details['jobDocument']
         job_steps = job_document['steps']
-        job_action = job_steps['action']
+        job_action = job_steps[0]['action']
         job_name = job_action['name']
 
         # Connect to the job_socket as a client
