@@ -41,7 +41,7 @@ def main():
         job_document = job_details['jobDocument']
         job_steps = job_document['steps']
         job_action = job_steps[0]['action']
-        job_name = job_action['name']
+        job_name = job_action[0]['name']
 
         # Connect to the job_socket as a client
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as job_socket:
