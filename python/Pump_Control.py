@@ -6,7 +6,7 @@ Modified By: Howard Webb - 11/2/2022
 from Trial_Util import Trial
 from Pump import Pump
 from datetime import datetime
-from WebSocketUtil import enqueue
+from WebSocketUtil import devicedata_enqueue
 
 #############################################
 # Global Variables
@@ -36,7 +36,7 @@ p.dispense(ps) # dispensing specified amount of water
 if (ps > 0):
 
     # Creating the payload via the enqueue function
-    enqueue(mqtt_topic,"pump", ps, "mL", observation_date, "PumpObservation")
+    devicedata_enqueue(mqtt_topic,"pump", ps, "mL", observation_date, "PumpObservation")
 print('Pump dispersed ', ps, ' ML of water on ', time)
 
 def test_pump(amount):
@@ -54,5 +54,5 @@ def test_pump(amount):
 
     if amount > 0:
         # Creating the payload via the enqueue function
-        enqueue(mqtt_topic,"pump", amount, "mL", observation_date, "PumpObservation")
+        devicedata_enqueue(mqtt_topic,"pump", amount, "mL", observation_date, "PumpObservation")
     print('Test pump dispersed', amount, 'ML of water')

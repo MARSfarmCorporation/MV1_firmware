@@ -4,7 +4,7 @@ from Trial_Util import Trial
 import json
 import sqlite3
 
-def enqueue(mqtt_topic, name, value, unit, observation_date, model):
+def devicedata_enqueue(mqtt_topic, name, value, unit, observation_date, model):
     t = Trial()
     date = parser.parse(datetime.fromtimestamp(observation_date).isoformat())
     day = abs((datetime.fromtimestamp(t.start_date) - datetime.fromtimestamp(observation_date)).days)

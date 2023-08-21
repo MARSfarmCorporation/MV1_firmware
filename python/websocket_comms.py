@@ -1,5 +1,6 @@
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0.
+# This script is used to connect to the AWS IoT Core MQTT broker using websockets and the AWS IoT Core credentials.
+# It also handles the incoming and outgoing messages from the broker.py service.
+# Author: Drew Thomas - 08.14.2020
 
 from time import sleep
 from awscrt import http, auth, io, mqtt
@@ -143,7 +144,7 @@ def shutdown_server(signum, frame):
 ###########################################################################################################################
 
 # Callback to handle incoming messages
-def on_message_received(topic, payload, **kwargs):
+def handle_inbound_message(topic, payload, **kwargs):
     print(f"Received message from topic '{topic}': {payload.decode('utf-8')}")
 
     # Publish a response to the log/response topic for this device
@@ -187,19 +188,26 @@ def handle_outbound_message(outbound_message):
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
 
+# Callback to handle incoming messages from the job_socket to the websocket_comms service
+def handle_job_socket_jobID(jobID):
+    # Subscribe to the "$aws/things/{thing_name}/jobs/{jobId}/update/accepted" topic with "thing_name" and "jobId" replaced with the appropriate values
+    #mqtt_connection.subscribe(topic=f"$aws/things/{SERIAL_NUMBER}/jobs/{jobID}/update/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_update_accepted)
+    print("JobID received: " + jobID)
+
+
 ###########################################################################################################################
 # SOCKETS
 ###########################################################################################################################
 
-# Create the server socket outside of the unix_socket_server function
+# Create the server socket outside of the websocket_comms_broker_socket function
 server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 # Register the signal handler for SIGTERM and SIGINT
 signal.signal(signal.SIGTERM, shutdown_server)
 signal.signal(signal.SIGINT, shutdown_server)
 
-# Sets up the Unix socket server to receive messages from the broker.py service
-def unix_socket_server():
+# Sets up the websocket_comms_broker_socket to receive messages from the broker.py service
+def websocket_comms_broker_socket():
     # Socket file path
     socket_file = "/tmp/websocket_comms.sock"
 
@@ -213,7 +221,7 @@ def unix_socket_server():
     # Listen for incoming connections
     server_socket.listen(1)
 
-    print("Unix socket server waiting for connections...")
+    print("websocket_comms_broker_socket server waiting for connections...")
 
     while True:
         try:
@@ -245,6 +253,59 @@ def unix_socket_server():
 
     # Close the socket
     server_socket.close()
+
+def job_socket():
+    # Socket file path
+    socket_file = "/tmp/job_socket.sock"
+
+    # Remove the socket file if it already exists
+    if os.path.exists(socket_file):
+        os.remove(socket_file)
+
+    # Bind the socket to the file
+    job_server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)  # Define the server_socket here
+    job_server_socket.bind(socket_file)
+
+    # Listen for incoming connections
+    job_server_socket.listen(1)
+
+    print("job_socket server waiting for connections...")
+
+    while True:
+        try:
+            # Accept a connection
+            connection, _ = job_server_socket.accept()
+
+            # Receive the message in chunks. It keeps adding chunks to the end of the previous chunk until the next one is empty, then it stops
+            chunks = []
+            while True:
+                chunk = connection.recv(1024)  # Buffer size of 1024 bytes
+                if chunk:
+                    chunks.append(chunk)
+                else:
+                    break
+
+            # Combine the chunks and decode the message
+            message = b''.join(chunks).decode()
+            message_data = json.loads(message)
+
+            # Check the type of the message and route to the appropriate handler
+            message_type = message_data.get("type")
+            if message_type == "jobID":
+                handle_job_socket_jobID(message_data['jobID'])
+            elif message_type == "publish":
+                handle_outbound_message(message_data)
+            else:
+                print(f"Unknown message type: {message_type}")
+
+        except Exception as e:
+            print(f"An error occurred while handling a connection: {e}")
+            # Optionally, you can log the traceback or other details here
+
+        finally:
+            # Ensure the connection is closed, even if an error occurred
+            connection.close()
+
 
 ###########################################################################################################################
 # MAIN SCRIPT CONNECTION
@@ -281,19 +342,34 @@ if __name__ == '__main__':
     refresh_thread.start()
 
     # Start the Unix socket server in a separate thread.
-    unix_socket_server_thread = threading.Thread(target=unix_socket_server)
-    unix_socket_server_thread.start()
+    websocket_comms_broker_socket_thread = threading.Thread(target=websocket_comms_broker_socket)
+    websocket_comms_broker_socket_thread.start()
+
+    # Start the job_socket server in a separate thread.
+    job_socket_thread = threading.Thread(target=job_socket)
+    job_socket_thread.start()
 
     ###########################################################################################################################
     # MAIN SCRIPT SUBSCRIPTIONS
     ###########################################################################################################################
 
-    # Subscribe to the trial topic, sends incoming messages to the on_message_received callback
+    # Subscribe to the trial topic, sends incoming messages to the handle_inbound_message callback
     subscribe_future, packet_id = mqtt_connection.subscribe(
         topic=trial_topic,
         qos=mqtt.QoS.AT_LEAST_ONCE,
-        callback=on_message_received
+        callback=handle_inbound_message
     )
+
+    # Subscribing to Job-related topics
+    mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/notify-next", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+    mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/get/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+    mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/get/rejected", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+    mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/start/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+    mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/start/rejected", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+    
+    # Note: For the following topics, you will need to replace {jobId} dynamically based on the specific job being processed
+    # mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/{jobId}/update/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_messages)
+    # mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/{jobId}/update/rejected", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_messages)
 
     subscribe_result = subscribe_future.result()
     print(f"Subscribed with {str(subscribe_result['qos'])}")
