@@ -19,7 +19,7 @@ def create_database():
                    'Inbound - Unsortable - Job Error 2', 
                    'Inbound - Unsortable - Job Error Unknown', 
                    'Inbound - Unsortable - Timeout', 
-                   'Inbound - Unsortable - Unknown'
+                   'Inbound - Unsortable - Unknown',
                    'Inbound - Unsortable - Unrecognized Topic'
                    )),
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
