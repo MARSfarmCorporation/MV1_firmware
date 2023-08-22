@@ -297,19 +297,19 @@ def job_socket():
                 if message:  # Ignore empty strings resulting from trailing newlines
                     message_data = json.loads(message)
 
-            with open('Job_Agent_Log.txt', 'a') as file:
-                file.write(f"websocket_comms.py: message_data: {message_data}\n")
+                    with open('Job_Agent_Log.txt', 'a') as file:
+                        file.write(f"websocket_comms.py: message_data: {message_data}\n")
 
-            # Check the type of the message and route to the appropriate handler
-            message_type = message_data.get("type")
-            if message_type == "jobID":
-                handle_job_socket_jobID(message_data['jobID'])
-            elif message_type == "publish":
-                handle_outbound_message(message_data)
-            else:
-                print(f"Unknown message type: {message_type}")
-                with open('Job_Agent_Log.txt', 'a') as file:
-                    file.write(f"websocket_comms.py: Unknown message type: {message_type}\n")
+                    # Check the type of the message and route to the appropriate handler
+                    message_type = message_data.get("type")
+                    if message_type == "jobID":
+                        handle_job_socket_jobID(message_data['jobID'])
+                    elif message_type == "publish":
+                        handle_outbound_message(message_data)
+                    else:
+                        print(f"Unknown message type: {message_type}")
+                        with open('Job_Agent_Log.txt', 'a') as file:
+                            file.write(f"websocket_comms.py: Unknown message type: {message_type}\n")
 
         except Exception as e:
             print(f"An error occurred while handling a connection: {e}")

@@ -106,7 +106,7 @@ def main():
             # Send the job status to the job_socket, formatted as a JSON string with a topic and a payload
             publish_message = {
                 "type": "publish",
-                "topic": f"$aws/things/{SERIAL_NUMBER}/jobs/{jobID}/update/",
+                "topic": f"$aws/things/{SERIAL_NUMBER}/jobs/{jobID}/update",
                 "payload": json.dumps(job_result)
             }
             job_socket.sendall((json.dumps(publish_message) + '\n').encode())
