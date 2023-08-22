@@ -61,6 +61,10 @@ def main():
                 "jobID": jobID
             }
             jobID_message_json = json.dumps(jobID_message)
+
+            with open('Job_Agent_Log.txt', 'a') as file:
+                file.write(f"Job_Agent.py: jobID_message_json: {jobID_message_json}\n")
+
             job_socket.sendall(jobID_message_json.encode())
         
             # Execute the job

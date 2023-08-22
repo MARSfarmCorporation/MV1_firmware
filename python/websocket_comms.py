@@ -289,6 +289,9 @@ def job_socket():
             message = b''.join(chunks).decode()
             message_data = json.loads(message)
 
+            with open('Job_Agent_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: message_data: {message_data}\n")
+
             # Check the type of the message and route to the appropriate handler
             message_type = message_data.get("type")
             if message_type == "jobID":
