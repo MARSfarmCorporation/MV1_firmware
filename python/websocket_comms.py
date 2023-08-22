@@ -176,12 +176,13 @@ def handle_outbound_message(outbound_message):
         # Publish the message to the AWS IoT Endpoint
         mqtt_connection.publish(
             topic=topic,
-            payload=json.dumps(payload),
+            payload=payload,
+            #payload=json.dumps(payload),
             qos=mqtt.QoS.AT_LEAST_ONCE
         )
         print(f"Published message to topic '{topic}': {payload}")
         with open('Job_Agent_Log.txt', 'a') as file:
-            file.write(f"websocket_comms.py: Published message to topic:{topic}, with payload: {payload}\n")
+            file.write(f"websocket_comms.py: Published message to topic: {topic}, with payload: {payload}\n")
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
         with open('Job_Agent_Log.txt', 'a') as file:
