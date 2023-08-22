@@ -286,12 +286,16 @@ def job_socket():
                     break
 
             # Combine the chunks and decode the message
-            message = b''.join(chunks).decode()
-
+            # Combine the chunks and decode the message
+            received_data = b''.join(chunks).decode()
+            messages = received_data.split('\n')
+            
             with open('Job_Agent_Log.txt', 'a') as file:
-                file.write(f"websocket_comms.py: message: {message}\n")
-
-            message_data = json.loads(message)
+                file.write(f"websocket_comms.py: messages: {messages}\n")
+            
+            for message in messages:
+                if message:  # Ignore empty strings resulting from trailing newlines
+                    message_data = json.loads(message)
 
             with open('Job_Agent_Log.txt', 'a') as file:
                 file.write(f"websocket_comms.py: message_data: {message_data}\n")

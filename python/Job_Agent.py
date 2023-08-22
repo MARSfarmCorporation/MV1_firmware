@@ -65,7 +65,7 @@ def main():
             with open('Job_Agent_Log.txt', 'a') as file:
                 file.write(f"Job_Agent.py: jobID_message_json: {jobID_message_json}\n")
 
-            job_socket.sendall(jobID_message_json.encode())
+            job_socket.sendall((jobID_message_json + '\n').encode())
         
             # Execute the job
             if job_name == "OTA_Update":
@@ -109,7 +109,7 @@ def main():
                 "topic": f"$aws/things/{SERIAL_NUMBER}/jobs/{jobID}/update/",
                 "payload": json.dumps(job_result)
             }
-            job_socket.sendall(json.dumps(publish_message).encode())
+            job_socket.sendall((json.dumps(publish_message) + '\n').encode())
             print(f"Job status sent to job_socket: {job_result}")
 
             # Close the socket and exit the program, sends a return code of 0 to the broker
