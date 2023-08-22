@@ -89,6 +89,25 @@ def devicedata_enqueue(mqtt_topic, name, value, unit, observation_date, model):
     except Exception as e:
         print(f"Error logging device data: {e}")
 
+# This function logs data to be sent to the AWS IoT Core via the message_queue.db route
+def aws_enqueue(mqtt_topic, mqtt_payload):
+    # setting the topic for the SQLite database entry
+    topic = mqtt_topic
+
+    # Convert the payload dictionary to a JSON string
+    payload_json = json.dumps(mqtt_payload)
+
+    # Setting the status of the message to "Outbound - Unsent"
+    status = "Outbound - Unsent"
+
+    # Connecting to the SQLite database
+    try:
+        secure_database_write(topic, payload_json, status)
+    except Exception as e:
+        print(f"Error logging device data: {e}")
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"WebSocketUtil.py: Failed to enqueue: {e}\n")
+
 ###########################################################################################################################
 # ERROR LOGGING
 ###########################################################################################################################
