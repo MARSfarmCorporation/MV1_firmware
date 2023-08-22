@@ -287,6 +287,10 @@ def job_socket():
 
             # Combine the chunks and decode the message
             message = b''.join(chunks).decode()
+
+            with open('Job_Agent_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: message: {message}\n")
+
             message_data = json.loads(message)
 
             with open('Job_Agent_Log.txt', 'a') as file:
@@ -300,6 +304,8 @@ def job_socket():
                 handle_outbound_message(message_data)
             else:
                 print(f"Unknown message type: {message_type}")
+                with open('Job_Agent_Log.txt', 'a') as file:
+                    file.write(f"websocket_comms.py: Unknown message type: {message_type}\n")
 
         except Exception as e:
             print(f"An error occurred while handling a connection: {e}")

@@ -80,12 +80,17 @@ def main():
                 print(f"Unknown job name: {job_name}")
                 exit(job_socket)
 
+            with open('Job_Agent_Log.txt', 'a') as file:
+                file.write(f"Job_Agent.py: result: {result}\n")
+
             # Format the job status to be sent to the job_socket
             if result.returncode == 0:
                 job_status = "SUCCEEDED"
                 job_result = {
                     "status": job_status
                 }
+                with open('Job_Agent_Log.txt', 'a') as file:
+                    file.write(f"Job_Agent.py: job_result_success: {job_result}\n")
             else:
                 job_status = "FAILED"
                 job_result = {
@@ -95,6 +100,8 @@ def main():
                         "message": result.stderr.decode('utf-8')
                     }
                 }
+                with open('Job_Agent_Log.txt', 'a') as file:
+                    file.write(f"Job_Agent.py: job_result_failure: {job_result}\n")
             
             # Send the job status to the job_socket, formatted as a JSON string with a topic and a payload
             publish_message = {
