@@ -50,12 +50,6 @@ def main():
 
         with open('Job_Agent_Log.txt', 'a') as file:
             file.write(f"Job_Agent.py: job_name: {job_name}\n")
-            
-        #job_status = job_details['status']
-        #job_document = job_details['jobDocument']
-        #job_steps = job_document['steps']
-        #job_action = job_steps[0]['action']
-        #job_name = job_action[0]['name']
 
         # Connect to the job_socket as a client
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as job_socket:
@@ -117,6 +111,12 @@ def main():
     except socket.error as e:
         print(f"Error connecting to job_socket: {e}")
         sys.exit(2)
+
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"Job_Agent.py: Error Code 4 {e}\n")
+        sys.exit(4)  # or another unique code
 
 if __name__ == "__main__":
         main()

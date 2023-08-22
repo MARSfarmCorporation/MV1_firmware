@@ -42,6 +42,9 @@ def spawn_job_agent(id, payload):
             elif result.returncode == 2:
                 status = 'Inbound - Unsortable - Job Error 2'
                 secure_database_update(id, status)
+            elif result.returncode == 3:
+                status = 'Inbound - Unsortable - Job Error 3'
+                secure_database_update(id, status)
             else:
                 status = 'Inbound - Unsortable - Job Error Unknown'
                 secure_database_update(id, status)

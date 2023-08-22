@@ -188,6 +188,8 @@ def handle_job_socket_jobID(jobID): #not finished
     # Subscribe to the "$aws/things/{thing_name}/jobs/{jobId}/update/accepted" topic with "thing_name" and "jobId" replaced with the appropriate values
     #mqtt_connection.subscribe(topic=f"$aws/things/{SERIAL_NUMBER}/jobs/{jobID}/update/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_update_accepted)
     print("JobID received: " + jobID)
+    with open('Job_Agent_Log.txt', 'a') as file:
+        file.write(f"websocket_comms.py: jobID: {jobID}\n")
 
 
 ###########################################################################################################################
