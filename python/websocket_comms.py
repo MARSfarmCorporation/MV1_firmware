@@ -305,6 +305,8 @@ def job_socket():
                     if message_type == "jobID":
                         handle_job_socket_jobID(message_data['jobID'])
                     elif message_type == "publish":
+                        with open('Job_Agent_Log.txt', 'a') as file:
+                            file.write(f"websocket_comms.py: message_type: {message_data}\n")
                         handle_outbound_message(message_data)
                     else:
                         print(f"Unknown message type: {message_type}")
