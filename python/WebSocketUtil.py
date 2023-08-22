@@ -97,7 +97,7 @@ def devicedata_enqueue(mqtt_topic, name, value, unit, observation_date, model):
 def log_job_fail(return_code):
     try:
         # Setting up the message
-        topic = "logs/job_fail/" + SERIAL_NUMBER
+        topic = "log/job_fail/" + SERIAL_NUMBER
         message_payload = {
             "timestamp": datetime.now().timestamp(),
             "return_code": return_code

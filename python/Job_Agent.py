@@ -25,7 +25,7 @@ def exit_fail(job_socket):
     sys.exit(3)
 
 ###########################################################################################################################
-# MAIN FUNCTION AND SOCKET CLIENT
+# MAIN FUNCTION AND SOCKET CLIENT 
 ###########################################################################################################################
 
 def main():
@@ -39,16 +39,23 @@ def main():
 
         # Parse the payload JSON and extract the job details
         payload_json = json.loads(payload)
+
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"Job_Agent.py: payload_json: {payload_json}\n")
+
         job_details = payload_json['execution']
         jobID = job_details['jobId']
-        job_status = job_details['status']
-        job_document = job_details['jobDocument']
-        job_steps = job_document['steps']
-        job_action = job_steps[0]['action']
-        job_name = job_action[0]['name']
+
+        job_name = job_details['jobDocument']['steps'][0]['action']['name']
 
         with open('Job_Agent_Log.txt', 'a') as file:
             file.write(f"Job_Agent.py: job_name: {job_name}\n")
+            
+        #job_status = job_details['status']
+        #job_document = job_details['jobDocument']
+        #job_steps = job_document['steps']
+        #job_action = job_steps[0]['action']
+        #job_name = job_action[0]['name']
 
         # Connect to the job_socket as a client
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as job_socket:
