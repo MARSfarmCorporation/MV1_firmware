@@ -47,6 +47,9 @@ def main():
         job_action = job_steps[0]['action']
         job_name = job_action[0]['name']
 
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"Job_Agent.py: job_name: {job_name}\n")
+
         # Connect to the job_socket as a client
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as job_socket:
             job_socket.connect("/tmp/job_socket.sock")
