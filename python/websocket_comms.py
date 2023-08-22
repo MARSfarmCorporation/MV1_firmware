@@ -176,13 +176,10 @@ def handle_outbound_message(outbound_message):
         # Publish the message to the AWS IoT Endpoint
         mqtt_connection.publish(
             topic=topic,
-            payload=payload,
-            #payload=json.dumps(payload),
+            payload=json.dumps(payload),
             qos=mqtt.QoS.AT_LEAST_ONCE
         )
         print(f"Published message to topic '{topic}': {payload}")
-        with open('Job_Agent_Log.txt', 'a') as file:
-            file.write(f"websocket_comms.py: Published message to topic: {topic}, with payload: {payload}\n")
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
         with open('Job_Agent_Log.txt', 'a') as file:
@@ -196,6 +193,25 @@ def handle_job_socket_jobID(jobID): #not finished
     with open('Job_Agent_Log.txt', 'a') as file:
         file.write(f"websocket_comms.py: jobID: {jobID}\n")
 
+# Function to publish Job messages coming from the job_socket to the AWS IoT Endpoint
+def handle_job_socket_publish(job_message):
+    # Extract the topic and payload from the received message
+    topic = job_message.get("topic")
+    payload = job_message.get("payload")
+
+    # Check if the topic and payload are valid
+    if topic and payload:
+        # Publish the message to the AWS IoT Endpoint
+        mqtt_connection.publish(
+            topic=topic,
+            payload=payload,
+            qos=mqtt.QoS.AT_LEAST_ONCE
+        )
+        print(f"Published message to topic '{topic}': {payload}")
+    else:
+        print("Invalid message format. Expected 'topic' and 'payload' fields.")
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"websocket_comms.py: Invalid message format passed to 'handle_outbound_message' function. Expected 'topic' and 'payload' fields.\n")
 
 ###########################################################################################################################
 # SOCKETS
@@ -312,7 +328,7 @@ def job_socket():
                     elif message_type == "publish":
                         with open('Job_Agent_Log.txt', 'a') as file:
                             file.write(f"websocket_comms.py: message_type: {message_data}\n")
-                        handle_outbound_message(message_data)
+                        handle_job_socket_publish(message_data)
                     else:
                         print(f"Unknown message type: {message_type}")
                         with open('Job_Agent_Log.txt', 'a') as file:
