@@ -4,6 +4,7 @@ import json
 import socket
 import subprocess
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
+from WebSocketUtil import log_job_fail, secure_database_update
 
 ###########################################################################################################################
 # DEFINE TOPICS
@@ -16,36 +17,55 @@ job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 # SPECIAL HANDLER FUNCTIONS
 ###########################################################################################################################
 
-def spawn_job_agent(cursor, id, payload):
+def spawn_job_agent(id, payload):
     try:
+        # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Broker.py: "
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"Broker.py: {payload}\n")
+
         # Start the Job_Agent.py process and pass the payload
         result = subprocess.run(['python3', 'Job_Agent.py', payload],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
-                                timeout=60)
+                                timeout=30)
 
-        # Check the return code to determine the status
+        # Check the return code to determine the status. Log the return code to the job_fail topic if the job fails.
         if result.returncode == 0:
-            cursor.execute("UPDATE message_queue SET status = 'Inbound - Sorted' WHERE id = ?", (id,))
-        elif result.returncode == 1:
-            cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error 1' WHERE id = ?", (id,))
-        elif result.returncode == 2:
-            cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error 2' WHERE id = ?", (id,))
+            status = 'Inbound - Sorted'
+            secure_database_update(id, status)
         else:
-            cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Job Error Unknown' WHERE id = ?", (id,))
-    
+            return_code = result.returncode
+            log_job_fail(return_code)
+            if result.returncode == 1:
+                status = 'Inbound - Unsortable - Job Error 1'
+                secure_database_update(id, status)
+            elif result.returncode == 2:
+                status = 'Inbound - Unsortable - Job Error 2'
+                secure_database_update(id, status)
+            else:
+                status = 'Inbound - Unsortable - Job Error Unknown'
+                secure_database_update(id, status)
+
     except subprocess.TimeoutExpired as e:
         print(f"Error executing the script: {e}")
-        cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Timeout' WHERE id = ?", (id,))
+        status = 'Inbound - Unsortable - Timeout'
+        secure_database_update(id, status)
+        #cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Timeout' WHERE id = ?", (id,))
 
     except Exception as e:
         print(f"Error executing the script: {e}")
-        cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Unknown' WHERE id = ?", (id,))
+        status = 'Inbound - Unsortable - Unknown'
+        secure_database_update(id, status)
+        #cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Unknown' WHERE id = ?", (id,))
 
-def trial_handler(payload):
+def trial_handler(payload, id):
     # Write the payload to trial.py
     with open('trial.py', 'w') as file:
         file.write(payload)
+
+    # Update the status in the database
+    status = 'Inbound - Sorted'
+    secure_database_update(id, status)
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
@@ -56,16 +76,17 @@ def process_inbound_message(cursor, id, topic, payload):
     try:
         # Defined topics are handled here via their respective functions
         if topic == trial_topic:
-            trial_handler(payload)
-            cursor.execute("UPDATE message_queue SET status = 'Inbound - Sorted' WHERE id = ?", (id,))
+            trial_handler(payload, id)
         if topic == job_notify_topic:
-            spawn_job_agent(cursor, id, payload)
+            spawn_job_agent(id, payload)
         else:
             # Handle other topics as needed
             pass
     except Exception as e:
         print(f"Error processing inbound message: {e}")
-        cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Unrecognized Topic' WHERE id = ?", (id,))
+        status = 'Inbound - Unsortable - Unrecognized Topic'
+        secure_database_update(id, status)
+        #cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Unrecognized Topic' WHERE id = ?", (id,))
 
 ###########################################################################################################################
 # OUTBOUND MESSAGE HANDLING + SOCKET CLIENT
@@ -90,10 +111,14 @@ def process_outbound_message(cursor, id, topic, payload):
         client_socket.close()
         
         # Update the status in the database
-        cursor.execute("UPDATE message_queue SET status = 'Outbound - Sent' WHERE id = ?", (id,))
+        status = 'Outbound - Sent'
+        secure_database_update(id, status)
+        #cursor.execute("UPDATE message_queue SET status = 'Outbound - Sent' WHERE id = ?", (id,))
     except Exception as e:
         print(f"Error sending outbound message: {e}")
-        cursor.execute("UPDATE message_queue SET status = 'Outbound - Unsendable' WHERE id = ?", (id,))
+        status = 'Outbound - Unsendable'
+        secure_database_update(id, status)
+        #cursor.execute("UPDATE message_queue SET status = 'Outbound - Unsendable' WHERE id = ?", (id,))
 
 ###########################################################################################################################
 # MESSAGE_QUEUE.DB POLLING

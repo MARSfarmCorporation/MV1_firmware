@@ -9,7 +9,6 @@ from concurrent.futures import Future
 import sys
 import os
 import threading
-import sqlite3
 import argparse
 import traceback
 import signal
@@ -18,6 +17,7 @@ import json
 import subprocess
 import datetime
 from uuid import uuid4
+from WebSocketUtil import secure_database_write
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
 # Parse command line arguments for the AWS IoT Core endpoint, signing region, and client ID
@@ -160,15 +160,10 @@ def handle_inbound_message(topic, payload, **kwargs):
     status = "Inbound - Unsorted"
 
     # Connect to the SQLite database
-    conn = sqlite3.connect('message_queue.db')
-    cursor = conn.cursor()
-
-    # Insert the message into the queue
-    cursor.execute("INSERT INTO message_queue (topic, payload, status) VALUES (?, ?, ?)", (topic, payload_json, status))
-
-    # Commit the transaction and close the connection
-    conn.commit()
-    conn.close()
+    try:
+        secure_database_write(topic, payload_json, status)
+    except Exception as e:
+        print(f"Error logging device data: {e}")
 
 # Function to publish a message coming from the broker.py service to the AWS IoT Endpoint
 def handle_outbound_message(outbound_message):
@@ -189,7 +184,7 @@ def handle_outbound_message(outbound_message):
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
 
 # Callback to handle incoming messages from the job_socket to the websocket_comms service
-def handle_job_socket_jobID(jobID):
+def handle_job_socket_jobID(jobID): #not finished
     # Subscribe to the "$aws/things/{thing_name}/jobs/{jobId}/update/accepted" topic with "thing_name" and "jobId" replaced with the appropriate values
     #mqtt_connection.subscribe(topic=f"$aws/things/{SERIAL_NUMBER}/jobs/{jobID}/update/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_update_accepted)
     print("JobID received: " + jobID)
@@ -199,15 +194,15 @@ def handle_job_socket_jobID(jobID):
 # SOCKETS
 ###########################################################################################################################
 
-# Create the server socket outside of the websocket_comms_broker_socket function
+# Create the server socket outside of the broker_socket function
 server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 # Register the signal handler for SIGTERM and SIGINT
 signal.signal(signal.SIGTERM, shutdown_server)
 signal.signal(signal.SIGINT, shutdown_server)
 
-# Sets up the websocket_comms_broker_socket to receive messages from the broker.py service
-def websocket_comms_broker_socket():
+# Sets up the broker_socket to receive messages from the broker.py service
+def broker_socket():
     # Socket file path
     socket_file = "/tmp/websocket_comms.sock"
 
@@ -221,7 +216,7 @@ def websocket_comms_broker_socket():
     # Listen for incoming connections
     server_socket.listen(1)
 
-    print("websocket_comms_broker_socket server waiting for connections...")
+    print("broker_socket server waiting for connections...")
 
     while True:
         try:
@@ -253,6 +248,9 @@ def websocket_comms_broker_socket():
 
     # Close the socket
     server_socket.close()
+
+# ------------------------------------- # job_socket # ------------------------------------- #
+# This socket is hosted on this script, and is used to receive jop updates from the Job_Agent.py script
 
 def job_socket():
     # Socket file path
@@ -342,8 +340,8 @@ if __name__ == '__main__':
     refresh_thread.start()
 
     # Start the Unix socket server in a separate thread.
-    websocket_comms_broker_socket_thread = threading.Thread(target=websocket_comms_broker_socket)
-    websocket_comms_broker_socket_thread.start()
+    broker_socket_thread = threading.Thread(target=broker_socket)
+    broker_socket_thread.start()
 
     # Start the job_socket server in a separate thread.
     job_socket_thread = threading.Thread(target=job_socket)

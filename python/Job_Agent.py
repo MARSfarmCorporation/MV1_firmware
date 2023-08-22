@@ -17,7 +17,7 @@ ota_update_script_path = "../scripts/ota_update.sh"
 # This function closes the socket gracefully and exits the program
 def exit(job_socket):
     job_socket.close()
-    sys.exit()
+    sys.exit() # Exit the program when the job succeeds, sends a return code of 0 to the broker
 
 # This function closes the socket and exits the program with a return code of 3 to the broker
 def exit_fail(job_socket):
@@ -32,6 +32,10 @@ def main():
     try:    
         # Receive the message payload from the command-line arguments
         payload = sys.argv[1]
+
+        # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"Job_Agent.py: {payload}\n")
 
         # Parse the payload JSON and extract the job details
         payload_json = json.loads(payload)
@@ -62,7 +66,7 @@ def main():
                     print(f"Script output: {result.stdout.decode('utf-8')}")
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing the script: {e.stderr.decode('utf-8')}")
-                    exit_fail(job_socket)
+                    exit_fail(job_socket) # Exit the program when the job fails, sends a return code of 3 to the broker
             else:
                 print(f"Unknown job name: {job_name}")
                 exit(job_socket)

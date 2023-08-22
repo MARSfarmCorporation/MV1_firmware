@@ -3,7 +3,55 @@ from dateutil import parser
 from Trial_Util import Trial
 import json
 import sqlite3
+import threading
+from Sys_Conf import SERIAL_NUMBER
 
+# Create a thread lock for the database
+database_lock = threading.Lock()
+
+###########################################################################################################################
+# COMMON FUNCTIONS FOR DATABASE CONNECTIONS
+###########################################################################################################################
+
+# This function uses thread locking to ensure that only one thread can write to the database at a time
+def secure_database_write(topic, payload_json, status):
+    with database_lock:
+        # Connecting to the SQLite database
+        conn = sqlite3.connect('message_queue.db')
+        cursor = conn.cursor()
+
+        # Inserting the payload into the message_queue table
+        cursor.execute("""
+        INSERT INTO message_queue (topic, payload, status)
+        VALUES (?, ?, ?)
+        """, (topic, payload_json, status))
+
+        conn.commit()
+        conn.close()
+
+# This function uses thread locking to ensure that only one thread can update the database at a time
+def secure_database_update(id, status):
+    with database_lock:
+        # Connecting to the SQLite database
+        conn = sqlite3.connect('message_queue.db')
+        cursor = conn.cursor()
+
+        # Updating the status in the message_queue table
+        cursor.execute("""
+        UPDATE message_queue
+        SET status = ?
+        WHERE id = ?
+        """, (status, id))
+
+        conn.commit()
+        conn.close()
+
+
+###########################################################################################################################
+# DATA LOGGING
+###########################################################################################################################
+
+# This function logs data to be sent to the MongoDB database via the message_queue.db route
 def devicedata_enqueue(mqtt_topic, name, value, unit, observation_date, model):
     t = Trial()
     date = parser.parse(datetime.fromtimestamp(observation_date).isoformat())
@@ -36,15 +84,29 @@ def devicedata_enqueue(mqtt_topic, name, value, unit, observation_date, model):
     status = "Outbound - Unsent"
 
     # Connecting to the SQLite database
-    conn = sqlite3.connect('message_queue.db')
-    cursor = conn.cursor()
+    try:
+        secure_database_write(topic, payload_json, status)
+    except Exception as e:
+        print(f"Error logging device data: {e}")
 
-    # Inserting the payload into the message_queue table
-    cursor.execute("""
-    INSERT INTO message_queue (topic, payload, status)
-    VALUES (?, ?, ?)
-    """, (topic, payload_json, status))
+###########################################################################################################################
+# ERROR LOGGING
+###########################################################################################################################
 
-    conn.commit()
-    conn.close()
+# This function logs a failed job process and the return code of the job_agent script to the 'logs/job_fail/{thing_name}' topic when called by the broker.
+def log_job_fail(return_code):
+    try:
+        # Setting up the message
+        topic = "logs/job_fail/" + SERIAL_NUMBER
+        message_payload = {
+            "timestamp": datetime.now().timestamp(),
+            "return_code": return_code
+        }
+        payload_json = json.dumps(message_payload)
+        status = "Outbound - Unsent"
 
+        # Use the secure_database_connection function to insert the data
+        secure_database_write(topic, payload_json, status)
+
+    except Exception as e:
+        print(f"Error logging job failure: {e}")
