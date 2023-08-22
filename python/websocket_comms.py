@@ -180,8 +180,12 @@ def handle_outbound_message(outbound_message):
             qos=mqtt.QoS.AT_LEAST_ONCE
         )
         print(f"Published message to topic '{topic}': {payload}")
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"websocket_comms.py: Published message to topic '{topic}': {payload}\n")
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"websocket_comms.py: Invalid message format passed to 'handle_outbound_message' function. Expected 'topic' and 'payload' fields.\n")
 
 # Callback to handle incoming messages from the job_socket to the websocket_comms service
 def handle_job_socket_jobID(jobID): #not finished
