@@ -8,7 +8,7 @@ from Sys_Conf import SERIAL_NUMBER
 # SCRIPT PATHS
 ###########################################################################################################################
 
-ota_update_script_path = "../scripts/ota_update.sh"
+ota_update_script_path = "/home/pi/Desktop/MV1_firmware/scripts/ota_update.sh"
 
 ###########################################################################################################################
 # FUNCTIONS
@@ -60,7 +60,8 @@ def main():
                 "type": "jobID",
                 "jobID": jobID
             }
-            job_socket.sendall(jobID_message.encode())
+            jobID_message_json = json.dumps(jobID_message)
+            job_socket.sendall(jobID_message_json.encode())
         
             # Execute the job
             if job_name == "OTA_Update":
