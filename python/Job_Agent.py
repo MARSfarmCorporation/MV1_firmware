@@ -107,10 +107,14 @@ def main():
     # Handle exceptions    
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON payload: {e}")
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"Job_Agent.py: Error Code 1 {e}\n")
         sys.exit(1)
 
     except socket.error as e:
         print(f"Error connecting to job_socket: {e}")
+        with open('Job_Agent_Log.txt', 'a') as file:
+            file.write(f"Job_Agent.py: Error Code 2 {e}\n")
         sys.exit(2)
 
     except Exception as e:
