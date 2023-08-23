@@ -55,4 +55,4 @@ def test_pump(amount):
     if amount > 0:
         # Creating the payload via the enqueue function
         devicedata_enqueue(mqtt_topic,"pump", amount, "mL", observation_date, "PumpObservation")
-    print('Test pump dispersed', amount, 'ML of water')
+        print('Test pump dispersed', amount, 'ML of water')

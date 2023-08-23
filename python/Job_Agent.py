@@ -77,6 +77,7 @@ def main():
                     print(f"Error executing the script: {e.stderr.decode('utf-8')}")
                     exit_fail(job_socket) # Exit the program when the job fails, sends a return code of 3 to the broker
             else:
+                # Exit the program when the job fails, sends a return code of 3 to the broker
                 print(f"Unknown job name: {job_name}")
                 exit(job_socket)
 
