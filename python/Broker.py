@@ -61,14 +61,20 @@ def spawn_job_agent(id, payload):
         secure_database_update(id, status)
         #cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Unknown' WHERE id = ?", (id,))
 
+# This function handles trial messages and writes them to trial.py. It then updates the status in the database.
 def trial_handler(payload, id):
-    # Write the payload to trial.py
-    with open('trial.py', 'w') as file:
-        file.write(payload)
+    try:
+        # Write the payload to trial.py
+        with open('trial.py', 'w') as file:
+            file.write(payload)
 
-    # Update the status in the database
-    status = 'Inbound - Sorted'
-    secure_database_update(id, status)
+        # Update the status in the database
+        status = 'Inbound - Sorted'
+        secure_database_update(id, status)
+    except Exception as e:
+        print(f"Error processing inbound message: {e}")
+        status = 'Inbound - Unsortable - Unrecognized Topic'
+        secure_database_update(id, status)
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
