@@ -7,7 +7,7 @@ BindsTo=websocket_comms.service
 Type=simple
 User=pi
 WorkingDirectory=/home/pi/Desktop/MV1_firmware/python
-ExecStart=/usr/bin/python3 /home/pi/Desktop/MV1_firmware/python/broker.py
+ExecStart=/usr/bin/python3 /home/pi/Desktop/MV1_firmware/python/Broker.py
 Restart=always
 
 [Install]
