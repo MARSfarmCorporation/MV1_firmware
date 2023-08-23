@@ -114,12 +114,12 @@ def main():
             print(f"Job status sent to job_socket: {job_result}")
 
             #this will try to send the job status to the broker via the message_queue.db route
-            try:
-                aws_enqueue(publish_message['topic'], job_result)
-            except Exception as e:
-                print(f"Error logging job status: {e}")
-                with open('Job_Agent_Log.txt', 'a') as file:
-                    file.write(f"Job_Agent.py: Failed to enqueue: {e}\n")
+            #try:
+            #    aws_enqueue(publish_message['topic'], job_result)
+            #except Exception as e:
+            #    print(f"Error logging job status: {e}")
+            #    with open('Job_Agent_Log.txt', 'a') as file:
+            #        file.write(f"Job_Agent.py: Failed to enqueue: {e}\n")
 
             # Close the socket and exit the program, sends a return code of 0 to the broker
             exit(job_socket)
