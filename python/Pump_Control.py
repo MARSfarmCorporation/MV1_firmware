@@ -37,7 +37,7 @@ if (ps > 0):
 
     # Creating the payload via the enqueue function
     devicedata_enqueue(mqtt_topic,"pump", ps, "mL", observation_date, "PumpObservation")
-print('Pump dispersed ', ps, ' ML of water on ', time)
+    print('Pump dispersed ', ps, ' ML of water on ', time)
 
 def test_pump(amount):
     p = Pump()

@@ -3,7 +3,6 @@ import json
 import socket
 import subprocess
 from Sys_Conf import SERIAL_NUMBER
-from WebSocketUtil import aws_enqueue
 
 ###########################################################################################################################
 # SCRIPT PATHS
@@ -35,22 +34,14 @@ def main():
         payload = sys.argv[1]
 
         # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
-        with open('Job_Agent_Log.txt', 'a') as file:
-            file.write(f"Job_Agent.py: {payload}\n")
+        #with open('Job_Agent_Log.txt', 'a') as file:
+        #    file.write(f"Job_Agent.py: {payload}\n")
 
         # Parse the payload JSON and extract the job details
         payload_json = json.loads(payload)
-
-        with open('Job_Agent_Log.txt', 'a') as file:
-            file.write(f"Job_Agent.py: payload_json: {payload_json}\n")
-
         job_details = payload_json['execution']
         jobID = job_details['jobId']
-
         job_name = job_details['jobDocument']['steps'][0]['action']['name']
-
-        with open('Job_Agent_Log.txt', 'a') as file:
-            file.write(f"Job_Agent.py: job_name: {job_name}\n")
 
         # Connect to the job_socket as a client
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as job_socket:
@@ -73,6 +64,14 @@ def main():
                 # Execute the shell script
                 try:
                     result = subprocess.run([ota_update_script_path], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    print(f"Script output: {result.stdout.decode('utf-8')}")
+                except subprocess.CalledProcessError as e:
+                    print(f"Error executing the script: {e.stderr.decode('utf-8')}")
+                    exit_fail(job_socket) # Exit the program when the job fails, sends a return code of 3 to the broker
+            if job_name == "Test_Job":
+                # Execute the python script
+                try:
+                    result = subprocess.run(["python3", "/home/pi/Desktop/MV1_firmware/scripts/Test_Job.py"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     print(f"Script output: {result.stdout.decode('utf-8')}")
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing the script: {e.stderr.decode('utf-8')}")
@@ -112,14 +111,6 @@ def main():
             }
             job_socket.sendall((json.dumps(publish_message) + '\n').encode())
             print(f"Job status sent to job_socket: {job_result}")
-
-            #this will try to send the job status to the broker via the message_queue.db route
-            #try:
-            #    aws_enqueue(publish_message['topic'], job_result)
-            #except Exception as e:
-            #    print(f"Error logging job status: {e}")
-            #    with open('Job_Agent_Log.txt', 'a') as file:
-            #        file.write(f"Job_Agent.py: Failed to enqueue: {e}\n")
 
             # Close the socket and exit the program, sends a return code of 0 to the broker
             exit(job_socket)
