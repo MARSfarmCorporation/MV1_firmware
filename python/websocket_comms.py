@@ -69,9 +69,9 @@ def refresh_credentials():
         credentials_data = get_iot_temporary_credentials()
         credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
         
-        # Calculate the time until the next refresh (11 hours before expiration)
+        # Calculate the time until the next refresh (1 hours before expiration)
         expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
-        refresh_time = expiration_time - datetime.timedelta(hours=11)
+        refresh_time = expiration_time - datetime.timedelta(hours=1)
         sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
 
         # Sleep until it's time to refresh
@@ -403,9 +403,5 @@ if __name__ == '__main__':
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/start/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/start/rejected", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
     
-    # Note: For the following topics, you will need to replace {jobId} dynamically based on the specific job being processed
-    # mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/{jobId}/update/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_messages)
-    # mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/{jobId}/update/rejected", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_messages)
-
     subscribe_result = subscribe_future.result()
     print(f"Subscribed with {str(subscribe_result['qos'])}")
