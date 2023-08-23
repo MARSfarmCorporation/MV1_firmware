@@ -17,7 +17,7 @@ database_lock = threading.Lock()
 def secure_database_write(topic, payload_json, status):
     with database_lock:
         # Connecting to the SQLite database
-        conn = sqlite3.connect('message_queue.db')
+        conn = sqlite3.connect('/home/pi/Desktop/MV1_firmware/python/message_queue.db')
         cursor = conn.cursor()
 
         # Inserting the payload into the message_queue table
@@ -33,7 +33,7 @@ def secure_database_write(topic, payload_json, status):
 def secure_database_update(id, status):
     with database_lock:
         # Connecting to the SQLite database
-        conn = sqlite3.connect('message_queue.db')
+        conn = sqlite3.connect('/home/pi/Desktop/MV1_firmware/python/message_queue.db')
         cursor = conn.cursor()
 
         # Updating the status in the message_queue table
