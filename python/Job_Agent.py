@@ -68,7 +68,7 @@ def main():
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing the script: {e.stderr.decode('utf-8')}")
                     exit_fail(job_socket) # Exit the program when the job fails, sends a return code of 3 to the broker
-            if job_name == "Test_Job":
+            elif job_name == "Test_Job":
                 # Execute the python script
                 try:
                     result = subprocess.run(["python3", "/home/pi/Desktop/MV1_firmware/scripts/Test_Job.py"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
