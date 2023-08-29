@@ -5,6 +5,6 @@ cd /home/pi/Desktop/MV1_firmware
 git pull
 echo "Pulled GitHub successfully"
 cd setup
-crontab MV1_firmware_crontab.txt
+crontab MV1_firmware_cron.txt
 echo "Updated crontab successfully"
 
