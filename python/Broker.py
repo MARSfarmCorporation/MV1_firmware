@@ -86,7 +86,7 @@ def process_inbound_message(cursor, id, topic, payload):
         # Defined topics are handled here via their respective functions
         if topic == trial_topic:
             trial_handler(payload, id)
-        if topic == job_notify_topic:
+        elif topic == job_notify_topic:
             spawn_job_agent(id, payload)
         else:
             # Handle other topics as needed
