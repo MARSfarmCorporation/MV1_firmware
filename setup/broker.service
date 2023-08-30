@@ -1,8 +1,7 @@
 [Unit]
 Description=Broker Service
 After=websocket_comms.service
-BindsTo=websocket_comms.service
-StartLimitBurst=0
+#BindsTo=websocket_comms.service
 
 [Service]
 Type=simple
@@ -11,9 +10,8 @@ WorkingDirectory=/home/pi/Desktop/MV1_firmware/python
 ExecStart=/usr/bin/python3 /home/pi/Desktop/MV1_firmware/python/Broker.py
 Restart=always
 RestartSec=10
-ExecStartPre=/bin/sleep 10
-StandardOutput=append:/home/pi/Desktop/broker_output.log
-StandardError=append:/home/pi/Desktop/broker_error.log
+#ExecStartPre=/bin/sleep 10
+
 
 [Install]
 WantedBy=multi-user.target
