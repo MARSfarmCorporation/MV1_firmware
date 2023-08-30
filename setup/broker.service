@@ -2,6 +2,7 @@
 Description=Broker Service
 After=websocket_comms.service
 BindsTo=websocket_comms.service
+StartLimitBurst=0
 
 [Service]
 Type=simple
