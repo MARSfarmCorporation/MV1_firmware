@@ -17,7 +17,7 @@ import json
 import subprocess
 import datetime
 from uuid import uuid4
-from WebSocketUtil import secure_database_write
+from WebSocketUtil import secure_database_write, secure_database_update
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
 # Parse command line arguments for the AWS IoT Core endpoint, signing region, and client ID
@@ -78,7 +78,7 @@ def refresh_credentials():
         sleep(max(sleep_time, 0))
 
 ###########################################################################################################################
-# CONNECTIONS AND SHUTDOWN
+# FUNCTIONS
 ###########################################################################################################################
 
 # Callback when connection is accidentally lost.
@@ -138,6 +138,14 @@ def shutdown_server(signum, frame):
     # Exit the program
     sys.exit(0)
 
+def on_publish_complete(future, result_future):
+    try:
+        future.result()  # Raises an exception if the publish operation failed
+        result_future.set_result("success")
+        print("Message published successfully.")
+    except Exception as e:
+        result_future.set_result("failure")
+        print(f"Publish failed: {e}")
 
 ###########################################################################################################################
 # MESSAGE HANDLERS
@@ -167,18 +175,35 @@ def handle_inbound_message(topic, payload, **kwargs):
 
 # Function to publish a message coming from the broker.py service to the AWS IoT Endpoint
 def handle_outbound_message(outbound_message):
-    # Extract the topic and payload from the received message
+    # Extract the database id, message topic, and message payload from the received message
+    id = outbound_message.get("id")
     topic = outbound_message.get("topic")
     payload = outbound_message.get("payload")
 
+    result_future = Future()
+
     # Check if the topic and payload are valid
     if topic and payload:
-        # Publish the message to the AWS IoT Endpoint
-        mqtt_connection.publish(
+        # Publish the message to the AWS IoT Endpoint as a future object
+        publish_future = mqtt_connection.publish(
             topic=topic,
             payload=json.dumps(payload),
             qos=mqtt.QoS.AT_LEAST_ONCE
         )
+        # Add a callback to the future object to handle the result, attempt to publish the message
+        publish_future.add_done_callback(lambda future: on_publish_complete(future, result_future))
+
+        # Wait for the result
+        publish_status = result_future.result()
+
+        # Update the database status based on the publish status
+        if publish_status == "success":
+            status = "Outbound - Sent"
+            secure_database_update(id, status)
+        else:
+            status = "Outbound - Pending Connection Restore"
+            secure_database_update(id, status)
+
         print(f"Published message to topic '{topic}': {payload}")
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")

@@ -3,6 +3,7 @@ import time
 import json
 import socket
 import subprocess
+import threading
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 from WebSocketUtil import log_job_fail, secure_database_update
 
@@ -111,7 +112,7 @@ def process_outbound_message(cursor, id, topic, payload):
         client_socket.connect("/tmp/websocket_comms.sock")
         
         # Format the MQTT message
-        message = json.dumps({"topic": topic, "payload": payload})
+        message = json.dumps({"id": id, "topic": topic, "payload": payload})
         
         # Send the message
         client_socket.sendall(message.encode())
@@ -120,7 +121,7 @@ def process_outbound_message(cursor, id, topic, payload):
         client_socket.close()
         
         # Update the status in the database
-        status = 'Outbound - Sent'
+        status = 'Outbound - Pending'
         secure_database_update(id, status)
         #cursor.execute("UPDATE message_queue SET status = 'Outbound - Sent' WHERE id = ?", (id,))
     except Exception as e:
@@ -133,6 +134,7 @@ def process_outbound_message(cursor, id, topic, payload):
 # MESSAGE_QUEUE.DB POLLING
 ###########################################################################################################################
 
+# Main loop to handle inbound and outbound messages
 def main():
     conn = sqlite3.connect('message_queue.db')
     cursor = conn.cursor()
@@ -154,5 +156,29 @@ def main():
     finally:
         conn.close()
 
+# This function handles outbound messages that were unable to send due to a connection error.
+def handle_pending_messages():
+    conn = sqlite3.connect('message_queue.db')
+    cursor = conn.cursor()
+
+    try:
+        while True:
+            cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status = 'Outbound - Pending Connection Restore'")
+            messages = cursor.fetchall()
+
+            for message in messages:
+                id, topic, payload, status = message
+                process_outbound_message(cursor, id, topic, payload)
+
+            conn.commit()
+            time.sleep(300)  # Sleep for 5 minutes to prevent excessive CPU usage
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
+    # Start a thread to handle pending messages
+    pending_messages_thread = threading.Thread(target=handle_pending_messages)
+    pending_messages_thread.start()
+    
+    # Start the main loop
     main()
