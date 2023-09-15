@@ -7,7 +7,7 @@ Modified By: Howard Webb - 11/2/2022
 Modified By: Peter Webb w/advice from Tyler Richards - 11/21/2022
 '''
 from pigpio import pi
-from GPIO_Conf import HEATER, ON, OFF
+from GPIO_Conf import HEATER, ON, OFF, HEATER_PWM
 from time import sleep
 # pi needs to be defined outside the class
 # set up a connection to the pigpio daemon
@@ -23,7 +23,7 @@ class Heater:
        
     def on(self):
        #turn on PWM heater (ratio of 126/255: 50W)
-       pi.set_PWM_dutycycle(HEATER,140)
+       pi.set_PWM_dutycycle(HEATER,HEATER_PWM)
        
     def off(self):
        # turn off the heater 
