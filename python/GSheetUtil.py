@@ -43,6 +43,7 @@ def test():
     test_date = (datetime.datetime.now() - datetime.datetime(1899, 12, 30))
     test_seconds = (test_date.total_seconds() / 86400)
     row = [test_seconds, "ObservationType", 'Temperature','26','Celcius']
+    sheet.insert_row(row)
 
 if __name__ == '__main__':  
     test()

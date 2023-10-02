@@ -9,16 +9,20 @@ Modified By Tyler Richards - 08.10.2021
 Modified By Howard Webb - 11.10.2022
 """
 
-from Remote_MongoUtil import EnvironmentalObservation, insert_one
+#from Remote_MongoUtil import EnvironmentalObservation, insert_one
 from SHTC3 import SHTC3
 from GSheetUtil import update_sheet 
 from MHZ16 import MHZ16
 import serial
 from datetime import datetime
 from Trial_Util import Trial
+from WebSocketUtil import devicedata_enqueue
 from Lights import Light
 from Log_Conf import TEMP, DB_TEMP, CO2, DB_CO2, DB_HUMIDITY, HUMIDITY, FAHRENHEIT, PPM, PERCENT
 import time
+
+# Global Variables
+mqtt_topic = "devicedata"
 
 # Import dictionary data
 # The 't' dictionary object is used to store trial information
@@ -42,18 +46,20 @@ def get_co2():
             co2 = 450
     except Exception as e:
         print(e)
+        l = Light()
+        l.blink_red()
         co2 = 500
     return co2
 
 # save sensor data to the remote MongoDB database
-def save_db(name, value, unit):
-     try:
-        insert_one(EnvironmentalObservation(observation_date, name, value, unit, t.trial_id, t.trial_name, t.start_date))
-     except Exception as e:
-        print(e)
-        # if data does not save to database, LED will blink blue
-        l = Light()
-        l.blink_blue()
+#def save_db(name, value, unit):
+#     try:
+#        insert_one(EnvironmentalObservation(observation_date, name, value, unit, t.trial_id, t.trial_name, t.start_date))
+#     except Exception as e:
+#        print(e)
+#        # if data does not save to database, LED will blink blue
+#        l = Light()
+#        l.blink_blue()
 
 def get_temp_humidity():
     #accessing SHTC3 sensor to read temperature and humidity data
@@ -64,12 +70,17 @@ def get_temp_humidity():
         print(e)
         # if sensor does not return a value, LED will blink red
         l = Light()
-        l.blink_red()
+        l.blink_red(10, 2)
     return temp, humid
 
 def save_google_sheet(name, value, unit):
     #Update google sheets with sensor data
-    update_sheet('Environment_Observation', name, value, unit)
+    try:
+        update_sheet('Environment_Observation', name, value, unit)
+    except Exception as e:
+        print(e)
+        l = Light()
+        l.blink_blue(10, 2)
 
 # perfrom a test of the sensor data logging 
 def test():
@@ -81,11 +92,14 @@ def test():
    temp, humid = get_temp_humidity()
    print("Temp", temp, "Humidity", humid)
    print('testing save_db function by sending Co2')
-   save_db(DB_CO2, co2, PPM)
+   #save_db(DB_CO2, co2, PPM)
+   devicedata_enqueue(mqtt_topic, DB_CO2, co2, PPM, observation_date, "EnvironmentalObservation")
    print('save temp and humidity data to database')
-   save_db(DB_TEMP, temp, FAHRENHEIT)
+   #save_db(DB_TEMP, temp, FAHRENHEIT)
+   devicedata_enqueue(mqtt_topic, DB_TEMP, temp, FAHRENHEIT, observation_date, "EnvironmentalObservation")
    print("Save Humidity")
-   save_db(DB_HUMIDITY, humid, PERCENT)
+   #save_db(DB_HUMIDITY, humid, PERCENT)
+   devicedata_enqueue(mqtt_topic, DB_HUMIDITY, humid, PERCENT, observation_date,"EnvironmentalObservation")
    print("Save Sheet Function")
    print("Save CO2")
    save_google_sheet(CO2, co2, PPM)
@@ -94,6 +108,6 @@ def test():
    print("Save Humidity")
    save_google_sheet(HUMIDITY, humid, PERCENT)
    print("Done")
-
+   
 if __name__=="__main__":
     test()

@@ -6,6 +6,7 @@ pictures/*
 
 # exclude everything
 logs/*
+python/__pycache__/*
 
 # exception to the rule
 !logs/.gitkeep 
@@ -15,3 +16,7 @@ logs/*
 # added by pw locally 12.21.22
 
 python/trial.py
+
+# added by pw locally 08.15.23
+
+python/Sys_Conf.py

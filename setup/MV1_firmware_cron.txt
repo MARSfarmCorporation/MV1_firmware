@@ -39,6 +39,9 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 # Check trial settings and temperature values, to determine whether heater or exhaust fan turns on, every 10 seconds
 * * * * * for i in {1..5}; do python3 $PYTHON_PATH/Thermostat.py & sleep 10; done >> $LOG_PATH/Thermostat.log 2>&1 &
 
+# Refresh the websocket connection every 4 hours
+1 */4 * * * sudo systemctl restart websocket_comms.service
+
 # Start pigpio service, at reboot, the "-s1" is necessary to set sample rate faster for Heater.py to set frequency 
 @reboot sudo pigpiod -s1 >> $LOG_PATH/boot_pigpio.log 2>&1 &
 
@@ -49,5 +52,5 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 @reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
 
 # Start paho service to listen for device_id on MQTT server, 1 minute after reboot - script continues to loop after starting at boot
-@reboot sleep 60; python3 $PYTHON_PATH/MQTTsub_savetrial.py >> $LOG_PATH/boot_MQTT.log 2>&1 &
+#@reboot sleep 60; python3 $PYTHON_PATH/MQTTsub_savetrial.py >> $LOG_PATH/boot_MQTT.log 2>&1 &
 # WARNING: This should probably be changed and tested to only run for an hour after boot so as to prevent long-term wear

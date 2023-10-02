@@ -7,7 +7,7 @@ import os
 #from time import sleep
 #from Lights import Light
 import datetime
-from Sys_Conf import MAC_ADDRESS
+from Sys_Conf import ETH_MAC_ADDRESS, WLAN_MAC_ADDRESS
 from datetime import datetime
 
 #time added for logging purposes
@@ -18,9 +18,15 @@ time = datetime.now().strftime("%Y-%m-%d_%H%M")
 #third to last group of digits is the year
 
 #cmd = ('sudo macchanger --mac=' + MAC_ADDRESS + ' eth0')
-cmd = str('sudo macchanger --mac='+MAC_ADDRESS+' eth0') # create a command string to change the MAC address using the MAC_ADDRESS variable 
-print('Attempting to run command ', cmd, ' at this time: ', time) 
-os.system(cmd)
+# Command to change the MAC address for eth0
+cmd_eth = str('sudo macchanger --mac=' + ETH_MAC_ADDRESS + ' eth0')
+print('Attempting to run command ', cmd_eth, ' at this time: ', time)
+os.system(cmd_eth)
+
+# Command to change the MAC address for wlan0
+cmd_wlan = str('sudo macchanger --mac=' + WLAN_MAC_ADDRESS + ' wlan0')
+print('Attempting to run command ', cmd_wlan, ' at this time: ', time)
+os.system(cmd_wlan)
 
 #flash lights red and blue to confirm ethernet connection
 #lights = Light()
