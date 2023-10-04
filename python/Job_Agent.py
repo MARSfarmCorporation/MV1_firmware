@@ -34,7 +34,7 @@ def main():
         payload = sys.argv[1]
 
         # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
-        #with open('Job_Agent_Log.txt', 'a') as file:
+        #with open('../logs/Job_Agent_Log.txt', 'a') as file:
         #    file.write(f"Job_Agent.py: {payload}\n")
 
         # Parse the payload JSON and extract the job details
@@ -54,7 +54,7 @@ def main():
             }
             jobID_message_json = json.dumps(jobID_message)
 
-            with open('Job_Agent_Log.txt', 'a') as file:
+            with open('../logs/Job_Agent_Log.txt', 'a') as file:
                 file.write(f"Job_Agent.py: jobID_message_json: {jobID_message_json}\n")
 
             job_socket.sendall((jobID_message_json + '\n').encode())
@@ -81,7 +81,7 @@ def main():
                 print(f"Unknown job name: {job_name}")
                 exit(job_socket)
 
-            with open('Job_Agent_Log.txt', 'a') as file:
+            with open('../logs/Job_Agent_Log.txt', 'a') as file:
                 file.write(f"Job_Agent.py: result: {result}\n")
 
             # Format the job status to be sent to the job_socket
@@ -90,7 +90,7 @@ def main():
                 job_result = {
                     "status": job_status
                 }
-                with open('Job_Agent_Log.txt', 'a') as file:
+                with open('../logs/Job_Agent_Log.txt', 'a') as file:
                     file.write(f"Job_Agent.py: job_result_success: {job_result}\n")
             else:
                 job_status = "FAILED"
@@ -101,7 +101,7 @@ def main():
                         "message": result.stderr.decode('utf-8')
                     }
                 }
-                with open('Job_Agent_Log.txt', 'a') as file:
+                with open('../logs/Job_Agent_Log.txt', 'a') as file:
                     file.write(f"Job_Agent.py: job_result_failure: {job_result}\n")
             
             # Send the job status to the job_socket, formatted as a JSON string with a topic and a payload
@@ -119,19 +119,19 @@ def main():
     # Handle exceptions    
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON payload: {e}")
-        with open('Job_Agent_Log.txt', 'a') as file:
+        with open('../logs/Job_Agent_Log.txt', 'a') as file:
             file.write(f"Job_Agent.py: Error Code 1 {e}\n")
         sys.exit(1)
 
     except socket.error as e:
         print(f"Error connecting to job_socket: {e}")
-        with open('Job_Agent_Log.txt', 'a') as file:
+        with open('../logs/Job_Agent_Log.txt', 'a') as file:
             file.write(f"Job_Agent.py: Error Code 2 {e}\n")
         sys.exit(2)
 
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        with open('Job_Agent_Log.txt', 'a') as file:
+        with open('../logs/Job_Agent_Log.txt', 'a') as file:
             file.write(f"Job_Agent.py: Error Code 4 {e}\n")
         sys.exit(4)  # or another unique code
 
