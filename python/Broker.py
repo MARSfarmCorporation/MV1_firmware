@@ -5,6 +5,7 @@ import socket
 import subprocess
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 from WebSocketUtil import log_job_fail, secure_database_update
+from Lights import Light
 
 ###########################################################################################################################
 # DEFINE TOPICS
@@ -71,10 +72,19 @@ def trial_handler(payload, id):
         # Update the status in the database
         status = 'Inbound - Sorted'
         secure_database_update(id, status)
+
+        # Blink the lights white to indicate a successful trial write
+        light = Light()
+        light.trial_received_success()
+        
     except Exception as e:
         print(f"Error processing inbound message: {e}")
         status = 'Inbound - Unsortable - Unrecognized Topic'
         secure_database_update(id, status)
+
+        # Blink the lights red to indicate an error
+        light = Light()
+        light.blink_blue()
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
