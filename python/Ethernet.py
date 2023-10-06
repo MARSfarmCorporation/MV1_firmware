@@ -2,6 +2,9 @@
 This file was created to reassign a static MAC address to eth0 at boot, this was modeled after CameraAF.py
 Previously this task was done entirely within cron, now though cron will call this python script so that variables may be kept within Sys_Conf.py
 Author: Peter Webb - 04.05.2023
+
+This file now also reassigns a static MAC address to wlan0 at boot
+Updated By: Drew Thomas - 10.01.2023
 '''
 import os
 #from time import sleep
