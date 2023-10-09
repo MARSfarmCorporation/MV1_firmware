@@ -25,7 +25,7 @@ print('image will be saved to: ', IMAGE_DIR + file_name)
 cmd = '/usr/local/bin/libcamera-still -t 5000 --nopreview --width 1920 --height 1080 --continue-autofocus -o {}'.format(IMAGE_DIR + file_name)
 # construct the commad to capture the image using the libcamera-still command-line utility 
 os.system(cmd)
-sleep(2)
+sleep(10)
 
 #Return light to current setting
 import Light_Control
