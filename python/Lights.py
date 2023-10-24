@@ -60,12 +60,20 @@ class Light:
     def off(self):
         self.customMode(0,0,0,0)
         
+    # default blink functions, need to fix names or rework functions
     def blink_blue(self, num=5, spd=1):
         self.blink(num, spd, 0, 0, 100, 0)
         
     def blink_red(self, num=5, spd=1):
         self.blink(num, spd, 0, 50, 0, 0)
+
+    # new format for blink functions
+    def trial_received_success(self, num=5, spd=1):
+        self.blink(num, spd, 0, 0, 0, 100)
         
+    def trial_received_fail(self, num=3, spd=0.25):
+        self.blink(num, spd, 0, 0, 100, 0)
+
     def blink(self, num=5, spd=1, fr=0, r=0, b=0, w=100):
         # Used to indicate an error
         for i in range(0,num):

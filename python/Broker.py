@@ -6,6 +6,7 @@ import subprocess
 import threading
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 from WebSocketUtil import log_job_fail, secure_database_update
+from Lights import Light
 
 ###########################################################################################################################
 # DEFINE TOPICS
@@ -21,7 +22,7 @@ job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 def spawn_job_agent(id, payload):
     try:
         # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Broker.py: "
-        #with open('Job_Agent_Log.txt', 'a') as file:
+        #with open('../logs/Job_Agent_Log.txt', 'a') as file:
         #    file.write(f"Broker.py: {payload}\n")
 
         # Start the Job_Agent.py process and pass the payload
@@ -72,10 +73,19 @@ def trial_handler(payload, id):
         # Update the status in the database
         status = 'Inbound - Sorted'
         secure_database_update(id, status)
+
+        # Blink the lights white to indicate a successful trial write
+        light = Light()
+        light.trial_received_success()
+        
     except Exception as e:
         print(f"Error processing inbound message: {e}")
         status = 'Inbound - Unsortable - Unrecognized Topic'
         secure_database_update(id, status)
+
+        # Blink the lights red to indicate an error
+        light = Light()
+        light.blink_blue()
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING

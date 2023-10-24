@@ -105,7 +105,7 @@ def aws_enqueue(mqtt_topic, mqtt_payload):
         secure_database_write(topic, payload_json, status)
     except Exception as e:
         print(f"Error logging device data: {e}")
-        with open('Job_Agent_Log.txt', 'a') as file:
+        with open('../logs/Job_Agent_Log.txt', 'a') as file:
             file.write(f"WebSocketUtil.py: Failed to enqueue: {e}\n")
 
 ###########################################################################################################################
