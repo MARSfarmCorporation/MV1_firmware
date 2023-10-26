@@ -154,10 +154,6 @@ def main():
             cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status IN ('Inbound - Unsorted', 'Outbound - Unsent')")
             messages = cursor.fetchall()
 
-            # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
-            with open('../logs/Broker_Log.txt', 'a') as file:
-                file.write(f"Broker.py: attempting to send {messages}\n")
-
             for message in messages:
                 id, topic, payload, status = message
                 if status == 'Inbound - Unsorted':
@@ -166,7 +162,7 @@ def main():
                     process_outbound_message(cursor, id, topic, payload)
 
             conn.commit()
-            time.sleep(5) # Sleep for 0.25 seconds to prevent excessive CPU usage
+            time.sleep(0.25) # Sleep for 0.25 seconds to prevent excessive CPU usage
     finally:
         conn.close()
 
