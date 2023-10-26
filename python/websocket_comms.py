@@ -182,6 +182,9 @@ def handle_outbound_message(outbound_message):
 
     result_future = Future()
 
+    with open('../logs/Broker_Log.txt', 'a') as file:
+        file.write(f"websocket_comms.py: attempting to publish ID: {id}, Topic: {topic}, and Payload: {payload} \n")
+
     # Check if the topic and payload are valid
     if topic and payload:
         try:
@@ -193,7 +196,7 @@ def handle_outbound_message(outbound_message):
             )
         except Exception as e:
             print(f"MQTT Publish failed: {e}")
-            with open('../logs/Job_Agent_Log.txt', 'a') as file:
+            with open('../logs/Broker_Log.txt', 'a') as file:
                 file.write(f"websocket_comms.py: MQTT Publish failed: {e}\n")
             return  # Exit the function if the publish operation fails
 
@@ -214,7 +217,7 @@ def handle_outbound_message(outbound_message):
         print(f"Published message to topic '{topic}': {payload}")
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
-        with open('../logs/Job_Agent_Log.txt', 'a') as file:
+        with open('../logs/Broker_Log.txt', 'a') as file:
             file.write(f"websocket_comms.py: Invalid message format passed to 'handle_outbound_message' function. Expected 'topic' and 'payload' fields.\n")
 
 # Callback to handle incoming messages from the job_socket to the websocket_comms service
@@ -289,6 +292,9 @@ def broker_socket():
 
             # Combine the chunks and decode the message
             outbound_message = b''.join(chunks).decode()
+
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: Received from Socket: {outbound_message}\n")
 
             # Passes file to the outbound message handler
             handle_outbound_message(json.loads(outbound_message))
