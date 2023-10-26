@@ -209,9 +209,13 @@ def handle_outbound_message(outbound_message):
         # Update the database status based on the publish status
         if publish_status == "success":
             status = "Outbound - Sent"
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: attempting to change status, ID: {id}, Status: {status} \n")
             secure_database_update(id, status)
         else:
             status = "Outbound - Pending Connection Restore"
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: failed to change status, ID: {id}, Status: {status} \n")
             secure_database_update(id, status)
 
         print(f"Published message to topic '{topic}': {payload}")
