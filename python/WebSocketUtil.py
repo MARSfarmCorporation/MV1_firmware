@@ -57,6 +57,8 @@ def secure_database_write(topic, payload_json, status):
 def secure_database_update(id, status):
     with database_lock:
         try:
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"WebSocketUtils.py: Attempting to change status of: {id}\n")
             # Connecting to the SQLite database
             conn = sqlite3.connect('/home/pi/Desktop/MV1_firmware/python/message_queue.db')
             conn.execute("PRAGMA busy_timeout = 2000")  # Setting a busy timeout of 2000 milliseconds
@@ -74,6 +76,8 @@ def secure_database_update(id, status):
         
         except sqlite3.Error as e:
             print(f"SQLite error occurred: {e}")
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"WebSocketUtils.py: Database status update: {e}\n")
         
         finally:
             # Closing the database connection
