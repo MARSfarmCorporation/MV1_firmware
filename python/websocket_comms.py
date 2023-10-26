@@ -184,12 +184,19 @@ def handle_outbound_message(outbound_message):
 
     # Check if the topic and payload are valid
     if topic and payload:
-        # Publish the message to the AWS IoT Endpoint as a future object
-        publish_future = mqtt_connection.publish(
-            topic=topic,
-            payload=json.dumps(payload),
-            qos=mqtt.QoS.AT_LEAST_ONCE
-        )
+        try:
+            # Publish the message to the AWS IoT Endpoint as a future object
+            publish_future = mqtt_connection.publish(
+                topic=topic,
+                payload=json.dumps(payload),
+                qos=mqtt.QoS.AT_LEAST_ONCE
+            )
+        except Exception as e:
+            print(f"MQTT Publish failed: {e}")
+            with open('../logs/Job_Agent_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: MQTT Publish failed: {e}\n")
+            return  # Exit the function if the publish operation fails
+
         # Add a callback to the future object to handle the result, attempt to publish the message
         publish_future.add_done_callback(lambda future: on_publish_complete(future, result_future))
 
