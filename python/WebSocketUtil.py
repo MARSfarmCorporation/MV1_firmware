@@ -56,19 +56,28 @@ def secure_database_write(topic, payload_json, status):
 # This function uses thread locking to ensure that only one thread can update the database at a time
 def secure_database_update(id, status):
     with database_lock:
-        # Connecting to the SQLite database
-        conn = sqlite3.connect('/home/pi/Desktop/MV1_firmware/python/message_queue.db')
-        cursor = conn.cursor()
+        try:
+            # Connecting to the SQLite database
+            conn = sqlite3.connect('/home/pi/Desktop/MV1_firmware/python/message_queue.db')
+            conn.execute("PRAGMA busy_timeout = 2000")  # Setting a busy timeout of 2000 milliseconds
+            cursor = conn.cursor()
 
-        # Updating the status in the message_queue table
-        cursor.execute("""
-        UPDATE message_queue
-        SET status = ?
-        WHERE id = ?
-        """, (status, id))
+            # Updating the status in the message_queue table
+            cursor.execute("""
+            UPDATE message_queue
+            SET status = ?
+            WHERE id = ?
+            """, (status, id))
 
-        conn.commit()
-        conn.close()
+            # Committing the transaction
+            conn.commit()
+        
+        except sqlite3.Error as e:
+            print(f"SQLite error occurred: {e}")
+        
+        finally:
+            # Closing the database connection
+            conn.close()
 
 
 ###########################################################################################################################
