@@ -146,14 +146,30 @@ def process_outbound_message(cursor, id, topic, payload):
 
 # Main loop to handle inbound and outbound messages
 def main():
-    conn = sqlite3.connect('message_queue.db')
-    cursor = conn.cursor()
+    try:
+        # Try to connect to the database
+        conn = sqlite3.connect('message_queue.db')
+        cursor = conn.cursor()
+    except sqlite3.Error as e:
+        print(f"Database connection failed: {e}")
+        # You can also log this error to a file
+        with open('../logs/Broker_Log.txt', 'a') as file:
+            file.write(f"Broker.py: Database connection failed: {e}\n")
+        return  # Exit the function
 
     try:
         while True:
-            cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status IN ('Inbound - Unsorted', 'Outbound - Unsent')")
-            messages = cursor.fetchall()
-            
+            try:
+                # Try to execute the SQL query
+                cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status IN ('Inbound - Unsorted', 'Outbound - Unsent')")
+                messages = cursor.fetchall()
+            except sqlite3.Error as e:
+                print(f"SQL query execution failed: {e}")
+                # Log this error to a file as well
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write(f"Broker.py: SQL query execution failed: {e}\n")
+                continue  # Skip this iteration and try again
+
             # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
             with open('../logs/Broker_Log.txt', 'a') as file:
                 file.write(f"Broker.py: attempting to send {messages}\n")
