@@ -203,8 +203,14 @@ def handle_outbound_message(outbound_message):
         # Add a callback to the future object to handle the result, attempt to publish the message
         publish_future.add_done_callback(lambda future: on_publish_complete(future, result_future))
 
+        with open('../logs/Broker_Log.txt', 'a') as file:
+            file.write(f"websocket_comms.py: publish_future = {publish_future}")
+
         # Wait for the result
         publish_status = result_future.result()
+
+        with open('../logs/Broker_Log.txt', 'a') as file:
+            file.write(f"websocket_comms.py: publish_satus = {publish_status}")
 
         # Update the database status based on the publish status
         if publish_status == "success":
