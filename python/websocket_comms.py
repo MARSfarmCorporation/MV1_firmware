@@ -138,30 +138,31 @@ def shutdown_server(signum, frame):
     # Exit the program
     sys.exit(0)
 
-def on_publish_complete(future, result_future):
-    try:
-        with open('../logs/Broker_Log.txt', 'a') as file:
-            file.write(f"websocket_comms.py: on_publish_complete call: {future}, Result: {result_future} \n")
-        
-        try:
-            future.result(timeout=5)  # Wait up to 5 seconds for the future to complete
-        except TimeoutError:
-            print("Publish operation timed out in callback.")
-            with open('../logs/Broker_Log.txt', 'a') as file:
-                file.write("websocket_comms.py: Publish operation timed out in callback.\n")
-            result_future.set_result("timeout")
-            return
-        
-        result_future.set_result("success")
-        with open('../logs/Broker_Log.txt', 'a') as file:
-            file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
-        print("Message published successfully.")
-    except Exception as e:
-        result_future.set_result("failure")
-        with open('../logs/Broker_Log.txt', 'a') as file:
-            file.write(f"websocket_comms.py: on_publish_complete failure: {e} \n")
-        print(f"Publish failed: {e}")
-        
+
+#def on_publish_complete(future, result_future):
+#    try:
+#        with open('../logs/Broker_Log.txt', 'a') as file:
+#            file.write(f"websocket_comms.py: on_publish_complete call: {future}, Result: {result_future} \n")
+#        
+#        try:
+#            future.result(timeout=5)  # Wait up to 5 seconds for the future to complete
+#        except TimeoutError:
+#            print("Publish operation timed out in callback.")
+#            with open('../logs/Broker_Log.txt', 'a') as file:
+#                file.write("websocket_comms.py: Publish operation timed out in callback.\n")
+#            result_future.set_result("timeout")
+#            return
+#        
+#        result_future.set_result("success")
+#        with open('../logs/Broker_Log.txt', 'a') as file:
+#            file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
+#        print("Message published successfully.")
+#   except Exception as e:
+#        result_future.set_result("failure")
+#        with open('../logs/Broker_Log.txt', 'a') as file:
+#           file.write(f"websocket_comms.py: on_publish_complete failure: {e} \n")
+#       print(f"Publish failed: {e}")
+
 
 ###########################################################################################################################
 # MESSAGE HANDLERS
@@ -214,46 +215,47 @@ def handle_outbound_message(outbound_message):
                 file.write(f"websocket_comms.py: MQTT Publish success.\n")
             with open('../logs/Broker_Log.txt', 'a') as file:
                 file.write(f"websocket_comms.py: MQTT publish Future: {publish_future}\n")
+            
+            try:
+                # Wait for up to 5 seconds for the publish future to complete
+                publish_future.result(timeout=5)
+                
+                # If it's here, it means the publish was successful
+                result_future.set_result("success")
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
+                print("Message published successfully.")
+            except TimeoutError:
+                print("Publish operation timed out.")
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write("websocket_comms.py: Publish operation timed out.\n")
+                result_future.set_result("failure")
+            except Exception as e:
+                print(f"Publish failed: {e}")
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write(f"websocket_comms.py: Publish failed: {e}\n")
+                result_future.set_result("failure")
+
+            # Get the publish status from the result future
+            publish_status = result_future.result()
+
+            # Update the database status based on the publish status
+            if publish_status == "success":
+                status = "Outbound - Sent"
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write(f"websocket_comms.py: attempting to change status, ID: {id}, Status: {status} \n")
+                secure_database_update(id, status)
+            else:
+                status = "Outbound - Pending Connection Restore"
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write(f"websocket_comms.py: failed to change status, ID: {id}, Status: {status} \n")
+                secure_database_update(id, status)
+
         except Exception as e:
             print(f"MQTT Publish failed: {e}")
             with open('../logs/Broker_Log.txt', 'a') as file:
                 file.write(f"websocket_comms.py: MQTT Publish failed: {e}\n")
             return  # Exit the function if the publish operation fails
-
-        # Add a callback to the future object to handle the result, attempt to publish the message
-        publish_future.add_done_callback(lambda future: on_publish_complete(future, result_future))
-
-        with open('../logs/Broker_Log.txt', 'a') as file:
-            file.write(f"websocket_comms.py: publish_future = {publish_future}")
-
-        try:
-            # Wait for up to 5 seconds for the publish future to complete
-            publish_future.result(timeout=5)
-        except TimeoutError:
-            print("Publish operation timed out.")
-            with open('../logs/Broker_Log.txt', 'a') as file:
-                file.write("websocket_comms.py: Publish operation timed out.\n")
-            # You can decide what to do here: retry, log, etc.
-
-        # Wait for the result
-        publish_status = result_future.result()
-
-        with open('../logs/Broker_Log.txt', 'a') as file:
-            file.write(f"websocket_comms.py: publish_status = {publish_status}")
-
-        # Update the database status based on the publish status
-        if publish_status == "success":
-            status = "Outbound - Sent"
-            with open('../logs/Broker_Log.txt', 'a') as file:
-                file.write(f"websocket_comms.py: attempting to change status, ID: {id}, Status: {status} \n")
-            secure_database_update(id, status)
-        else:
-            status = "Outbound - Pending Connection Restore"
-            with open('../logs/Broker_Log.txt', 'a') as file:
-                file.write(f"websocket_comms.py: failed to change status, ID: {id}, Status: {status} \n")
-            secure_database_update(id, status)
-
-        print(f"Published message to topic '{topic}': {payload}")
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
         with open('../logs/Broker_Log.txt', 'a') as file:
