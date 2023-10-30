@@ -140,8 +140,14 @@ def shutdown_server(signum, frame):
 
 def on_publish_complete(future, result_future):
     try:
+        with open('../logs/Broker_Log.txt', 'a') as file:
+            file.write(f"websocket_comms.py: on_publish_complete call: {future}, Result: {result_future} \n")
+
         future.result()  # Raises an exception if the publish operation failed
+
         result_future.set_result("success")
+        with open('../logs/Broker_Log.txt', 'a') as file:
+            file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
         print("Message published successfully.")
     except Exception as e:
         result_future.set_result("failure")
