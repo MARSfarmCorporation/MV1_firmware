@@ -200,6 +200,10 @@ def handle_outbound_message(outbound_message):
                 payload=json.dumps(payload),
                 qos=mqtt.QoS.AT_LEAST_ONCE
             )
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: MQTT Publish success.\n")
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: MQTT publish Future: {publish_future}\n")
         except Exception as e:
             print(f"MQTT Publish failed: {e}")
             with open('../logs/Broker_Log.txt', 'a') as file:

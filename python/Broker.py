@@ -171,8 +171,8 @@ def main():
                 continue  # Skip this iteration and try again
 
             # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
-            with open('../logs/Broker_Log.txt', 'a') as file:
-                file.write(f"Broker.py: attempting to send {messages}\n")
+            #with open('../logs/Broker_Log.txt', 'a') as file:
+            #    file.write(f"Broker.py: attempting to send {messages}\n")
             
             for message in messages:
                 id, topic, payload, status = message
