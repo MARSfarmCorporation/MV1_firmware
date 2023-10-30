@@ -206,7 +206,7 @@ def handle_outbound_message(outbound_message):
     if topic and payload:
         try:
             # Publish the message to the AWS IoT Endpoint as a future object
-            publish_future = mqtt_connection.publish(
+            publish_future, _ = mqtt_connection.publish(
                 topic=topic,
                 payload=json.dumps(payload),
                 qos=mqtt.QoS.AT_LEAST_ONCE
