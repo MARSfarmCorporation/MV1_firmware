@@ -16,7 +16,6 @@ import socket
 import json
 import subprocess
 import datetime
-from uuid import uuid4
 from WebSocketUtil import secure_database_write, secure_database_update
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
@@ -211,10 +210,10 @@ def handle_outbound_message(outbound_message):
                 payload=json.dumps(payload),
                 qos=mqtt.QoS.AT_LEAST_ONCE
             )
-            with open('../logs/Broker_Log.txt', 'a') as file:
-                file.write(f"websocket_comms.py: MQTT Publish success.\n")
-            with open('../logs/Broker_Log.txt', 'a') as file:
-                file.write(f"websocket_comms.py: MQTT publish Future: {publish_future}\n")
+            #with open('../logs/Broker_Log.txt', 'a') as file:
+            #    file.write(f"websocket_comms.py: MQTT Publish success.\n")
+            #with open('../logs/Broker_Log.txt', 'a') as file:
+            #    file.write(f"websocket_comms.py: MQTT publish Future: {publish_future}\n")
             
             try:
                 # Wait for up to 5 seconds for the publish future to complete
@@ -222,8 +221,8 @@ def handle_outbound_message(outbound_message):
                 
                 # If it's here, it means the publish was successful
                 result_future.set_result("success")
-                with open('../logs/Broker_Log.txt', 'a') as file:
-                    file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
+            #    with open('../logs/Broker_Log.txt', 'a') as file:
+            #        file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
                 print("Message published successfully.")
             except TimeoutError:
                 print("Publish operation timed out.")
@@ -242,8 +241,8 @@ def handle_outbound_message(outbound_message):
             # Update the database status based on the publish status
             if publish_status == "success":
                 status = "Outbound - Sent"
-                with open('../logs/Broker_Log.txt', 'a') as file:
-                    file.write(f"websocket_comms.py: attempting to change status, ID: {id}, Status: {status} \n")
+            #    with open('../logs/Broker_Log.txt', 'a') as file:
+            #        file.write(f"websocket_comms.py: attempting to change status, ID: {id}, Status: {status} \n")
                 secure_database_update(id, status)
             else:
                 status = "Outbound - Pending Connection Restore"
@@ -340,6 +339,9 @@ def broker_socket():
             # Passes file to the outbound message handler
             handle_outbound_message(json.loads(outbound_message))
 
+            # Sleep briefly to yield control and prevent tight looping
+            sleep(0.1)
+
         except Exception as e:
             print(f"An error occurred while handling a connection: {e}")
             # Optionally, you can log the traceback or other details here
@@ -412,7 +414,9 @@ def job_socket():
                         print(f"Unknown message type: {message_type}")
                         with open('../logs/Job_Agent_Log.txt', 'a') as file:
                             file.write(f"websocket_comms.py: Unknown message type: {message_type}\n")
-
+            
+            # Sleep briefly to yield control and prevent tight looping
+            sleep(0.1)
         except Exception as e:
             print(f"An error occurred while handling a connection: {e}")
             # Optionally, you can log the traceback or other details here

@@ -80,7 +80,7 @@ def trial_handler(payload, id):
         
     except Exception as e:
         print(f"Error processing inbound message: {e}")
-        status = 'Inbound - Unsortable - Unrecognized Topic'
+        status = 'Inbound - Unsortable - Unknown'
         secure_database_update(id, status)
 
         # Blink the lights red to indicate an error
@@ -161,7 +161,7 @@ def main():
         while True:
             try:
                 # Try to execute the SQL query
-                cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status IN ('Inbound - Unsorted', 'Outbound - Unsent')")
+                cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status IN ('Inbound - Unsorted', 'Outbound - Unsent') ORDER BY id ASC LIMIT 10")
                 messages = cursor.fetchall()
             except sqlite3.Error as e:
                 print(f"SQL query execution failed: {e}")
@@ -182,7 +182,7 @@ def main():
                     process_outbound_message(cursor, id, topic, payload)
 
             conn.commit()
-            time.sleep(5) # Sleep for 0.25 seconds to prevent excessive CPU usage
+            time.sleep(1) # Sleep for 1 second to prevent excessive CPU usage
     finally:
         conn.close()
 
@@ -193,7 +193,7 @@ def handle_pending_messages():
 
     try:
         while True:
-            cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status = 'Outbound - Pending Connection Restore'")
+            cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status = 'Outbound - Pending Connection Restore' ORDER BY id ASC LIMIT 50")
             messages = cursor.fetchall()
 
             for message in messages:
@@ -201,7 +201,7 @@ def handle_pending_messages():
                 process_outbound_message(cursor, id, topic, payload)
 
             conn.commit()
-            time.sleep(300)  # Sleep for 5 minutes to prevent excessive CPU usage
+            time.sleep(60)  # Sleep for 1 minute to prevent excessive CPU usage
     finally:
         conn.close()
 
