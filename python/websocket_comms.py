@@ -87,12 +87,11 @@ def refresh_credentials():
 # Callback when connection is accidentally lost.
 def on_connection_interrupted(connection, error, **kwargs):
     print("Connection interrupted. error: {}".format(error))
-    logging.error(f"Connection interrupted. Error: {error}")
-    sys.exit(1)
-    #with locked_data.lock:
-    #    locked_data.reconnection_attempts += 1
-    #    if locked_data.reconnection_attempts > 5:  # Change 5 to any threshold you prefer
-    #        exit("Exceeded maximum reconnection attempts.")
+
+    with locked_data.lock:
+        locked_data.reconnection_attempts += 1
+        if locked_data.reconnection_attempts > 5:  # Change 5 to any threshold you prefer
+            exit("Exceeded maximum reconnection attempts.")
 
 # Callback when an interrupted connection is re-established.
 def on_connection_resumed(connection, return_code, session_present, **kwargs):
