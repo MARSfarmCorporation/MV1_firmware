@@ -16,15 +16,12 @@ import socket
 import json
 import subprocess
 import datetime
+import logging
 from WebSocketUtil import secure_database_write, secure_database_update
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
-# Parse command line arguments for the AWS IoT Core endpoint, signing region, and client ID
-parser = argparse.ArgumentParser(description="Send and receive messages through an MQTT connection.")
-parser.add_argument("--endpoint", action="store", type=str, default="a28ud61a8gem1b-ats.iot.us-east-2.amazonaws.com", help="")
-parser.add_argument("--signing_region", action="store", type=str, default="us-east-2", help="")
-parser.add_argument("--client_id", action="store", type=str, default=SERIAL_NUMBER, help="")
-args = parser.parse_args()
+# Setup logging to file
+logging.basicConfig(filename='../logs/websocket_comms_log', level=logging.DEBUG)
 
 # Global variables
 is_sample_done = threading.Event()
@@ -43,6 +40,13 @@ locked_data = LockedData()
 ###########################################################################################################################
 # CREDENTIALS
 ###########################################################################################################################
+
+# Parse command line arguments for the AWS IoT Core endpoint, signing region, and client ID
+parser = argparse.ArgumentParser(description="Send and receive messages through an MQTT connection.")
+parser.add_argument("--endpoint", action="store", type=str, default="a28ud61a8gem1b-ats.iot.us-east-2.amazonaws.com", help="")
+parser.add_argument("--signing_region", action="store", type=str, default="us-east-2", help="")
+parser.add_argument("--client_id", action="store", type=str, default=SERIAL_NUMBER, help="")
+args = parser.parse_args()
 
 # AWS IoT Core credentials
 device_cert = "/home/pi/certs/device.pem.crt.crt"
@@ -83,6 +87,7 @@ def refresh_credentials():
 # Callback when connection is accidentally lost.
 def on_connection_interrupted(connection, error, **kwargs):
     print("Connection interrupted. error: {}".format(error))
+    logging.error(f"Connection interrupted. Error: {error}")
     sys.exit(1)
     #with locked_data.lock:
     #    locked_data.reconnection_attempts += 1
