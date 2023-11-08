@@ -71,7 +71,7 @@ def main():
             elif job_name == "Message_Queue_Refresh_Job":
                 # Execute the shell script
                 try:
-                    result = subprocess.run({"message_queue_refresh.sh"}, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    result = subprocess.run({"/home/pi/Desktop/MV1_firmware/scripts/message_queue_refresh.sh"}, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     print(f"Script output: {result.stdout.decode('utf-8')}")
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing the script: {e.stderr.decode('utf-8')}")
