@@ -11,9 +11,9 @@ Modified By Howard Webb - 11.10.2022
 
 #from Remote_MongoUtil import EnvironmentalObservation, insert_one
 from SHTC3 import SHTC3
-from GSheetUtil import update_sheet 
+#from GSheetUtil import update_sheet 
 from MHZ16 import MHZ16
-import serial
+#import serial
 from datetime import datetime
 from Trial_Util import Trial
 from WebSocketUtil import devicedata_enqueue
@@ -76,6 +76,7 @@ def get_temp_humidity():
 def save_google_sheet(name, value, unit):
     #Update google sheets with sensor data
     try:
+        from GSheetUtil import update_sheet
         update_sheet('Environment_Observation', name, value, unit)
     except Exception as e:
         print(e)
