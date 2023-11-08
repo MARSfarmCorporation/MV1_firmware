@@ -34,8 +34,8 @@ def main():
         payload = sys.argv[1]
 
         # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
-        #with open('../logs/Job_Agent_Log.txt', 'a') as file:
-        #    file.write(f"Job_Agent.py: {payload}\n")
+        with open('../logs/Job_Agent_Log.txt', 'a') as file:
+            file.write(f"Job_Agent.py: {payload}\n")
 
         # Parse the payload JSON and extract the job details
         payload_json = json.loads(payload)
