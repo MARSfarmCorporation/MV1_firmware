@@ -136,6 +136,8 @@ def process_outbound_message(cursor, id, topic, payload):
         #cursor.execute("UPDATE message_queue SET status = 'Outbound - Sent' WHERE id = ?", (id,))
     except Exception as e:
         print(f"Error sending outbound message: {e}")
+        with open('../logs/Broker_Log.txt', 'a') as file:
+            file.write(f"Broker.py: Error sending outbound message: {e}\n")
         status = 'Outbound - Pending Connection Restore'
         secure_database_update(id, status)
         #cursor.execute("UPDATE message_queue SET status = 'Outbound - Unsendable' WHERE id = ?", (id,))
