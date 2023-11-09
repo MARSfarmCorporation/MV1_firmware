@@ -98,7 +98,7 @@ def process_inbound_message(cursor, id, topic, payload):
         if topic == trial_topic:
             trial_handler(payload, id)
         elif topic == job_notify_topic:
-            spawn_job_agent(payload)
+            spawn_job_agent(id, payload)
         else:
             # Handle other topics as needed
             pass
