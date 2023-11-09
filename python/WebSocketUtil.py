@@ -83,6 +83,35 @@ def secure_database_update(id, status):
             # Closing the database connection
             conn.close()
 
+# This function is used to write a new record to the database with a specific id
+def secure_database_write_with_id(id, topic, payload, status):
+    with database_lock:
+        try:
+            # Connecting to the SQLite database
+            conn = sqlite3.connect('/home/pi/Desktop/MV1_firmware/python/message_queue.db')
+            conn.execute("PRAGMA busy_timeout = 2000")  # Setting a busy timeout of 2000 milliseconds
+            cursor = conn.cursor()
+
+            # Update the record if it exists, otherwise insert it
+            cursor.execute("""
+            INSERT INTO message_queue (id, topic, payload, status)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+            topic=excluded.topic,
+            payload=excluded.payload,
+            status=excluded.status
+            """, (id, topic, payload, status))
+
+            # Committing the transaction
+            conn.commit()
+        
+        except sqlite3.Error as e:
+            print(f"SQLite error occurred: {e}")
+        
+        finally:
+            # Closing the database connection
+            conn.close()
+
 
 ###########################################################################################################################
 # DATA LOGGING

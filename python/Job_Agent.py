@@ -3,12 +3,15 @@ import json
 import socket
 import subprocess
 from Sys_Conf import SERIAL_NUMBER
+from WebSocketUtil import secure_database_write_with_id
+from Broker import job_notify_topic
 
 ###########################################################################################################################
 # SCRIPT PATHS
 ###########################################################################################################################
 
 ota_update_script_path = "/home/pi/Desktop/MV1_firmware/scripts/ota_update.sh"
+Message_Queue_Refresh_Job_path = "/home/pi/Desktop/MV1_firmware/scripts/message_queue_refresh.sh"
 
 ###########################################################################################################################
 # FUNCTIONS
@@ -32,6 +35,7 @@ def main():
     try:    
         # Receive the message payload from the command-line arguments
         payload = sys.argv[1]
+        job_id = sys.argv[2]
 
         # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
         with open('../logs/Job_Agent_Log.txt', 'a') as file:
@@ -71,8 +75,16 @@ def main():
             elif job_name == "Message_Queue_Refresh_Job":
                 # Execute the shell script
                 try:
-                    result = subprocess.run({"/home/pi/Desktop/MV1_firmware/scripts/message_queue_refresh.sh"}, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    result = subprocess.run({Message_Queue_Refresh_Job_path}, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     print(f"Script output: {result.stdout.decode('utf-8')}")
+                    if result.returncode == 0: # If the script succeeds, recreate the job record in the new message_queue.db
+                        id = job_id
+                        topic = job_notify_topic
+                        status = 'Inbound - Unsortable'
+                        secure_database_write_with_id(id, topic, payload, status) # THIS PREVENTS INFINITE LOOPING
+                    else:
+                        exit_fail(job_socket)
+
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing the script: {e.stderr.decode('utf-8')}")
                     exit_fail(job_socket) # Exit the program when the job fails, sends a return code of 3 to the broker

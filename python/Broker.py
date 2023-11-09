@@ -25,8 +25,8 @@ def spawn_job_agent(id, payload):
         #with open('../logs/Job_Agent_Log.txt', 'a') as file:
         #    file.write(f"Broker.py: {payload}\n")
 
-        # Start the Job_Agent.py process and pass the payload
-        result = subprocess.run(['python3', 'Job_Agent.py', payload],
+        # Start the Job_Agent.py process and pass the payload and id as command-line arguments
+        result = subprocess.run(['python3', 'Job_Agent.py', payload, str(id)],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
                                 timeout=30)
