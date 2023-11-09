@@ -77,14 +77,6 @@ def main():
                 try:
                     result = subprocess.run({Message_Queue_Refresh_Job_path}, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     print(f"Script output: {result.stdout.decode('utf-8')}")
-                    if result.returncode == 0: # If the script succeeds, recreate the job record in the new message_queue.db
-                        id = job_id
-                        topic = job_notify_topic
-                        status = 'Inbound - Sorted'
-                        secure_database_write_with_id(id, topic, payload, status) # THIS PREVENTS INFINITE LOOPING
-                    else:
-                        exit_fail(job_socket)
-
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing the script: {e.stderr.decode('utf-8')}")
                     exit_fail(job_socket) # Exit the program when the job fails, sends a return code of 3 to the broker
