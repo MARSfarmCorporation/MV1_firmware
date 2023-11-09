@@ -104,9 +104,14 @@ def secure_database_write_with_id(id, topic, payload, status):
 
             # Committing the transaction
             conn.commit()
+
+            with open('../logs/Job_Agent_Log.txt', 'a') as file:
+                file.write(f"WebSocketUtil.py: New ID Successfully written!\n")
         
         except sqlite3.Error as e:
             print(f"SQLite error occurred: {e}")
+            with open('../logs/Job_Agent_Log.txt', 'a') as file:
+                file.write(f"WebSocketUtil.py: Failed to write new id: {e}\n")
         
         finally:
             # Closing the database connection
