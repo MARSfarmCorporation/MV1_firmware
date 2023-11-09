@@ -80,7 +80,7 @@ def main():
                     if result.returncode == 0: # If the script succeeds, recreate the job record in the new message_queue.db
                         id = job_id
                         topic = job_notify_topic
-                        status = 'Inbound - Unsortable'
+                        status = 'Inbound - Sorted'
                         secure_database_write_with_id(id, topic, payload, status) # THIS PREVENTS INFINITE LOOPING
                     else:
                         exit_fail(job_socket)
