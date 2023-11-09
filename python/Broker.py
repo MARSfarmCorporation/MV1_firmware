@@ -19,13 +19,13 @@ job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 # SPECIAL HANDLER FUNCTIONS
 ###########################################################################################################################
 
-def spawn_job_agent(id, payload):
+def spawn_job_agent(payload):
     try:
         # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Broker.py: "
         #with open('../logs/Job_Agent_Log.txt', 'a') as file:
         #    file.write(f"Broker.py: {payload}\n")
 
-        # Start the Job_Agent.py process and pass the payload and id as command-line arguments
+        # Start the Job_Agent.py process and pass the payload
         result = subprocess.run(['python3', 'Job_Agent.py', payload],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,

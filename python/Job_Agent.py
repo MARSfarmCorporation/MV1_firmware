@@ -3,8 +3,6 @@ import json
 import socket
 import subprocess
 from Sys_Conf import SERIAL_NUMBER
-from WebSocketUtil import secure_database_write_with_id
-from Broker import job_notify_topic
 
 ###########################################################################################################################
 # SCRIPT PATHS
