@@ -19,7 +19,7 @@ job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 # SPECIAL HANDLER FUNCTIONS
 ###########################################################################################################################
 
-def spawn_job_agent(payload):
+def spawn_job_agent(id, payload):
     try:
         # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Broker.py: "
         #with open('../logs/Job_Agent_Log.txt', 'a') as file:
