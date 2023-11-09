@@ -14,7 +14,7 @@ from Lights import Light
 
 trial_topic = 'trial/' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
-
+# Test again
 ###########################################################################################################################
 # SPECIAL HANDLER FUNCTIONS
 ###########################################################################################################################
