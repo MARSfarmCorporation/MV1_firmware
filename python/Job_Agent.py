@@ -33,7 +33,6 @@ def main():
     try:    
         # Receive the message payload from the command-line arguments
         payload = sys.argv[1]
-        job_id = sys.argv[2]
 
         # write the payload to Job_Agent_Log.txt, on a new line each time (make sure the file is there), with the prefix "Job_Agent.py: "
         with open('../logs/Job_Agent_Log.txt', 'a') as file:
