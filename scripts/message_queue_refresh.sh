@@ -42,5 +42,9 @@ else
     fi
 fi
 
+echo "Restarting the broker service"
+sudo systemctl restart broker.service
+echo "Broker service restarted successfully."
+
 # If we got this far, everything was successful
 exit 0
