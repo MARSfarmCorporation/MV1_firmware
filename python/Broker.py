@@ -48,6 +48,13 @@ def spawn_job_agent(id, payload):
                 status = 'Inbound - Unsortable - Job Error 3'
                 secure_database_update(id, status)
             else:
+                return_code = result.returncode
+                log_job_fail(return_code)
+                error_message = result.stderr.decode('utf-8')  # Decode stderr to string
+                print(f"Job Error Unknown: {error_message}")  # Print the error message
+                # Write the error message to Job_Agent_Log.txt
+                with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+                    log_file.write(f"Broker.py: Job Error Unknown with return code {return_code}: {error_message}\n")
                 status = 'Inbound - Unsortable - Job Error Unknown'
                 secure_database_update(id, status)
 
