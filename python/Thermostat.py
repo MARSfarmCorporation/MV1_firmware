@@ -32,10 +32,11 @@ class Thermostat(object):
         setpoint = self.get_Setpoint()
         temp = self.get_temp()
         print("Set", setpoint, "Temp", temp)
+        self.cfan.on() # Set circ fan state
+        print("Circ_Fan: ON")
         if ( temp < setpoint): #Measured temp is below setpoint
             self.heater.on() #Turn on heater to raise temp   
-            self.cfan.on() # Set circ fan state
-            print("Heater: On, Circ_Fan: ON")
+            print("Heater: On")
 
         if ( temp >= setpoint): #Measured temp is above setpoint
             self.heater.off() #Turn off heater to lower temp
@@ -44,10 +45,10 @@ class Thermostat(object):
         # Exhaust fan control code
         if ( temp >= setpoint + 1): #Measured temp is above setpoint by too much
             self.efan.on() #Turn on exhaust fan
-            print("Exhaust Fan: ON")
+            print("Exhaust Fan ON")
         else:
             self.efan.off() #Turn off fan
-            print("Exhaust Fan: OFF")
+            print("Exhaust Fan OFF")
 
 
 # testing the thermostat

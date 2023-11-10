@@ -1,6 +1,8 @@
 [Unit]
 Description=WebSocket Communications Service
 After=network.target
+StartLimitIntervalSec=10
+StartLimitBurst=50
 
 [Service]
 Type=simple

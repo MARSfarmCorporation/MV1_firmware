@@ -5,7 +5,7 @@
 from time import sleep
 from awscrt import http, auth, io, mqtt
 from awsiot import mqtt_connection_builder
-from concurrent.futures import Future
+from concurrent.futures import Future, TimeoutError
 import sys
 import os
 import threading
@@ -16,16 +16,12 @@ import socket
 import json
 import subprocess
 import datetime
-from uuid import uuid4
-from WebSocketUtil import secure_database_write
+import logging
+from WebSocketUtil import secure_database_write, secure_database_update
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
-# Parse command line arguments for the AWS IoT Core endpoint, signing region, and client ID
-parser = argparse.ArgumentParser(description="Send and receive messages through an MQTT connection.")
-parser.add_argument("--endpoint", action="store", type=str, default="a28ud61a8gem1b-ats.iot.us-east-2.amazonaws.com", help="")
-parser.add_argument("--signing_region", action="store", type=str, default="us-east-2", help="")
-parser.add_argument("--client_id", action="store", type=str, default=SERIAL_NUMBER, help="")
-args = parser.parse_args()
+# Setup logging to file
+logging.basicConfig(filename='../logs/websocket_comms_log', level=logging.DEBUG)
 
 # Global variables
 is_sample_done = threading.Event()
@@ -44,6 +40,13 @@ locked_data = LockedData()
 ###########################################################################################################################
 # CREDENTIALS
 ###########################################################################################################################
+
+# Parse command line arguments for the AWS IoT Core endpoint, signing region, and client ID
+parser = argparse.ArgumentParser(description="Send and receive messages through an MQTT connection.")
+parser.add_argument("--endpoint", action="store", type=str, default="a28ud61a8gem1b-ats.iot.us-east-2.amazonaws.com", help="")
+parser.add_argument("--signing_region", action="store", type=str, default="us-east-2", help="")
+parser.add_argument("--client_id", action="store", type=str, default=SERIAL_NUMBER, help="")
+args = parser.parse_args()
 
 # AWS IoT Core credentials
 device_cert = "/home/pi/certs/device.pem.crt.crt"
@@ -78,7 +81,7 @@ def refresh_credentials():
         sleep(max(sleep_time, 0))
 
 ###########################################################################################################################
-# CONNECTIONS AND SHUTDOWN
+# FUNCTIONS
 ###########################################################################################################################
 
 # Callback when connection is accidentally lost.
@@ -139,6 +142,31 @@ def shutdown_server(signum, frame):
     sys.exit(0)
 
 
+#def on_publish_complete(future, result_future):
+#    try:
+#        with open('../logs/Broker_Log.txt', 'a') as file:
+#            file.write(f"websocket_comms.py: on_publish_complete call: {future}, Result: {result_future} \n")
+#        
+#        try:
+#            future.result(timeout=5)  # Wait up to 5 seconds for the future to complete
+#        except TimeoutError:
+#            print("Publish operation timed out in callback.")
+#            with open('../logs/Broker_Log.txt', 'a') as file:
+#                file.write("websocket_comms.py: Publish operation timed out in callback.\n")
+#            result_future.set_result("timeout")
+#            return
+#        
+#        result_future.set_result("success")
+#        with open('../logs/Broker_Log.txt', 'a') as file:
+#            file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
+#        print("Message published successfully.")
+#   except Exception as e:
+#        result_future.set_result("failure")
+#        with open('../logs/Broker_Log.txt', 'a') as file:
+#           file.write(f"websocket_comms.py: on_publish_complete failure: {e} \n")
+#       print(f"Publish failed: {e}")
+
+
 ###########################################################################################################################
 # MESSAGE HANDLERS
 ###########################################################################################################################
@@ -167,22 +195,73 @@ def handle_inbound_message(topic, payload, **kwargs):
 
 # Function to publish a message coming from the broker.py service to the AWS IoT Endpoint
 def handle_outbound_message(outbound_message):
-    # Extract the topic and payload from the received message
+    # Extract the database id, message topic, and message payload from the received message
+    id = outbound_message.get("id")
     topic = outbound_message.get("topic")
     payload = outbound_message.get("payload")
 
+    result_future = Future()
+
+    with open('../logs/Broker_Log.txt', 'a') as file:
+        file.write(f"websocket_comms.py: attempting to publish ID: {id}, Topic: {topic}, and Payload: {payload} \n")
+
     # Check if the topic and payload are valid
     if topic and payload:
-        # Publish the message to the AWS IoT Endpoint
-        mqtt_connection.publish(
-            topic=topic,
-            payload=json.dumps(payload),
-            qos=mqtt.QoS.AT_LEAST_ONCE
-        )
-        print(f"Published message to topic '{topic}': {payload}")
+        try:
+            # Publish the message to the AWS IoT Endpoint as a future object
+            publish_future, _ = mqtt_connection.publish(
+                topic=topic,
+                payload=json.dumps(payload),
+                qos=mqtt.QoS.AT_LEAST_ONCE
+            )
+            #with open('../logs/Broker_Log.txt', 'a') as file:
+            #    file.write(f"websocket_comms.py: MQTT Publish success.\n")
+            #with open('../logs/Broker_Log.txt', 'a') as file:
+            #    file.write(f"websocket_comms.py: MQTT publish Future: {publish_future}\n")
+            
+            try:
+                # Wait for up to 5 seconds for the publish future to complete
+                publish_future.result(timeout=5)
+                
+                # If it's here, it means the publish was successful
+                result_future.set_result("success")
+            #    with open('../logs/Broker_Log.txt', 'a') as file:
+            #        file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
+                print("Message published successfully.")
+            except TimeoutError:
+                print("Publish operation timed out.")
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write("websocket_comms.py: Publish operation timed out.\n")
+                result_future.set_result("failure")
+            except Exception as e:
+                print(f"Publish failed: {e}")
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write(f"websocket_comms.py: Publish failed: {e}\n")
+                result_future.set_result("failure")
+
+            # Get the publish status from the result future
+            publish_status = result_future.result()
+
+            # Update the database status based on the publish status
+            if publish_status == "success":
+                status = "Outbound - Sent"
+            #    with open('../logs/Broker_Log.txt', 'a') as file:
+            #        file.write(f"websocket_comms.py: attempting to change status, ID: {id}, Status: {status} \n")
+                secure_database_update(id, status)
+            else:
+                status = "Outbound - Pending Connection Restore"
+                with open('../logs/Broker_Log.txt', 'a') as file:
+                    file.write(f"websocket_comms.py: failed to change status, ID: {id}, Status: {status} \n")
+                secure_database_update(id, status)
+
+        except Exception as e:
+            print(f"MQTT Publish failed: {e}")
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: MQTT Publish failed: {e}\n")
+            return  # Exit the function if the publish operation fails
     else:
         print("Invalid message format. Expected 'topic' and 'payload' fields.")
-        with open('../logs/Job_Agent_Log.txt', 'a') as file:
+        with open('../logs/Broker_Log.txt', 'a') as file:
             file.write(f"websocket_comms.py: Invalid message format passed to 'handle_outbound_message' function. Expected 'topic' and 'payload' fields.\n")
 
 # Callback to handle incoming messages from the job_socket to the websocket_comms service
@@ -258,8 +337,14 @@ def broker_socket():
             # Combine the chunks and decode the message
             outbound_message = b''.join(chunks).decode()
 
+            with open('../logs/Broker_Log.txt', 'a') as file:
+                file.write(f"websocket_comms.py: Received from Socket: {outbound_message}\n")
+
             # Passes file to the outbound message handler
             handle_outbound_message(json.loads(outbound_message))
+
+            # Sleep briefly to yield control and prevent tight looping
+            sleep(0.1)
 
         except Exception as e:
             print(f"An error occurred while handling a connection: {e}")
@@ -333,7 +418,9 @@ def job_socket():
                         print(f"Unknown message type: {message_type}")
                         with open('../logs/Job_Agent_Log.txt', 'a') as file:
                             file.write(f"websocket_comms.py: Unknown message type: {message_type}\n")
-
+            
+            # Sleep briefly to yield control and prevent tight looping
+            sleep(0.1)
         except Exception as e:
             print(f"An error occurred while handling a connection: {e}")
             # Optionally, you can log the traceback or other details here

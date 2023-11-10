@@ -9,7 +9,8 @@ from Sys_Conf import SERIAL_NUMBER
 ###########################################################################################################################
 
 ota_update_script_path = "/home/pi/Desktop/MV1_firmware/scripts/ota_update.sh"
-
+Message_Queue_Refresh_Job_path = "/home/pi/Desktop/MV1_firmware/scripts/message_queue_refresh.sh"
+#Test
 ###########################################################################################################################
 # FUNCTIONS
 ###########################################################################################################################
@@ -68,6 +69,14 @@ def main():
                 except subprocess.CalledProcessError as e:
                     print(f"Error executing the script: {e.stderr.decode('utf-8')}")
                     exit_fail(job_socket) # Exit the program when the job fails, sends a return code of 3 to the broker
+            elif job_name == "Message_Queue_Refresh_Job":
+                # Execute the shell script
+                try:
+                    result = subprocess.run({Message_Queue_Refresh_Job_path}, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    print(f"Script output: {result.stdout.decode('utf-8')}")
+                except subprocess.CalledProcessError as e:
+                    print(f"Error executing the script: {e.stderr.decode('utf-8')}")
+                    exit_fail(job_socket) # Exit the program when the job fails, sends a return code of 3 to the broker
             elif job_name == "Test_Job":
                 # Execute the python script
                 try:
@@ -79,7 +88,7 @@ def main():
             else:
                 # Exit the program when the job fails, sends a return code of 3 to the broker
                 print(f"Unknown job name: {job_name}")
-                exit(job_socket)
+                exit_fail(job_socket)
 
             with open('../logs/Job_Agent_Log.txt', 'a') as file:
                 file.write(f"Job_Agent.py: result: {result}\n")
