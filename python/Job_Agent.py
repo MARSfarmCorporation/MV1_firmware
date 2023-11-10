@@ -10,7 +10,7 @@ from Sys_Conf import SERIAL_NUMBER
 
 ota_update_script_path = "/home/pi/Desktop/MV1_firmware/scripts/ota_update.sh"
 Message_Queue_Refresh_Job_path = "/home/pi/Desktop/MV1_firmware/scripts/message_queue_refresh.sh"
-
+#Test
 ###########################################################################################################################
 # FUNCTIONS
 ###########################################################################################################################
