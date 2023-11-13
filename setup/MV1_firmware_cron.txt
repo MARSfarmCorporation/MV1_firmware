@@ -52,7 +52,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 @reboot python3 $PYTHON_PATH/Ethernet.py >> $LOG_PATH/boot_ethernet.log 2>&1 &
 
 # After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
-@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
+#@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
 
 # Start paho service to listen for device_id on MQTT server, 1 minute after reboot - script continues to loop after starting at boot
 #@reboot sleep 60; python3 $PYTHON_PATH/MQTTsub_savetrial.py >> $LOG_PATH/boot_MQTT.log 2>&1 &
