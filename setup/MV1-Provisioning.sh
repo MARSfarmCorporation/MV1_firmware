@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Volume label of the USB stick or SD card
-VOLUME_LABEL="Provision"
+VOLUME_LABEL="PROVISION"
 
 # Check if a serial number is provided
 if [ $# -eq 0 ]; then
