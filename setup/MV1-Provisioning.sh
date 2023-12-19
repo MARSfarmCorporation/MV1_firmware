@@ -16,12 +16,7 @@ TARGET_PATH="/home/pi/Desktop/MV1_firmware/python/Sys_Conf.py"
 USB_MOUNT_DIR="/mnt/myusb"
 
 # Find the device identifier of the USB stick by its volume label
-USB_DEVICE=$(lsblk -no NAME,LABEL | grep $VOLUME_LABEL | awk '{print $1}')
-
-if [ -z "$USB_DEVICE" ]; then
-    echo "USB stick with label $VOLUME_LABEL not found."
-    exit 1
-fi
+USB_DEVICE="sda1"
 
 # Mount the USB stick to the USB mount directory
 if ! grep -qs "$USB_MOUNT_DIR" /proc/mounts; then
