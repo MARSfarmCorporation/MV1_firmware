@@ -11,6 +11,7 @@ fi
 
 SERIAL_NUMBER=$1
 TARGET_PATH="/home/pi/Desktop/MV1_firmware/python/Sys_Conf.py"
+CERTS_TARGET_PATH="/home/pi/certs"
 
 # Directory to mount the USB stick
 USB_MOUNT_DIR="/mnt/myusb"
@@ -27,16 +28,26 @@ fi
 # Path to the directory on the USB stick
 DIR_ON_USB="${USB_MOUNT_DIR}/${SERIAL_NUMBER}"
 
-# Path to the Sys_Conf.py file on the USB stick
+# Replace Sys_Conf.py file
 FILE_ON_USB="${DIR_ON_USB}/Sys_Conf.py"
-
-# Check if the Sys_Conf.py file exists in the USB directory
 if [ -f "${FILE_ON_USB}" ]; then
     cp "${FILE_ON_USB}" "${TARGET_PATH}"
     echo "Sys_Conf.py has been replaced successfully."
 else
     echo "No Sys_Conf.py found in ${DIR_ON_USB}"
 fi
+
+# Replace certificate files
+declare -a CERT_FILES=("AmazonRootCA1.pem" "AmazonRootCA3.pem" "device.pem.crt.crt" "private.pem.key" "public.pem.key")
+
+for cert_file in "${CERT_FILES[@]}"; do
+    if [ -f "${DIR_ON_USB}/${cert_file}" ]; then
+        cp "${DIR_ON_USB}/${cert_file}" "${CERTS_TARGET_PATH}/"
+        echo "${cert_file} has been replaced successfully."
+    else
+        echo "No ${cert_file} found in ${DIR_ON_USB}"
+    fi
+done
 
 # Optionally unmount the USB stick after the operation
 sudo umount "$USB_MOUNT_DIR"
