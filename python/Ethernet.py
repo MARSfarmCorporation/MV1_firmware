@@ -13,7 +13,7 @@ This file now also brings down the interface and then back up to ensure the MAC 
 import subprocess
 import datetime
 from Sys_Conf import ETH_MAC_ADDRESS, WLAN_MAC_ADDRESS
-from your_light_module import Light  # Replace 'your_light_module' with the actual name of your module containing the Light class
+from Lights import Light
 
 def change_mac(interface, mac_address):
     # Take down the interface
