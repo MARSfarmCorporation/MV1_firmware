@@ -97,7 +97,7 @@ def trial_handler(payload, id):
         light.trial_received_success()
 
         create_response_topic = f'trialResponseCreate/{DEVICE_ID}'
-        aws_enqueue(create_response_topic, payload)
+        aws_enqueue(create_response_topic, payload_dict)
         
     except Exception as e:
         print(f"Error processing inbound message: {e}")
