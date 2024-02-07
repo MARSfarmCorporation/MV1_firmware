@@ -5,7 +5,7 @@ import socket
 import subprocess
 import threading
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
-from WebSocketUtil import log_job_fail, secure_database_update
+from WebSocketUtil import log_job_fail, secure_database_update, aws_enqueue
 from Lights import Light
 
 ###########################################################################################################################
@@ -71,19 +71,33 @@ def spawn_job_agent(id, payload):
         #cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Unknown' WHERE id = ?", (id,))
 
 # This function handles trial messages and writes them to trial.py. It then updates the status in the database.
+import json
+
 def trial_handler(payload, id):
     try:
-        # Write the payload to trial.py
+        # Parse the incoming payload from string to dictionary
+        payload_dict = json.loads(payload)
+        
+        # Extract the 'formatted_trial' object from the payload
+        formatted_trial = payload_dict.get("formatted_trial", {})
+        
+        # Convert the 'formatted_trial' object back to a string, but formatted as required
+        formatted_trial_str = f"trial={json.dumps(formatted_trial)}"
+        
+        # Write the formatted 'formatted_trial' string to trial.py
         with open('trial.py', 'w') as file:
-            file.write(payload)
-
-        # Update the status in the database
+            file.write(formatted_trial_str)
+        
+        # Update the status in the database as 'Inbound - Sorted'
         status = 'Inbound - Sorted'
         secure_database_update(id, status)
-
+        
         # Blink the lights white to indicate a successful trial write
         light = Light()
         light.trial_received_success()
+
+        create_response_topic = f'trialResponseCreate/{DEVICE_ID}'
+        aws_enqueue(create_response_topic, payload)
         
     except Exception as e:
         print(f"Error processing inbound message: {e}")
@@ -93,6 +107,7 @@ def trial_handler(payload, id):
         # Blink the lights red to indicate an error
         light = Light()
         light.blink_blue()
+
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
