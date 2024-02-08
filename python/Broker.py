@@ -13,6 +13,7 @@ from Lights import Light
 ###########################################################################################################################
 
 trial_topic = 'trial/' + DEVICE_ID
+trial2_topic = 'trial2/' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 
 ###########################################################################################################################
@@ -71,9 +72,30 @@ def spawn_job_agent(id, payload):
         #cursor.execute("UPDATE message_queue SET status = 'Inbound - Unsortable - Unknown' WHERE id = ?", (id,))
 
 # This function handles trial messages and writes them to trial.py. It then updates the status in the database.
-import json
-
 def trial_handler(payload, id):
+    try:
+        # Write the payload to trial.py
+        with open('trial.py', 'w') as file:
+            file.write(payload)
+
+        # Update the status in the database
+        status = 'Inbound - Sorted'
+        secure_database_update(id, status)
+
+        # Blink the lights white to indicate a successful trial write
+        light = Light()
+        light.trial_received_success()
+        
+    except Exception as e:
+        print(f"Error processing inbound message: {e}")
+        status = 'Inbound - Unsortable - Unknown'
+        secure_database_update(id, status)
+
+        # Blink the lights red to indicate an error
+        light = Light()
+        light.blink_blue()
+
+def trial2_handler(payload, id):
     try:
         # Parse the incoming payload from string to dictionary
         payload_dict = json.loads(payload)
@@ -119,6 +141,8 @@ def process_inbound_message(cursor, id, topic, payload):
         # Defined topics are handled here via their respective functions
         if topic == trial_topic:
             trial_handler(payload, id)
+        elif topic == trial2_topic:
+            trial2_handler(payload, id)
         elif topic == job_notify_topic:
             spawn_job_agent(id, payload)
         else:
