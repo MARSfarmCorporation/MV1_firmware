@@ -113,13 +113,13 @@ def trial2_handler(payload, id):
         # Update the status in the database as 'Inbound - Sorted'
         status = 'Inbound - Sorted'
         secure_database_update(id, status)
+
+        create_response_topic = f'trialResponseCreate/{DEVICE_ID}'
+        aws_enqueue(create_response_topic, payload_dict)
         
         # Blink the lights white to indicate a successful trial write
         light = Light()
         light.trial_received_success()
-
-        create_response_topic = f'trialResponseCreate/{DEVICE_ID}'
-        aws_enqueue(create_response_topic, payload_dict)
         
     except Exception as e:
         print(f"Error processing inbound message: {e}")
