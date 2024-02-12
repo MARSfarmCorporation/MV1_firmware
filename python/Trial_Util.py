@@ -31,6 +31,7 @@ class Trial(object):
     def get_current_phase(self):
         # Get the current phase from trial.py
         #print("Phases", self.phases)
+        current_phase = 0
         self.phase_count = len(self.phases)
         for i in range(len(self.phases)):
             # If current time is greater than the start day of the phase, then it is saved

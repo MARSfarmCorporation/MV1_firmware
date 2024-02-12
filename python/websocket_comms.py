@@ -26,6 +26,7 @@ logging.basicConfig(filename='../logs/websocket_comms_log', level=logging.DEBUG)
 # Global variables
 is_sample_done = threading.Event()
 trial_topic = "trial/" + DEVICE_ID
+trial2_topic = "trial2/" + DEVICE_ID
 mqtt_connection = None
 
 # Class to hold the locked data for threading
@@ -479,6 +480,13 @@ if __name__ == '__main__':
     # Subscribe to the trial topic, sends incoming messages to the handle_inbound_message callback
     subscribe_future, packet_id = mqtt_connection.subscribe(
         topic=trial_topic,
+        qos=mqtt.QoS.AT_LEAST_ONCE,
+        callback=handle_inbound_message
+    )
+
+    # Subscribe to the trial2 topic, which allows for the new trial functionality on the web application to be used
+    subscribe_future, packet_id = mqtt_connection.subscribe(
+        topic=trial2_topic,
         qos=mqtt.QoS.AT_LEAST_ONCE,
         callback=handle_inbound_message
     )
