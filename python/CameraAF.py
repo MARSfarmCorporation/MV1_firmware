@@ -16,7 +16,8 @@ time = datetime.now().strftime("%Y-%m-%d_%H%M")
 
 # set light to white for taking image
 lights = Light() 
-lights.white()
+lights.customMode(0,0,0,255)
+#lights.white()
 sleep(2)
 
 #Take picture
