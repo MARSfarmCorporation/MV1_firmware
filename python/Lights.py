@@ -85,6 +85,9 @@ class Light:
         #import Light_On
         from Light_Control import test
         test()
+    
+    def flash_all(self, num=2, spd=1):
+        self.blink(num, spd, 0, 100, 100, 100)
 
 # test the light class by turning on/off and blinking the light
 def test():

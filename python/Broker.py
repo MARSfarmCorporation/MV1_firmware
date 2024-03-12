@@ -14,6 +14,7 @@ from Lights import Light
 
 trial_topic = 'trial/' + DEVICE_ID
 trial2_topic = 'trial2/' + DEVICE_ID
+device_control_topic = 'device-control' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 
 ###########################################################################################################################
@@ -130,6 +131,25 @@ def trial2_handler(payload, id):
         light = Light()
         light.blink_blue()
 
+def device_control(payload, id):
+    try:
+        if payload == '"LED": "Flash LED"':
+            light = Light()
+            light.flash_all()
+            status = 'Inbound - Sorted'
+            secure_database_update(id, status)
+        else:
+            status = 'Inbound - Unsortable - Unknown'
+            secure_database_update(id, status)
+    except Exception as e:
+        print(f"Error processing inbound message: {e}")
+        status = 'Inbound - Unsortable - Unknown'
+        secure_database_update(id, status)
+
+        # Blink the lights red to indicate an error
+        light = Light()
+        light.blink_blue()
+
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
@@ -145,6 +165,8 @@ def process_inbound_message(cursor, id, topic, payload):
             trial2_handler(payload, id)
         elif topic == job_notify_topic:
             spawn_job_agent(id, payload)
+        elif topic == device_control_topic:
+            device_control(payload, id)
         else:
             # Handle other topics as needed
             pass

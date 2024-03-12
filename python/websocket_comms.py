@@ -27,6 +27,7 @@ logging.basicConfig(filename='../logs/websocket_comms_log', level=logging.DEBUG)
 is_sample_done = threading.Event()
 trial_topic = "trial/" + DEVICE_ID
 trial2_topic = "trial2/" + DEVICE_ID
+device_control_topic = "device-control" + DEVICE_ID
 mqtt_connection = None
 
 # Class to hold the locked data for threading
@@ -393,7 +394,6 @@ def job_socket():
                     break
 
             # Combine the chunks and decode the message
-            # Combine the chunks and decode the message
             received_data = b''.join(chunks).decode()
             messages = received_data.split('\n')
             
@@ -490,6 +490,9 @@ if __name__ == '__main__':
         qos=mqtt.QoS.AT_LEAST_ONCE,
         callback=handle_inbound_message
     )
+
+    # Subscribe to Device Control related topics
+    mqtt_connection.subscribe(topic=device_control_topic, qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
 
     # Subscribing to Job-related topics
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/notify-next", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
