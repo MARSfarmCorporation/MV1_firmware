@@ -133,22 +133,30 @@ def trial2_handler(payload, id):
 
 def device_control(payload, id):
     try:
-        if payload == '"LED": "Flash LED"':
+        # Assuming payload is a JSON string; parse it into a dictionary
+        payload_dict = json.loads(payload)
+
+        # Check if the "LED" key exists in the dictionary and its value
+        if payload_dict.get("LED") == "Flash LED":
             light = Light()
             light.flash_all()
             status = 'Inbound - Sorted'
-            secure_database_update(id, status)
         else:
             status = 'Inbound - Unsortable - Unknown'
-            secure_database_update(id, status)
-    except Exception as e:
-        print(f"Error processing inbound message: {e}")
-        status = 'Inbound - Unsortable - Unknown'
-        secure_database_update(id, status)
-
-        # Blink the lights red to indicate an error
+    except json.JSONDecodeError as e:
+        print(f"Error parsing JSON payload: {e}")
+        status = 'Inbound - Unsortable - Parse Error'
+        # Optionally blink the lights blue to indicate a parse error
         light = Light()
         light.blink_blue()
+    except Exception as e:
+        print(f"Error processing inbound message: {e}")
+        status = 'Inbound - Unsortable - Error'
+        # Blink the lights red to indicate a general error
+        light = Light()
+        light.blink_blue()  # Assuming this should be blink_red for an error?
+
+    secure_database_update(id, status)
 
 
 ###########################################################################################################################
