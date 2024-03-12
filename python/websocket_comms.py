@@ -27,7 +27,7 @@ logging.basicConfig(filename='../logs/websocket_comms_log', level=logging.DEBUG)
 is_sample_done = threading.Event()
 trial_topic = "trial/" + DEVICE_ID
 trial2_topic = "trial2/" + DEVICE_ID
-device_control_topic = "device-control" + DEVICE_ID
+device_control_topic = "device-control/" + DEVICE_ID
 mqtt_connection = None
 
 # Class to hold the locked data for threading
