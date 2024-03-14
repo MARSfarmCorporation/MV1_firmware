@@ -13,6 +13,8 @@ if [ -f "$DATABASE_FILE" ]; then
     if [ $? -eq 0 ]; then
         echo "SQLite server removed successfully."
         
+        sleep 3 # Wait for the SQLite server to be fully removed to prevent corruption
+        
         # Run the Python script with python3
         python3 "$PYTHON_SCRIPT"
         
@@ -41,6 +43,10 @@ else
         exit 1
     fi
 fi
+
+echo "Restarting the broker service"
+sudo systemctl restart broker.service
+echo "Broker service restarted successfully."
 
 # If we got this far, everything was successful
 exit 0
