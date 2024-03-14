@@ -66,6 +66,10 @@ class Light:
         
     def blink_red(self, num=5, spd=1):
         self.blink(num, spd, 0, 50, 0, 0)
+    
+    # blinks blue twice when a MAC address fails to change
+    def mac_fail(self, num=2, spd=1):
+        self.blink(num, spd, 0, 0, 100, 0)
 
     # new format for blink functions
     def trial_received_success(self, num=5, spd=1):
@@ -85,6 +89,9 @@ class Light:
         #import Light_On
         from Light_Control import test
         test()
+    
+    def flash_all(self, num=2, spd=1):
+        self.blink(num, spd, 0, 100, 100, 100)
 
 # test the light class by turning on/off and blinking the light
 def test():

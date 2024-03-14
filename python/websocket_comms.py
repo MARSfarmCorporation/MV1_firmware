@@ -3,6 +3,7 @@
 # Author: Drew Thomas - 08.14.2020
 
 from time import sleep
+from datetime import datetime
 from awscrt import http, auth, io, mqtt
 from awsiot import mqtt_connection_builder
 from concurrent.futures import Future, TimeoutError
@@ -17,6 +18,8 @@ import json
 import subprocess
 import datetime
 import logging
+import uuid
+import time
 from WebSocketUtil import secure_database_write, secure_database_update
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 
@@ -27,6 +30,9 @@ logging.basicConfig(filename='../logs/websocket_comms_log', level=logging.DEBUG)
 is_sample_done = threading.Event()
 trial_topic = "trial/" + DEVICE_ID
 trial2_topic = "trial2/" + DEVICE_ID
+device_control_topic = "device-control/" + DEVICE_ID
+pong_topic = "pong/" + DEVICE_ID
+ping_topic = "ping/" + DEVICE_ID
 mqtt_connection = None
 
 # Class to hold the locked data for threading
@@ -37,6 +43,9 @@ class LockedData:
         self.reconnection_attempts = 0
 
 locked_data = LockedData()
+
+# Dictionary to hold heartbeat data
+ping_tracker = {}
 
 ###########################################################################################################################
 # CREDENTIALS
@@ -142,31 +151,44 @@ def shutdown_server(signum, frame):
     # Exit the program
     sys.exit(0)
 
+# Sends a ping to the IoT Core endpoint to keep the connection alive
+def send_ping():
+    ping_id = str(uuid.uuid4())  # Generate a unique ID for the ping
+    ping_tracker[ping_id] = False  # Initialize to False indicating pong not yet received
 
-#def on_publish_complete(future, result_future):
-#    try:
-#        with open('../logs/Broker_Log.txt', 'a') as file:
-#            file.write(f"websocket_comms.py: on_publish_complete call: {future}, Result: {result_future} \n")
-#        
-#        try:
-#            future.result(timeout=5)  # Wait up to 5 seconds for the future to complete
-#        except TimeoutError:
-#            print("Publish operation timed out in callback.")
-#            with open('../logs/Broker_Log.txt', 'a') as file:
-#                file.write("websocket_comms.py: Publish operation timed out in callback.\n")
-#            result_future.set_result("timeout")
-#            return
-#        
-#        result_future.set_result("success")
-#        with open('../logs/Broker_Log.txt', 'a') as file:
-#            file.write(f"websocket_comms.py: on_publish_complete future.result: {result_future} \n")
-#        print("Message published successfully.")
-#   except Exception as e:
-#        result_future.set_result("failure")
-#        with open('../logs/Broker_Log.txt', 'a') as file:
-#           file.write(f"websocket_comms.py: on_publish_complete failure: {e} \n")
-#       print(f"Publish failed: {e}")
+    # Construct the ping message payload with the unique ID
+    ping_payload = json.dumps({"ping": ping_id})
+    mqtt_connection.publish(
+        topic=ping_topic,
+        payload=ping_payload,
+        qos=mqtt.QoS.AT_LEAST_ONCE
+    )
+    return ping_id
 
+# Callback to handle incoming pongs
+def handle_pong(topic, payload, **kwargs):
+    pong_message = json.loads(payload.decode('utf-8'))
+    pong_id = pong_message.get("pong")
+
+    if pong_id in ping_tracker:
+        ping_tracker[pong_id] = True  # Mark that the pong has been received
+
+def wait_for_pong(ping_id, timeout=300):
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        if ping_tracker.get(ping_id):
+            print("Pong received for ping ID:", ping_id)
+            return True
+        sleep(1)  # Wait a bit before checking again
+
+    # Timeout elapsed without receiving pong
+    print("Pong not received for ping ID:", ping_id)
+    return False
+
+# Restarts the websocket_comms service if the connection is lost
+def restart_service():
+    print("Restarting the MQTT service...")
+    subprocess.call(['sudo', 'systemctl', 'restart', 'websocket_comms.service'])
 
 ###########################################################################################################################
 # MESSAGE HANDLERS
@@ -293,6 +315,32 @@ def handle_job_socket_publish(job_message):
         with open('../logs/Job_Agent_Log.txt', 'a') as file:
             file.write(f"websocket_comms.py: Invalid message format passed to 'handle_outbound_message' function. Expected 'topic' and 'payload' fields.\n")
 
+# Function used by heartbeat thread to send pings to the IoT Core endpoint
+def connection_monitor():
+    while not is_sample_done.is_set():
+        try:
+            # Send a ping message and wait for a pong
+            ping_id = send_ping()
+            pong_received = wait_for_pong(ping_id, timeout=300)  # Wait up to 300 seconds for a pong
+
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if not pong_received:
+                # Pong not received, take remedial action
+                with open('../logs/heartbeat_log.txt', 'a') as file:
+                    file.write(f"{current_time} - Connection Lost\n")
+                print("Pong not received, restarting service or taking other action.")
+                restart_service()
+                break  # Optionally break the loop if you want the thread to end after taking action
+            
+            # Sleep for 5 minutes before sending the next ping
+            sleep(300)
+        except Exception as e:
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            with open('../logs/heartbeat_log.txt', 'a') as file:
+                file.write(f"{current_time} - Error in connection monitor thread: {e}\n")
+            print(f"Error in connection monitor thread: {e}")
+
+
 ###########################################################################################################################
 # SOCKETS
 ###########################################################################################################################
@@ -393,7 +441,6 @@ def job_socket():
                     break
 
             # Combine the chunks and decode the message
-            # Combine the chunks and decode the message
             received_data = b''.join(chunks).decode()
             messages = received_data.split('\n')
             
@@ -473,6 +520,10 @@ if __name__ == '__main__':
     job_socket_thread = threading.Thread(target=job_socket)
     job_socket_thread.start()
 
+    # Start the connection monitor thread
+    monitor_thread = threading.Thread(target=connection_monitor)
+    monitor_thread.start()
+
     ###########################################################################################################################
     # MAIN SCRIPT SUBSCRIPTIONS
     ###########################################################################################################################
@@ -491,12 +542,22 @@ if __name__ == '__main__':
         callback=handle_inbound_message
     )
 
+    # Subscribe to Device Control related topics
+    mqtt_connection.subscribe(topic=device_control_topic, qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+
     # Subscribing to Job-related topics
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/notify-next", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/get/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/get/rejected", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/start/accepted", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/$next/start/rejected", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+
+    # Subscribing to the pong topic
+    mqtt_connection.subscribe(
+        topic=pong_topic,
+        qos=mqtt.QoS.AT_LEAST_ONCE,
+        callback=handle_pong
+    )
     
     subscribe_result = subscribe_future.result()
     print(f"Subscribed with {str(subscribe_result['qos'])}")
