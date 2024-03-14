@@ -331,10 +331,6 @@ def connection_monitor():
                 print("Pong not received, restarting service or taking other action.")
                 restart_service()
                 break  # Optionally break the loop if you want the thread to end after taking action
-            else:
-                # Log successful ping-pong interaction
-                with open('../logs/heartbeat_log.txt', 'a') as file:
-                    file.write(f"{current_time} - Ping-Pong successful\n")
             
             # Sleep for 5 minutes before sending the next ping
             sleep(300)
