@@ -157,7 +157,7 @@ def send_ping():
     ping_tracker[ping_id] = False  # Initialize to False indicating pong not yet received
 
     # Construct the ping message payload with the unique ID
-    ping_payload = json.dumps({"type": "ping", "id": ping_id})
+    ping_payload = json.dumps({"ping": ping_id})
     mqtt_connection.publish(
         topic=ping_topic,
         payload=ping_payload,
@@ -168,7 +168,7 @@ def send_ping():
 # Callback to handle incoming pongs
 def handle_pong(topic, payload, **kwargs):
     pong_message = json.loads(payload.decode('utf-8'))
-    pong_id = pong_message.get("id")
+    pong_id = pong_message.get("pong")
 
     if pong_id in ping_tracker:
         ping_tracker[pong_id] = True  # Mark that the pong has been received
