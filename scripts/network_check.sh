@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ping Google DNS to check for internet connectivity
-if ping -c 1 8.8.8.8 &> /dev/null
+if ping -4 -c 1 8.8.8.8 &> /dev/null
 then
     echo "Internet connection is up"
 else

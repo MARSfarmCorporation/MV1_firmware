@@ -17,7 +17,7 @@ sleep 15
 # nmcli -t g | grep full
 
 # 3. Is there Internet connectivity via a google ping?
-wget --spider http://google.com 2>&1
+ping -4 -c 1 google.com
 
 # 4. Is there an active WiFi connection?
 # iwgetid -r
