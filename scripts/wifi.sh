@@ -6,7 +6,7 @@ export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
 # sometimes. In this case, following checks will fail and wifi-connect
 # will be launched even if the device will be able to connect to a WiFi network.
 # If this is your case, you can wait for a while and then check for the connection.
-sleep 15
+sleep 60
 
 # Choose a condition for running WiFi Connect according to your use case:
 
@@ -27,8 +27,9 @@ if [ $? -eq 0 ]; then
     printf 'Skipping WiFi Connect\n'
 else
     # if the exit code is not 0, start the wifi-connect service to establish a WiFi connection. 
+    python3 /home/pi/Desktop/MV1_firmware/python/WiFiConnectIndicator.py
     printf 'Starting WiFi Connect\n'
-    sudo wifi-connect
+    #sudo wifi-connect
 fi
 
 # Start your application here.

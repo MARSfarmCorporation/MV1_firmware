@@ -71,6 +71,11 @@ class Light:
     def mac_fail(self, num=2, spd=1):
         self.blink(num, spd, 0, 0, 100, 0)
 
+    # blinks blue then red when WiFi Connect needs to be launched due to a connection failure
+    def wifi_connect_launch(self, num=1, spd=1):
+        self.blink(num, spd, 0, 0, 100, 0)
+        self.blink(num, spd, 0, 50, 0, 0)
+
     # new format for blink functions
     def trial_received_success(self, num=5, spd=1):
         self.blink(num, spd, 0, 0, 0, 100)
