@@ -494,7 +494,7 @@ if __name__ == '__main__':
         on_connection_resumed=on_connection_resumed,
         client_id=args.client_id,
         clean_session=False,
-        keep_alive_secs=30)
+        keep_alive_secs=600)
     print(mqtt_connection)
 
     print(f"Connecting to {args.endpoint} with client ID '{args.client_id}'...")

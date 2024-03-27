@@ -49,10 +49,13 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 @reboot sudo pigpiod -s1 >> $LOG_PATH/boot_pigpio.log 2>&1 &
 
 # Set up MAC address to remain static, 30 seconds after reboot
-@reboot sleep 10; python3 $PYTHON_PATH/Ethernet.py >> $LOG_PATH/boot_ethernet.log 2>&1 &
+@reboot sleep 40; python3 $PYTHON_PATH/Ethernet.py >> $LOG_PATH/boot_ethernet.log 2>&1 &
 
 # Check for network connection, and if not found, restarts NetworkManager
-*/5 * * * * sudo bash $SCRIPT_PATH/network_check.sh >> $LOG_PATH/network_check.log 2>&1 &
+*/3 * * * * sudo bash $SCRIPT_PATH/network_check.sh >> $LOG_PATH/network_check.log 2>&1 &
+
+# Reboot the device at 2:30AM every day, with a random delay of up to 5 minutes to avoid all devices rebooting at the same time
+30 2 * * * /bin/bash -c 'sleep $((RANDOM % 300)); sudo reboot'
 
 # After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
 #@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
