@@ -17,7 +17,7 @@ sleep 60
 # nmcli -t g | grep full
 
 # 3. Is there Internet connectivity via a google ping?
-ping -4 -c 1 google.com
+ping -4 -c 1 -W 10 google.com
 
 # 4. Is there an active WiFi connection?
 # iwgetid -r
@@ -29,7 +29,7 @@ else
     # if the exit code is not 0, start the wifi-connect service to establish a WiFi connection. 
     python3 /home/pi/Desktop/MV1_firmware/python/WiFiConnectIndicator.py
     printf 'Starting WiFi Connect\n'
-    #sudo wifi-connect
+    sudo wifi-connect
 fi
 
 # Start your application here.
