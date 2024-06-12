@@ -7,6 +7,7 @@ import threading
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 from WebSocketUtil import log_job_fail, secure_database_update, aws_enqueue
 from Lights import Light
+from Pump_Control import test_pump
 
 ###########################################################################################################################
 # DEFINE TOPICS
@@ -15,6 +16,7 @@ from Lights import Light
 trial_topic = 'trial/' + DEVICE_ID
 trial2_topic = 'trial2/' + DEVICE_ID
 device_control_topic = 'device-control/' + DEVICE_ID
+cloud_device_control_topic = 'cloud-device-control/' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 
 ###########################################################################################################################
@@ -131,33 +133,74 @@ def trial2_handler(payload, id):
         light = Light()
         light.blink_blue()
 
-def device_control(payload, id):
-    try:
+# def device_control(payload, id):
+#     try:
+#         # Assuming payload is a JSON string; parse it into a dictionary
+#         payload_dict = json.loads(payload)
+
+#         # Check if the "LED" key exists in the dictionary and its value
+#         if payload_dict.get("LED") == "Flash LED":
+#             light = Light()
+#             light.flash_all()
+#             status = 'Inbound - Sorted'
+#         else:
+#             status = 'Inbound - Unsortable - Unknown'
+#     except json.JSONDecodeError as e:
+#         print(f"Error parsing JSON payload: {e}")
+#         status = 'Inbound - Unsortable - Parse Error'
+#         # Optionally blink the lights blue to indicate a parse error
+#         light = Light()
+#         light.blink_blue()
+#     except Exception as e:
+#         print(f"Error processing inbound message: {e}")
+#         status = 'Inbound - Unsortable - Error'
+#         # Blink the lights red to indicate a general error
+#         light = Light()
+#         light.blink_blue()  # Assuming this should be blink_red for an error?
+
+#     secure_database_update(id, status)
+
+def cloud_device_control(payload, id):
+    try: 
         # Assuming payload is a JSON string; parse it into a dictionary
         payload_dict = json.loads(payload)
-
-        # Check if the "LED" key exists in the dictionary and its value
-        if payload_dict.get("LED") == "Flash LED":
-            light = Light()
-            light.flash_all()
-            status = 'Inbound - Sorted'
+        
+        # Check which operation the user wants to perform, based on the "command" key.
+        command = payload_dict.get("control")
+        value = payload_dict.get("value")
+        if command == "LED":
+            # Check if "value" is 1, and flash the LED if it is. Otherwise, update the status to "Inbound - Unsortable - Unknown"
+            if value == 1:
+                light = Light()
+                light.flash_all()
+                status = 'Inbound - Sorted'
+            else:
+                print("Unknown LED value received from the Web Application")
+                status = 'Inbound - Unsortable - Unknown'
+        elif command == "PUMP":
+            # Get the value of the "value" key and pass that to the pump_control function
+            try:
+                test_pump(value)
+                status = 'Inbound - Sorted'
+            except Exception as e:
+                print(f"Error running pump: {e}")
+                status = 'Inbound - Unsortable - Unknown'
         else:
+            print("Command type not recognized from message ID: {id}")
             status = 'Inbound - Unsortable - Unknown'
     except json.JSONDecodeError as e:
-        print(f"Error parsing JSON payload: {e}")
-        status = 'Inbound - Unsortable - Parse Error'
-        # Optionally blink the lights blue to indicate a parse error
+        print(f"Error parsing JSON payload when trying to run a user command from the Web Application: {e}")
+        status = 'Inbound - Unsortable - Unknown'
+        # Optionally blink the lights red to indicate a parse error
         light = Light()
-        light.blink_blue()
+        light.blink_red()
     except Exception as e:
         print(f"Error processing inbound message: {e}")
-        status = 'Inbound - Unsortable - Error'
+        status = 'Inbound - Unsortable - Unknown'
         # Blink the lights red to indicate a general error
         light = Light()
-        light.blink_blue()  # Assuming this should be blink_red for an error?
-
+        light.blink_red()
     secure_database_update(id, status)
-
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
@@ -175,6 +218,8 @@ def process_inbound_message(cursor, id, topic, payload):
             spawn_job_agent(id, payload)
         elif topic == device_control_topic:
             device_control(payload, id)
+        elif topic == cloud_device_control_topic:
+            cloud_device_control(payload, id)
         else:
             # Handle other topics as needed
             pass

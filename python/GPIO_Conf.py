@@ -9,7 +9,13 @@ from Sys_Conf import VERSION
 # the names indicate the function or purpose of the respective pin 
 
 # Max PWM values
-if VERSION == "V0.6":
+if VERSION == "V0.7":
+  HEATER_PWM = 175
+  MAX_FAR_RED = 100
+  MAX_RED = 255
+  MAX_BLUE = 200
+  MAX_WHITE = 200
+elif VERSION == "V0.6":
   HEATER_PWM = 140
   MAX_FAR_RED = 100
   MAX_RED = 255
