@@ -216,8 +216,8 @@ def process_inbound_message(cursor, id, topic, payload):
             trial2_handler(payload, id)
         elif topic == job_notify_topic:
             spawn_job_agent(id, payload)
-        elif topic == device_control_topic:
-            device_control(payload, id)
+        #elif topic == device_control_topic:
+        #    device_control(payload, id)
         elif topic == cloud_device_control_topic:
             cloud_device_control(payload, id)
         else:
