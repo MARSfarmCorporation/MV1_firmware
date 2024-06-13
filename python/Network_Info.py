@@ -1,5 +1,6 @@
 import psutil
 import subprocess
+import socket
 
 def get_connection_method():
     interfaces = psutil.net_if_addrs()
@@ -13,7 +14,7 @@ def get_connection_method():
 def get_ip_address(interface):
     addresses = psutil.net_if_addrs().get(interface, [])
     for address in addresses:
-        if address.family == psutil.AF_INET:
+        if address.family == socket.AF_INET:
             return address.address
     return 'No IP found'
 
