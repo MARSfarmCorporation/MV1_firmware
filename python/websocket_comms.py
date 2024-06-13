@@ -30,7 +30,6 @@ logging.basicConfig(filename='../logs/websocket_comms_log', level=logging.DEBUG)
 is_sample_done = threading.Event()
 trial_topic = "trial/" + DEVICE_ID
 trial2_topic = "trial2/" + DEVICE_ID
-device_control_topic = "device-control/" + DEVICE_ID
 cloud_device_control_topic = "cloud-device-control/" + DEVICE_ID
 pong_topic = "pong/" + DEVICE_ID
 ping_topic = "ping/" + DEVICE_ID
@@ -544,7 +543,6 @@ if __name__ == '__main__':
     )
 
     # Subscribe to Device Control related topics
-    mqtt_connection.subscribe(topic=device_control_topic, qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
     mqtt_connection.subscribe(topic=cloud_device_control_topic, qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
 
     # Subscribing to Job-related topics
