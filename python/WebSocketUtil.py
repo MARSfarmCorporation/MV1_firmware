@@ -15,42 +15,42 @@ database_lock = threading.Lock()
 
 # This function uses thread locking to ensure that only one thread can write to the database at a time
 def secure_database_write(topic, payload_json, status):
-    print("Attempting to acquire database lock...")
+    #print("Attempting to acquire database lock...")
     with database_lock:
-        print("Database lock acquired.")
+        #print("Database lock acquired.")
         
         try:
             # Connecting to the SQLite database
-            print("Connecting to SQLite database...")
+            #print("Connecting to SQLite database...")
             conn = sqlite3.connect('/home/pi/Desktop/MV1_firmware/python/message_queue.db')
             conn.execute("PRAGMA busy_timeout = 2000")  # Setting a busy timeout of 2000 milliseconds
             cursor = conn.cursor()
-            print("Successfully connected to SQLite database.")
+            #print("Successfully connected to SQLite database.")
 
             # Inserting the payload into the message_queue table
-            print("Inserting data into message_queue table...")
+            #print("Inserting data into message_queue table...")
             cursor.execute("""
             INSERT INTO message_queue (topic, payload, status)
             VALUES (?, ?, ?)
             """, (topic, payload_json, status))
-            print("Data successfully inserted.")
+            #print("Data successfully inserted.")
 
             # Committing the transaction
-            print("Committing the transaction...")
+            #print("Committing the transaction...")
             conn.commit()
-            print("Transaction committed.")
+            #print("Transaction committed.")
         
         except sqlite3.Error as e:
             print(f"SQLite error occurred: {e}")
         
         finally:
             # Closing the database connection
-            print("Closing the database connection...")
+            #print("Closing the database connection...")
             conn.close()
-            print("Database connection closed.")
+            #print("Database connection closed.")
             
-        print("Releasing database lock...")
-    print("Database lock released.")
+        #print("Releasing database lock...")
+    #print("Database lock released.")
 
 
 # This function uses thread locking to ensure that only one thread can update the database at a time

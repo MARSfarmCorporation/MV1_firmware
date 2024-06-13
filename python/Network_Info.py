@@ -1,6 +1,10 @@
 import psutil
 import subprocess
 import socket
+import datetime
+import json
+from Sys_Conf import DEVICE_ID
+from WebSocketUtil import secure_database_write
 
 def get_connection_method():
     interfaces = psutil.net_if_addrs()
@@ -35,9 +39,20 @@ def main():
         ip_address = get_ip_address(interface)
         ssid = get_ssid(interface) if interface == 'wlan0' else 'Not applicable'
         
-        print(f"Connection Method: {interface}")
-        print(f"IP Address: {ip_address}")
-        print(f"SSID: {ssid}")
+        # Write the network information to the database to send to the MongoDB device record
+        topic = f"network-info/{DEVICE_ID}"
+        payload = {
+            "timestamp": datetime.datetime.now().timestamp(),
+            "connection_method": interface,
+            "ip_address": ip_address,
+            "ssid": ssid
+        }
+        payload_json = json.dumps(payload)
+        status = "Outbound - Unsent"
+        try:
+            secure_database_write(topic, payload_json, status)
+        except Exception as e:
+            print(f"Error logging network data: {e}")
     else:
         print("No network connection detected")
 
