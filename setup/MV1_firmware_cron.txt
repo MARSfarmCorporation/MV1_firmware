@@ -57,6 +57,9 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 # Reboot the device at 2:30AM every day, with a random delay of up to 5 minutes to avoid all devices rebooting at the same time
 30 2 * * * sudo reboot'
 
+# Back up any images not sent to S3 overnight, at 3:30AM every day
+30 3 * * * python3 $PYTHON_PATH/ImageBackup.py >> $LOG_PATH/S3_backup.log 2>&1 &
+
 # After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
 #@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
 
