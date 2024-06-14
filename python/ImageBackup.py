@@ -54,6 +54,26 @@ def compare_image_lists(local_image_name_list, S3_image_name_list):
     
     return images_to_upload
 
+def upload_images_to_s3(images_to_upload):
+    """
+    Upload images to an S3 bucket with an additional prefix.
+
+    :param bucket_name: The name of the S3 bucket.
+    :param directory: The local directory containing the images.
+    :param images_to_upload: List of image names to upload.
+    """
+    s3 = boto3.resource('s3')
+    for image_name in images_to_upload:
+        try:
+            file_path = os.path.join(IMAGE_DIR, image_name)
+            with open(file_path, 'rb') as data:
+                s3_path = f"{DEVICE_ID}/'Backups'/{image_name}"
+                s3.Bucket(S3_BUCKET).put_object(Key=s3_path, Body=data)
+                print(f"Uploaded {image_name} to {s3_path}")
+        except Exception as e:
+            print(f"Failed to upload {image_name} due to {e}")
+
+
 if __name__ == "__main__":
     bucket_name = S3_BUCKET  # Replace with your S3 bucket name
     prefix = DEVICE_ID  # Replace with your prefix if needed
@@ -65,7 +85,5 @@ if __name__ == "__main__":
     # Compare lists
     images_to_upload = compare_image_lists(local_image_name_list, S3_image_name_list)
     
-    # Print result
-    print(f"Images to upload ({len(images_to_upload)}):")
-    for image in images_to_upload:
-        print(image)
+    # Upload images
+    upload_images_to_s3(images_to_upload)
