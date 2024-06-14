@@ -15,7 +15,7 @@ from Pump_Control import test_pump
 
 trial_topic = 'trial/' + DEVICE_ID
 trial2_topic = 'trial2/' + DEVICE_ID
-device_control_topic = 'device-control/' + DEVICE_ID
+#device_control_topic = 'device-control/' + DEVICE_ID # Remove this topic as it is not used
 cloud_device_control_topic = 'cloud-device-control/' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
 

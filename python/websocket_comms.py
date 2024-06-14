@@ -75,20 +75,43 @@ def get_iot_temporary_credentials():
 credentials_data = get_iot_temporary_credentials()
 credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
 
+# def refresh_credentials():
+#     global credentials_provider
+#     while not is_sample_done.is_set():
+#         # Get the new credentials
+#         credentials_data = get_iot_temporary_credentials()
+#         credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
+        
+#         # Calculate the time until the next refresh (1 hours before expiration)
+#         expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
+#         refresh_time = expiration_time - datetime.timedelta(hours=1)
+#         sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
+
+#         # Sleep until it's time to refresh
+#         sleep(max(sleep_time, 0))
+
 def refresh_credentials():
     global credentials_provider
     while not is_sample_done.is_set():
-        # Get the new credentials
-        credentials_data = get_iot_temporary_credentials()
-        credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
-        
-        # Calculate the time until the next refresh (1 hours before expiration)
-        expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
-        refresh_time = expiration_time - datetime.timedelta(hours=1)
-        sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
+        try:
+            # Get the new credentials
+            credentials_data = get_iot_temporary_credentials()
+            credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
+            
+            # Calculate the time until the next refresh (1 hour before expiration)
+            expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
+            refresh_time = expiration_time - datetime.timedelta(hours=1)
+            sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
 
-        # Sleep until it's time to refresh
-        sleep(max(sleep_time, 0))
+            # Log the calculated sleep time and expiration details
+            logging.debug(f"Credentials refreshed. Next refresh in {sleep_time} seconds. Expiration: {expiration_time}")
+
+            # Sleep until it's time to refresh
+            sleep(max(sleep_time, 0))
+        except Exception as e:
+            logging.error(f"Error refreshing credentials: {e}")
+            # Add a short sleep to prevent tight looping in case of error
+            sleep(60)
 
 ###########################################################################################################################
 # FUNCTIONS
@@ -494,7 +517,7 @@ if __name__ == '__main__':
         on_connection_resumed=on_connection_resumed,
         client_id=args.client_id,
         clean_session=False,
-        keep_alive_secs=600)
+        keep_alive_secs=60)
     print(mqtt_connection)
 
     print(f"Connecting to {args.endpoint} with client ID '{args.client_id}'...")
