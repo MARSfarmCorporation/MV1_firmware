@@ -92,6 +92,8 @@ credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['
 
 def refresh_credentials():
     global credentials_provider
+    MIN_REFRESH_INTERVAL = 60  # Minimum interval of 60 seconds between refreshes
+    
     while not is_sample_done.is_set():
         try:
             # Get the new credentials
@@ -101,17 +103,26 @@ def refresh_credentials():
             # Calculate the time until the next refresh (1 hour before expiration)
             expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
             refresh_time = expiration_time - datetime.timedelta(hours=1)
-            sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
+            current_time = datetime.datetime.utcnow()
+            sleep_time = (refresh_time - current_time).total_seconds()
 
-            # Log the calculated sleep time and expiration details
-            logging.debug(f"Credentials refreshed. Next refresh in {sleep_time} seconds. Expiration: {expiration_time}")
+            # Log the calculated times and sleep time
+            logging.debug(f"Current time: {current_time}")
+            logging.debug(f"Expiration time: {expiration_time}")
+            logging.debug(f"Refresh time: {refresh_time}")
+            logging.debug(f"Calculated sleep time: {sleep_time} seconds")
+
+            # Ensure the sleep time is reasonable
+            sleep_time = max(sleep_time, MIN_REFRESH_INTERVAL)
+            logging.debug(f"Adjusted next refresh time: {sleep_time} seconds.")
 
             # Sleep until it's time to refresh
-            sleep(max(sleep_time, 0))
+            sleep(sleep_time)
         except Exception as e:
             logging.error(f"Error refreshing credentials: {e}")
             # Add a short sleep to prevent tight looping in case of error
             sleep(60)
+
 
 ###########################################################################################################################
 # FUNCTIONS
