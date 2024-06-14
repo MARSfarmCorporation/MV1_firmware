@@ -67,7 +67,7 @@ def upload_images_to_s3(images_to_upload):
         try:
             file_path = os.path.join(IMAGE_DIR, image_name)
             with open(file_path, 'rb') as data:
-                s3_path = f"{DEVICE_ID}/'Backups'/{image_name}"
+                s3_path = f"{DEVICE_ID}/Backups/{image_name}"
                 s3.Bucket(S3_BUCKET).put_object(Key=s3_path, Body=data)
                 print(f"Uploaded {image_name} to {s3_path}")
         except Exception as e:
