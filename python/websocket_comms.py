@@ -100,16 +100,18 @@ def refresh_credentials():
             credentials_data = get_iot_temporary_credentials()
             credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
             
-            # Calculate the time until the next refresh (1 hour before expiration)
+            # Calculate the time until expiration
             expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
-            refresh_time = expiration_time - datetime.timedelta(hours=1)
             current_time = datetime.datetime.utcnow()
-            sleep_time = (refresh_time - current_time).total_seconds()
+            time_until_expiration = (expiration_time - current_time).total_seconds()
 
-            # Log the calculated times and sleep time
+            # Log the calculated times
             logging.debug(f"Current time: {current_time}")
             logging.debug(f"Expiration time: {expiration_time}")
-            logging.debug(f"Refresh time: {refresh_time}")
+            logging.debug(f"Time until expiration: {time_until_expiration} seconds")
+
+            # Calculate the sleep time (1 minute before expiration)
+            sleep_time = time_until_expiration - 60  # Subtract 1 minute in seconds
             logging.debug(f"Calculated sleep time: {sleep_time} seconds")
 
             # Ensure the sleep time is reasonable
@@ -122,7 +124,6 @@ def refresh_credentials():
             logging.error(f"Error refreshing credentials: {e}")
             # Add a short sleep to prevent tight looping in case of error
             sleep(60)
-
 
 ###########################################################################################################################
 # FUNCTIONS
