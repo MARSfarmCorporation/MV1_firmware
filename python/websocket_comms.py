@@ -71,9 +71,9 @@ def get_iot_temporary_credentials():
     output = subprocess.check_output(curl_command, stderr=subprocess.DEVNULL).decode("utf-8")
     return json.loads(output)['credentials']
 
-# Deprecated method of getting credentials due to the refresh thread
-#credentials_data = get_iot_temporary_credentials()
-#credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
+# Creates initial credentials provider, do not delete this until the refresh thread can handle the initial credentials on its own
+credentials_data = get_iot_temporary_credentials()
+credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
 
 def refresh_credentials():
     global credentials_provider
