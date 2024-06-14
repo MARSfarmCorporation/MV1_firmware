@@ -71,24 +71,9 @@ def get_iot_temporary_credentials():
     output = subprocess.check_output(curl_command, stderr=subprocess.DEVNULL).decode("utf-8")
     return json.loads(output)['credentials']
 
-# Create the credentials provider
-credentials_data = get_iot_temporary_credentials()
-credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
-
-# def refresh_credentials():
-#     global credentials_provider
-#     while not is_sample_done.is_set():
-#         # Get the new credentials
-#         credentials_data = get_iot_temporary_credentials()
-#         credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
-        
-#         # Calculate the time until the next refresh (1 hours before expiration)
-#         expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
-#         refresh_time = expiration_time - datetime.timedelta(hours=1)
-#         sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
-
-#         # Sleep until it's time to refresh
-#         sleep(max(sleep_time, 0))
+# Deprecated method of getting credentials due to the refresh thread
+#credentials_data = get_iot_temporary_credentials()
+#credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
 
 def refresh_credentials():
     global credentials_provider
@@ -105,18 +90,11 @@ def refresh_credentials():
             current_time = datetime.datetime.utcnow()
             time_until_expiration = (expiration_time - current_time).total_seconds()
 
-            # Log the calculated times
-            logging.debug(f"Current time: {current_time}")
-            logging.debug(f"Expiration time: {expiration_time}")
-            logging.debug(f"Time until expiration: {time_until_expiration} seconds")
-
             # Calculate the sleep time (1 minute before expiration)
             sleep_time = time_until_expiration - 60  # Subtract 1 minute in seconds
-            logging.debug(f"Calculated sleep time: {sleep_time} seconds")
 
             # Ensure the sleep time is reasonable
             sleep_time = max(sleep_time, MIN_REFRESH_INTERVAL)
-            logging.debug(f"Adjusted next refresh time: {sleep_time} seconds.")
 
             # Sleep until it's time to refresh
             sleep(sleep_time)
