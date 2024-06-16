@@ -5,7 +5,6 @@ from Sys_Conf import DEVICE_ID, IMAGE_DIR, S3_BUCKET
 
 # Gets the list of image names in the local directory for comparison
 def list_local_image_names():
-
     local_image_names = []
     # Get a list of files in the specified directory
     list_of_files = glob.glob(IMAGE_DIR + '*')
@@ -56,10 +55,8 @@ def compare_image_lists(local_image_name_list, S3_image_name_list):
 
 def upload_images_to_s3(images_to_upload):
     """
-    Upload images to an S3 bucket with an additional prefix.
+    Upload images to an S3 bucket with an additional prefix and metadata.
 
-    :param bucket_name: The name of the S3 bucket.
-    :param directory: The local directory containing the images.
     :param images_to_upload: List of image names to upload.
     """
     s3 = boto3.resource('s3')
@@ -67,12 +64,18 @@ def upload_images_to_s3(images_to_upload):
         try:
             file_path = os.path.join(IMAGE_DIR, image_name)
             with open(file_path, 'rb') as data:
-                s3_path = f"{DEVICE_ID}/Backups/{image_name}"
-                s3.Bucket(S3_BUCKET).put_object(Key=s3_path, Body=data)
-                print(f"Uploaded {image_name} to {s3_path}")
+                s3_path = f"Backups/{image_name}"
+                s3.Bucket(S3_BUCKET).put_object(
+                    Key=s3_path,
+                    Body=data,
+                    Metadata={
+                        'x-amz-meta-device_id': DEVICE_ID,
+                        'x-amz-meta-currtime': image_name
+                        }
+                )
+                print(f"Uploaded {image_name} to {s3_path} with device_id {DEVICE_ID}")
         except Exception as e:
             print(f"Failed to upload {image_name} due to {e}")
-
 
 if __name__ == "__main__":
     bucket_name = S3_BUCKET  # Replace with your S3 bucket name
