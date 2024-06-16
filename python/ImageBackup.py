@@ -16,11 +16,11 @@ def list_local_image_names():
 
 def list_images_in_s3(bucket_name, prefix=''):
     """
-    List all image names in an S3 bucket with an optional prefix.
+    List all image names in an S3 bucket with an optional prefix and strip the prefix from the image names.
 
     :param bucket_name: The name of the S3 bucket.
     :param prefix: The prefix to filter objects in the bucket.
-    :return: A list of image names in the S3 bucket.
+    :return: A list of image names in the S3 bucket with the prefix stripped.
     """
     s3 = boto3.client('s3')
     image_names = []
@@ -32,7 +32,9 @@ def list_images_in_s3(bucket_name, prefix=''):
     for page in page_iterator:
         if 'Contents' in page:
             for obj in page['Contents']:
-                image_names.append(obj['Key'])
+                # Strip the prefix from the image name
+                stripped_key = obj['Key'][len(prefix):] if obj['Key'].startswith(prefix) else obj['Key']
+                image_names.append(stripped_key)
     
     return image_names
 
