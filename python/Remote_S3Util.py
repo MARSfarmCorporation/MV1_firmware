@@ -71,19 +71,20 @@ def main():
         # upload the file to S3 bucket with metadata
         if trial_id_num != 0:
             s3.Bucket(S3_BUCKET).put_object(Key=s3_path,
-                                                           Body=data,
-                                                           Metadata={
-                                                                     'currTime':current_time,
-                                                                     'device_id':device_id,
-                                                                     'trial_id':trial_id,
-								                                     'day_number':day_number_str,
-                                                                    })
+                Body=data,
+                Metadata={
+                    'currTime':current_time,
+                    'device_id':device_id,
+                    'trial_id':trial_id,
+                    'day_number':day_number_str,
+                })
         else:
              s3.Bucket(S3_BUCKET).put_object(Key=s3_path,
-                                                           Body=data,
-                                                           Metadata={'currTime':current_time,
-                                                                     'device_id':device_id,
-                                                                    })
+                Body=data,
+                Metadata={
+                    'currTime':current_time,
+                    'device_id':device_id,
+                })
         print('image uploaded to this location', s3_path, 'in S3 bucket', S3_BUCKET)
         print('s3 image metadata uploaded Current Time: ', current_time, ' Device ID: ', device_id, 'Trial ID: ', trial_id, 'Day Number: ', day_number_str)
 

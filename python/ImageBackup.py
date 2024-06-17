@@ -83,16 +83,42 @@ def upload_images_to_s3(images_to_upload):
         except Exception as e:
             print(f"Failed to upload {image_name} due to {e}")
 
+def delete_local_images(images_to_delete):
+    """
+    Delete local images that are already in S3.
+
+    :param images_to_delete: List of image names to delete.
+    """
+    for image_name in images_to_delete:
+        try:
+            file_path = os.path.join(IMAGE_DIR, image_name)
+            os.remove(file_path)
+            print(f"Deleted local image: {image_name}")
+        except Exception as e:
+            print(f"Failed to delete {image_name} due to {e}")
+
 if __name__ == "__main__":
     bucket_name = S3_BUCKET  # Replace with your S3 bucket name
     prefix = DEVICE_ID  # Replace with your prefix if needed
     
-    # Get lists of image names
-    S3_image_name_list = list_images_in_s3(bucket_name, prefix)
-    local_image_name_list = list_local_image_names()
-    
-    # Compare lists
-    images_to_upload = compare_image_lists(local_image_name_list, S3_image_name_list)
-    
-    # Upload images
-    upload_images_to_s3(images_to_upload)
+    try:
+        # Get lists of image names
+        S3_image_name_list = list_images_in_s3(bucket_name, prefix)
+        local_image_name_list = list_local_image_names()
+        
+        # Compare lists
+        images_to_upload = compare_image_lists(local_image_name_list, S3_image_name_list)
+        
+        # Upload images
+        upload_images_to_s3(images_to_upload)
+    except Exception as e:
+        print(f"Failed to upload images due to {e}")
+
+    try:
+        # Find images to delete
+        images_to_delete = [image for image in local_image_name_list if image in S3_image_name_list]
+        
+        # Delete local images
+        delete_local_images(images_to_delete)
+    except Exception as e:
+        print(f"Failed to delete images due to {e}")
