@@ -12,7 +12,6 @@ def list_local_image_names():
     for file in list_of_files:
         local_image_names.append(os.path.basename(file))
     return local_image_names
-    
 
 def list_images_in_s3(bucket_name, prefix=''):
     """
@@ -115,8 +114,11 @@ if __name__ == "__main__":
         print(f"Failed to upload images due to {e}")
 
     try:
-        # Find images to delete
-        images_to_delete = [image for image in local_image_name_list if image in S3_image_name_list]
+        # Sort local image names by date
+        sorted_local_images = sorted(local_image_name_list)
+        
+        # Find images to delete (all but the most recent 1440 images)
+        images_to_delete = [image for image in sorted_local_images if image in S3_image_name_list][:-1440]
         
         # Delete local images
         delete_local_images(images_to_delete)
