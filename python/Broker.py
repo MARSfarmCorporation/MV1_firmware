@@ -3,6 +3,7 @@ import time
 import json
 import socket
 import subprocess
+import os
 import threading
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 from WebSocketUtil import log_job_fail, secure_database_update, aws_enqueue
@@ -18,6 +19,13 @@ trial2_topic = 'trial2/' + DEVICE_ID
 #device_control_topic = 'device-control/' + DEVICE_ID # Remove this topic as it is not used
 cloud_device_control_topic = 'cloud-device-control/' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
+
+###########################################################################################################################
+# SEMAPHORES
+###########################################################################################################################
+
+pump_lock_file = 'pump_lock.lock'
+pump_lock_timeout = 750  # 750 seconds = 12.5 minutes
 
 ###########################################################################################################################
 # SPECIAL HANDLER FUNCTIONS
@@ -178,13 +186,20 @@ def cloud_device_control(payload, id):
                 print("Unknown LED value received from the Web Application")
                 status = 'Inbound - Unsortable - Unknown'
         elif command == "PUMP":
-            # Get the value of the "value" key and pass that to the pump_control function
             try:
+                # Create the lock file with a timestamp
+                with open(pump_lock_file, 'w') as file:
+                    file.write(str(time.time()))
+
                 test_pump(value)
                 status = 'Inbound - Sorted'
             except Exception as e:
                 print(f"Error running pump: {e}")
                 status = 'Inbound - Unsortable - Unknown'
+            finally:
+                # Remove the lock file
+                if os.path.exists(pump_lock_file):
+                    os.remove(pump_lock_file)
         else:
             print("Command type not recognized from message ID: {id}")
             status = 'Inbound - Unsortable - Unknown'
