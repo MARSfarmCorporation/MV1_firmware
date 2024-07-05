@@ -36,11 +36,11 @@ observation_date = datetime.now().timestamp()
 p = Pump()
 
 # Check if the lock file exists and its timestamp
-if os.path.exists(lock_file):
-    with open(lock_file, 'r') as file:
+if os.path.exists(pump_lock_file):
+    with open(pump_lock_file, 'r') as file:
         timestamp = float(file.read())
     # If the lock file is older than the timeout, ignore it
-    if time.time() - timestamp < lock_timeout:
+    if time.time() - timestamp < pump_lock_timeout:
         print("Lock file exists and is valid. Skipping scheduled task.")
         exit()
 
