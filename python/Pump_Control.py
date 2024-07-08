@@ -72,6 +72,7 @@ def test_pump(amount):
         return
 
     # Get current time
+    current_time = datetime.now().strftime("%y-%m-%d %H:%M:%S")  # Renamed to avoid conflict
     observation_date = datetime.now().timestamp()
 
     p.dispense(amount)  # Dispensing specified amount of water
