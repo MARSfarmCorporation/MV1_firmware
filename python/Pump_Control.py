@@ -21,6 +21,7 @@ mqtt_topic = "devicedata"
 #############################################
 
 pump_lock_file = 'pump_lock.lock'
+pump_log_file = '../logs/Pump.log'
 pump_lock_timeout = 750  # 750 seconds = 12.5 minutes
 
 #############################################
@@ -41,6 +42,9 @@ if os.path.exists(pump_lock_file):
         timestamp = float(file.read())
     # If the lock file is older than the timeout, ignore it
     if time.time() - timestamp < pump_lock_timeout:
+        # delete this after testing
+        with open(pump_log_file, 'a') as file:
+            file.write(time + " - Lock file exists and is valid. Skipping scheduled task.\n")
         print("Lock file exists and is valid. Skipping scheduled task.")
         exit()
 
@@ -76,3 +80,6 @@ def test_pump(amount):
         # Creating the payload via the enqueue function
         devicedata_enqueue(mqtt_topic,"pump", amount, "mL", observation_date, "PumpObservation")
         print('Test pump dispersed', amount, 'ML of water. This is likely due to user input from the Web Application, but could aslo be due to a test.')
+        # delete this after testing
+        with open(pump_log_file, 'a') as file:
+            file.write(time + " - Test pump dispersed " + str(amount) + " mL of water.\n")
