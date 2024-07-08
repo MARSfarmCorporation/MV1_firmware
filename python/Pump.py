@@ -24,7 +24,7 @@ class Pump:
         self.calibration = 0.7  # Rate of pumping, measured in ml/sec
         pi.set_mode(self.gpioA, OUTPUT)  # Set pump as output
         pi.set_mode(self.gpioB, OUTPUT)  # Set pump as output
-        self.off()  # Turn off pump when initialized
+        #self.off()  # Turn off pump when initialized
 
     def is_pumping(self):
         # Check if pump is currently pumping
@@ -32,8 +32,8 @@ class Pump:
 
     # Turn on the pump
     def on(self):
-        pi.write(self.gpioA, OFF)
-        pi.write(self.gpioB, ON)
+        pi.write(self.gpioA, ON)
+        pi.write(self.gpioB, OFF)
 
     # Turn off the pump
     def off(self):

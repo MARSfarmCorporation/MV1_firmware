@@ -47,20 +47,14 @@ def main():
         # If the lock file is older than the timeout, ignore it
         if time_module.time() - timestamp < pump_lock_timeout:
             # Log skipping the task due to valid lock file
-            with open(pump_log_file, 'a') as file:
-                file.write(current_time + " - Lock file exists and is valid. Skipping scheduled task.\n")
-            print("Lock file exists and is valid. Skipping scheduled task.")
+            print(current_time + "Lock file exists and is valid. Skipping scheduled task.")
             return
         else:
             # Log ignoring the stale lock file
-            with open(pump_log_file, 'a') as file:
-                file.write(current_time + " - Lock file is stale. Continuing with scheduled task.\n")
             print("Lock file is stale. Continuing with scheduled task.")
 
     # Check to verify that pump is not already pumping to prevent overwrite
     if p.is_pumping():
-        with open(pump_log_file, 'a') as file:
-            file.write(current_time + " - Pump is already Pumping\n")
         print('Pump is already Pumping')
         return
 
@@ -71,8 +65,6 @@ def main():
     if ps > 0:
         # Creating the payload via the enqueue function
         devicedata_enqueue(mqtt_topic, "pump", ps, "mL", observation_date, "PumpObservation")
-        with open(pump_log_file, 'a') as file:
-            file.write(current_time + ' - Pump dispersed ' + str(ps) + ' ML of water.\n')
         print('Pump dispersed ', ps, ' ML of water on ', current_time)
 
 def test_pump(amount):
