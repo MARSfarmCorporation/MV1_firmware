@@ -32,15 +32,11 @@ class Pump:
 
     # Turn on the pump
     def on(self):
-        with open('/home/pi/Desktop/MV1_firmware/logs/Pump.log', 'a') as log_file:
-            log_file.write(datetime.now().strftime("%y-%m-%d %H:%M:%S") + " - Turning pump ON\n")
         pi.write(self.gpioA, ON)
         pi.write(self.gpioB, OFF)
 
     # Turn off the pump
     def off(self):
-        with open('/home/pi/Desktop/MV1_firmware/logs/Pump.log', 'a') as log_file:
-            log_file.write(datetime.now().strftime("%y-%m-%d %H:%M:%S") + " - Turning pump OFF\n")
         pi.write(self.gpioA, OFF)
         pi.write(self.gpioB, OFF)
 
