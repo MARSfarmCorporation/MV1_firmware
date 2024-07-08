@@ -20,7 +20,7 @@ mqtt_topic = "devicedata"
 # Semaphores
 #############################################
 
-pump_lock_file = 'pump_lock.lock'
+pump_lock_file = '/home/pi/Desktop/MV1_firmware/python/pump_lock.lock'
 pump_log_file = '../logs/Pump.log'
 pump_lock_timeout = 750  # 750 seconds = 12.5 minutes
 
