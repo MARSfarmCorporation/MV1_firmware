@@ -32,8 +32,8 @@ class Pump:
 
     # Turn on the pump
     def on(self):
-        pi.write(self.gpioA, ON)
-        pi.write(self.gpioB, OFF)
+        pi.write(self.gpioA, OFF)
+        pi.write(self.gpioB, ON)
 
     # Turn off the pump
     def off(self):
