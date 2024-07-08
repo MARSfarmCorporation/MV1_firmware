@@ -26,42 +26,42 @@ pump_lock_timeout = 750  # 750 seconds = 12.5 minutes
 
 #############################################
 
-# Import dictionary data
-t = Trial()
+def main():
+    # Import dictionary data
+    t = Trial()
 
-# Get current time
-current_time = datetime.now().strftime("%y-%m-%d %H:%M:%S")  # Renamed to avoid conflict
-observation_date = datetime.now().timestamp()
+    # Get current time
+    current_time = datetime.now().strftime("%y-%m-%d %H:%M:%S")  # Renamed to avoid conflict
+    observation_date = datetime.now().timestamp()
 
-# creating an instance of the pump class
-p = Pump()
+    # creating an instance of the pump class
+    p = Pump()
 
-# Check if the lock file exists and its timestamp
-if os.path.exists(pump_lock_file):
-    with open(pump_lock_file, 'r') as file:
-        timestamp = float(file.read())
-    # If the lock file is older than the timeout, ignore it
-    if time_module.time() - timestamp < pump_lock_timeout:
-        # delete this after testing
-        with open(pump_log_file, 'a') as file:
-            file.write(current_time + " - Lock file exists and is valid. Skipping scheduled task.\n")
-        print("Lock file exists and is valid. Skipping scheduled task.")
-        exit()
+    # Check if the lock file exists and its timestamp
+    if os.path.exists(pump_lock_file):
+        with open(pump_lock_file, 'r') as file:
+            timestamp = float(file.read())
+        # If the lock file is older than the timeout, ignore it
+        if time_module.time() - timestamp < pump_lock_timeout:
+            # delete this after testing
+            with open(pump_log_file, 'a') as file:
+                file.write(current_time + " - Lock file exists and is valid. Skipping scheduled task.\n")
+            print("Lock file exists and is valid. Skipping scheduled task.")
+            return
 
-# check to verify that pump is not already pumping to prevent overwrite
-if p.is_pumping():
-   print('Pump is already Pumping')
-   exit()
+    # check to verify that pump is not already pumping to prevent overwrite
+    if p.is_pumping():
+        print('Pump is already Pumping')
+        return
 
-# retrieve pump settings from trial
-ps = t.get_pump_setting()
+    # retrieve pump settings from trial
+    ps = t.get_pump_setting()
 
-p.dispense(ps) # dispensing specified amount of water
-if (ps > 0):
-
-    # Creating the payload via the enqueue function
-    devicedata_enqueue(mqtt_topic, "pump", ps, "mL", observation_date, "PumpObservation")
-    print('Pump dispersed ', ps, ' ML of water on ', current_time)
+    p.dispense(ps)  # dispensing specified amount of water
+    if ps > 0:
+        # Creating the payload via the enqueue function
+        devicedata_enqueue(mqtt_topic, "pump", ps, "mL", observation_date, "PumpObservation")
+        print('Pump dispersed ', ps, ' ML of water on ', current_time)
 
 def test_pump(amount):
     p = Pump()
@@ -74,7 +74,7 @@ def test_pump(amount):
     # Get current time
     observation_date = datetime.now().timestamp()
 
-    p.dispense(amount) # Dispensing specified amount of water
+    p.dispense(amount)  # Dispensing specified amount of water
 
     if amount > 0:
         # Creating the payload via the enqueue function
@@ -83,3 +83,6 @@ def test_pump(amount):
         # delete this after testing
         with open(pump_log_file, 'a') as file:
             file.write(current_time + " - Test pump dispersed " + str(amount) + " mL of water.\n")
+
+if __name__ == "__main__":
+    main()
