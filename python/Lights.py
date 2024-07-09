@@ -56,6 +56,9 @@ class Light:
         
     def white(self):
         self.customMode(0,0,0,255)
+    
+    def camera_mode(self):
+        self.customMode(0,0,0,170)
         
     def off(self):
         self.customMode(0,0,0,0)
