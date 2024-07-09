@@ -117,8 +117,8 @@ if __name__ == "__main__":
         # Sort local image names by date
         sorted_local_images = sorted(local_image_name_list)
         
-        # Find images to delete (all but the most recent 1440 images)
-        images_to_delete = [image for image in sorted_local_images if image in S3_image_name_list][:-100] # Change 100 to 1440 when ready
+        # Find images to delete (all but the most recent 1440 images, or about 60 days of images)
+        images_to_delete = [image for image in sorted_local_images if image in S3_image_name_list][:-1440] 
         
         # Delete local images
         delete_local_images(images_to_delete)
