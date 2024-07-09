@@ -37,7 +37,6 @@ def add_wifi_credentials(ssid, password):
     config_content = f"""
 [connection]
 id={ssid}
-uuid=$(uuidgen)
 interface-name=wlan0
 type=wifi
 
