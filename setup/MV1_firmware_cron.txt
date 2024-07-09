@@ -60,6 +60,12 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 # Back up any images not sent to S3 overnight, at 3:30AM every day
 30 3 * * * python3 $PYTHON_PATH/ImageBackup.py >> $LOG_PATH/S3_backup.log 2>&1 &
 
+# Delete inbound and outbound messages that have successfully been sorted/sent at 4am every day
+0 4 * * * python3 $PYTHON_PATH/SQLiteCleaner.py >> $LOG_PATH/SQLiteCleaner.log 2>&1 &
+
+# Attempts to mount the USB drive and find wifi_credentials.txt every minute
+#* * * * * python3 $PYTHON_PATH/WiFiCredentials.py >> $LOG_PATH/WiFiCredentials.log 2>&1 &
+
 # After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
 #@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
 

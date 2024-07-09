@@ -85,6 +85,12 @@ class Light:
         
     def trial_received_fail(self, num=3, spd=0.25):
         self.blink(num, spd, 0, 0, 100, 0)
+    
+    def wifi_credtials_success(self, num=5, spd=0.25):
+        self.blink(num, spd, 0, 0, 0, 100)
+
+    def wifi_credtials_fail(self, num=5, spd=0.25):
+        self.blink(num, spd, 0, 0, 100, 0)
 
     def blink(self, num=5, spd=1, fr=0, r=0, b=0, w=100):
         # Used to indicate an error
