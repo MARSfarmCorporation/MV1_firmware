@@ -64,7 +64,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 0 4 * * * python3 $PYTHON_PATH/SQLiteCleaner.py >> $LOG_PATH/SQLiteCleaner.log 2>&1 &
 
 # Attempts to mount the USB drive and find wifi_credentials.txt every minute
-#* * * * * python3 $PYTHON_PATH/WiFiCredentials.py >> $LOG_PATH/WiFiCredentials.log 2>&1 &
+* * * * * python3 $PYTHON_PATH/WiFiCredentials.py >> $LOG_PATH/WiFiCredentials.log 2>&1 &
 
 # After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
 #@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &

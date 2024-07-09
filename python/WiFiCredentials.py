@@ -77,14 +77,15 @@ def main():
                 if TARGET_FILENAME in files:
                     file_path = os.path.join(root, TARGET_FILENAME)
                     process_file(file_path)
+                    
+                    light = Light()
+                    light.wifi_credentials_success()
+
+                    import Light_Control
                     break
             unmount_usb()
             print('USB drive unmounted.')
 
-            light = Light()
-            light.wifi_credentials_success()
-
-            import Light_Control
         else:
             print('Failed to mount USB drive.')
             light = Light()
