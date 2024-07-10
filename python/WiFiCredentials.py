@@ -18,11 +18,14 @@ def get_usb_devices():
         output = json.loads(result.stdout)
         for device in output['blockdevices']:
             if device['mountpoint'] is None and device['name'].startswith('sd'):
-                devices.append(device['name'])
+                # Look for partitions (e.g., sda1, sdb1)
+                for child in device.get('children', []):
+                    if child['mountpoint'] is None:
+                        devices.append(child['name'])
     return devices
 
 def mount_usb(device):
-    device_path = f'/dev/{device}1'
+    device_path = f'/dev/{device}'
     result = subprocess.run(['sudo', 'mount', device_path, MOUNT_POINT], capture_output=True, text=True)
     return result.returncode == 0
 
