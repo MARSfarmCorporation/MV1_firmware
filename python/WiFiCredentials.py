@@ -20,8 +20,7 @@ def get_usb_devices():
             if device['mountpoint'] is None and device['name'].startswith('sd'):
                 # Look for partitions (e.g., sda1, sdb1)
                 for child in device.get('children', []):
-                    if child['mountpoint'] is None:
-                        devices.append(child['name'])
+                    devices.append(child['name'])
     return devices
 
 def mount_usb(device):
