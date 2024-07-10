@@ -1,5 +1,6 @@
 import os
 import shutil
+import json
 import subprocess
 from Lights import Light
 
@@ -9,6 +10,16 @@ from Lights import Light
 MOUNT_POINT = '/mnt/usb'
 TARGET_FILENAME = 'wifi_credentials.txt'
 PROCESSING_DIR = '/home/pi/'  # Directory where the file will be processed
+
+def get_usb_devices():
+    result = subprocess.run(['lsblk', '-o', 'NAME,MOUNTPOINT', '-J'], capture_output=True, text=True)
+    devices = []
+    if result.returncode == 0:
+        output = json.loads(result.stdout)
+        for device in output['blockdevices']:
+            if device['mountpoint'] is None and device['name'].startswith('sd'):
+                devices.append(device['name'])
+    return devices
 
 def mount_usb():
     result = subprocess.run(['sudo', 'mount', '/dev/sda1', MOUNT_POINT], capture_output=True, text=True)
@@ -69,29 +80,33 @@ def main():
     if not os.path.exists(MOUNT_POINT):
         os.makedirs(MOUNT_POINT)
     
-    if os.path.exists('/dev/sda1'):
-        print('USB drive detected. Mounting...')
-        if mount_usb():
-            print('USB drive mounted.')
-            for root, dirs, files in os.walk(MOUNT_POINT):
-                if TARGET_FILENAME in files:
-                    file_path = os.path.join(root, TARGET_FILENAME)
-                    process_file(file_path)
-                    
-                    light = Light()
-                    light.wifi_credentials_success()
+    usb_devices = get_usb_devices()
+    if usb_devices:
+        for device in usb_devices:
+            print(f'USB drive detected: {device}. Mounting...')
+            if mount_usb(device):
+                print('USB drive mounted.')
+                for root, dirs, files in os.walk(MOUNT_POINT):
+                    if TARGET_FILENAME in files:
+                        file_path = os.path.join(root, TARGET_FILENAME)
+                        process_file(file_path)
 
-                    import Light_Control
-                    break
-            unmount_usb()
-            print('USB drive unmounted.')
+                        light = Light()
+                        light.wifi_credentials_success()
 
-        else:
-            print('Failed to mount USB drive.')
-            light = Light()
-            light.wifi_credentials_fail()
+                        import Light_Control
 
-            import Light_Control
+                        break
+
+                unmount_usb()
+                print('USB drive unmounted.')
+            else:
+                print(f'Failed to mount USB drive: {device}.')
+
+                light = Light()
+                light.wifi_credentials_fail()
+
+                import Light_Control
     else:
         exit(0)
 
