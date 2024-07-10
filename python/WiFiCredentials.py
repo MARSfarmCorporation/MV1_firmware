@@ -21,8 +21,9 @@ def get_usb_devices():
                 devices.append(device['name'])
     return devices
 
-def mount_usb():
-    result = subprocess.run(['sudo', 'mount', '/dev/sda1', MOUNT_POINT], capture_output=True, text=True)
+def mount_usb(device):
+    device_path = f'/dev/{device}1'
+    result = subprocess.run(['sudo', 'mount', device_path, MOUNT_POINT], capture_output=True, text=True)
     return result.returncode == 0
 
 def unmount_usb():
