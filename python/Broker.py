@@ -3,10 +3,12 @@ import time
 import json
 import socket
 import subprocess
+import os
 import threading
 from Sys_Conf import DEVICE_ID, SERIAL_NUMBER
 from WebSocketUtil import log_job_fail, secure_database_update, aws_enqueue
 from Lights import Light
+from Pump_Control import test_pump
 
 ###########################################################################################################################
 # DEFINE TOPICS
@@ -14,8 +16,16 @@ from Lights import Light
 
 trial_topic = 'trial/' + DEVICE_ID
 trial2_topic = 'trial2/' + DEVICE_ID
-device_control_topic = 'device-control/' + DEVICE_ID
+#device_control_topic = 'device-control/' + DEVICE_ID # Remove this topic as it is not used
+cloud_device_control_topic = 'cloud-device-control/' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
+
+###########################################################################################################################
+# SEMAPHORES
+###########################################################################################################################
+
+pump_lock_file = '/home/pi/Desktop/MV1_firmware/python/pump_lock.lock'
+pump_lock_timeout = 1500  # 1500 seconds = 25 minutes
 
 ###########################################################################################################################
 # SPECIAL HANDLER FUNCTIONS
@@ -131,33 +141,46 @@ def trial2_handler(payload, id):
         light = Light()
         light.blink_blue()
 
-def device_control(payload, id):
-    try:
+def cloud_device_control(payload, id):
+    try: 
         # Assuming payload is a JSON string; parse it into a dictionary
         payload_dict = json.loads(payload)
-
-        # Check if the "LED" key exists in the dictionary and its value
-        if payload_dict.get("LED") == "Flash LED":
-            light = Light()
-            light.flash_all()
-            status = 'Inbound - Sorted'
+        
+        # Check which operation the user wants to perform, based on the "command" key.
+        command = payload_dict.get("control")
+        value = payload_dict.get("value")
+        if command == "LED":
+            # Check if "value" is 1, and flash the LED if it is. Otherwise, update the status to "Inbound - Unsortable - Unknown"
+            if value == 1:
+                light = Light()
+                light.flash_all()
+                status = 'Inbound - Sorted'
+            else:
+                print("Unknown LED value received from the Web Application")
+                status = 'Inbound - Unsortable - Unknown'
+        elif command == "PUMP":
+            try:
+                test_pump(value)
+                status = 'Inbound - Sorted'
+            except Exception as e:
+                print(f"Error running pump: {e}")
+                status = 'Inbound - Unsortable - Unknown'
         else:
+            print("Command type not recognized from message ID: {id}")
             status = 'Inbound - Unsortable - Unknown'
     except json.JSONDecodeError as e:
-        print(f"Error parsing JSON payload: {e}")
-        status = 'Inbound - Unsortable - Parse Error'
-        # Optionally blink the lights blue to indicate a parse error
+        print(f"Error parsing JSON payload when trying to run a user command from the Web Application: {e}")
+        status = 'Inbound - Unsortable - Unknown'
+        # Optionally blink the lights red to indicate a parse error
         light = Light()
-        light.blink_blue()
+        light.blink_red()
     except Exception as e:
         print(f"Error processing inbound message: {e}")
-        status = 'Inbound - Unsortable - Error'
+        status = 'Inbound - Unsortable - Unknown'
         # Blink the lights red to indicate a general error
         light = Light()
-        light.blink_blue()  # Assuming this should be blink_red for an error?
-
+        light.blink_red()
     secure_database_update(id, status)
-
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
@@ -173,8 +196,10 @@ def process_inbound_message(cursor, id, topic, payload):
             trial2_handler(payload, id)
         elif topic == job_notify_topic:
             spawn_job_agent(id, payload)
-        elif topic == device_control_topic:
-            device_control(payload, id)
+        #elif topic == device_control_topic:
+        #    device_control(payload, id)
+        elif topic == cloud_device_control_topic:
+            cloud_device_control(payload, id)
         else:
             # Handle other topics as needed
             pass
@@ -283,10 +308,34 @@ def handle_pending_messages():
     finally:
         conn.close()
 
+# This function handles outbound messages that were unable to send due to a rare connection error, generally only when the socket to websocket_comms is lost after a message is sent to it.
+# A more elegant solution can likely be made with an independant script that runs nightly to check for lost messages, but this is a simple solution for now.
+def handle_lost_pending_messages():
+    conn = sqlite3.connect('message_queue.db')
+    cursor = conn.cursor()
+
+    try:
+        while True:
+            cursor.execute("SELECT id, topic, payload, status FROM message_queue WHERE status = 'Outbound - Pending' ORDER BY id ASC LIMIT 50")
+            messages = cursor.fetchall()
+
+            for message in messages:
+                id, topic, payload, status = message
+                process_outbound_message(cursor, id, topic, payload)
+
+            conn.commit()
+            time.sleep(6013)  # Sleep for 100 minutes and 13 seconds to prevent excessive CPU usage, and to prevent recursively sending messages on the main loop
+    finally:
+        conn.close()
+
 if __name__ == "__main__":
     # Start a thread to handle pending messages
     pending_messages_thread = threading.Thread(target=handle_pending_messages)
     pending_messages_thread.start()
+
+    # Start a thread to handle lost pending messages
+    lost_pending_messages_thread = threading.Thread(target=handle_lost_pending_messages)
+    lost_pending_messages_thread.start
     
     # Start the main loop
     main()

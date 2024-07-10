@@ -30,7 +30,7 @@ logging.basicConfig(filename='../logs/websocket_comms_log', level=logging.DEBUG)
 is_sample_done = threading.Event()
 trial_topic = "trial/" + DEVICE_ID
 trial2_topic = "trial2/" + DEVICE_ID
-device_control_topic = "device-control/" + DEVICE_ID
+cloud_device_control_topic = "cloud-device-control/" + DEVICE_ID
 pong_topic = "pong/" + DEVICE_ID
 ping_topic = "ping/" + DEVICE_ID
 mqtt_connection = None
@@ -71,24 +71,37 @@ def get_iot_temporary_credentials():
     output = subprocess.check_output(curl_command, stderr=subprocess.DEVNULL).decode("utf-8")
     return json.loads(output)['credentials']
 
-# Create the credentials provider
+# Creates initial credentials provider, do not delete this until the refresh thread can handle the initial credentials on its own
 credentials_data = get_iot_temporary_credentials()
 credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
 
 def refresh_credentials():
     global credentials_provider
+    MIN_REFRESH_INTERVAL = 60  # Minimum interval of 60 seconds between refreshes
+    
     while not is_sample_done.is_set():
-        # Get the new credentials
-        credentials_data = get_iot_temporary_credentials()
-        credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
-        
-        # Calculate the time until the next refresh (1 hours before expiration)
-        expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
-        refresh_time = expiration_time - datetime.timedelta(hours=1)
-        sleep_time = (refresh_time - datetime.datetime.utcnow()).total_seconds()
+        try:
+            # Get the new credentials
+            credentials_data = get_iot_temporary_credentials()
+            credentials_provider = auth.AwsCredentialsProvider.new_static(credentials_data['accessKeyId'], credentials_data['secretAccessKey'], credentials_data['sessionToken'])
+            
+            # Calculate the time until expiration
+            expiration_time = datetime.datetime.strptime(credentials_data['expiration'], "%Y-%m-%dT%H:%M:%SZ")
+            current_time = datetime.datetime.utcnow()
+            time_until_expiration = (expiration_time - current_time).total_seconds()
 
-        # Sleep until it's time to refresh
-        sleep(max(sleep_time, 0))
+            # Calculate the sleep time (1 minute before expiration)
+            sleep_time = time_until_expiration - 60  # Subtract 1 minute in seconds
+
+            # Ensure the sleep time is reasonable
+            sleep_time = max(sleep_time, MIN_REFRESH_INTERVAL)
+
+            # Sleep until it's time to refresh
+            sleep(sleep_time)
+        except Exception as e:
+            logging.error(f"Error refreshing credentials: {e}")
+            # Add a short sleep to prevent tight looping in case of error
+            sleep(60)
 
 ###########################################################################################################################
 # FUNCTIONS
@@ -494,7 +507,7 @@ if __name__ == '__main__':
         on_connection_resumed=on_connection_resumed,
         client_id=args.client_id,
         clean_session=False,
-        keep_alive_secs=600)
+        keep_alive_secs=60)
     print(mqtt_connection)
 
     print(f"Connecting to {args.endpoint} with client ID '{args.client_id}'...")
@@ -543,7 +556,7 @@ if __name__ == '__main__':
     )
 
     # Subscribe to Device Control related topics
-    mqtt_connection.subscribe(topic=device_control_topic, qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+    mqtt_connection.subscribe(topic=cloud_device_control_topic, qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
 
     # Subscribing to Job-related topics
     mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/jobs/notify-next", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)

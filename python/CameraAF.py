@@ -14,9 +14,10 @@ from Lights import Light
 # Retrieve the current time for logging purposes
 time = datetime.now().strftime("%Y-%m-%d_%H%M")
 
-# set light to white for taking image
+# set light to white for taking image. sleep 15 seconds to allow normal light script called by Cron to run before beginning
+sleep(15)
 lights = Light() 
-lights.white()
+lights.camera_mode()
 sleep(2)
 
 #Take picture

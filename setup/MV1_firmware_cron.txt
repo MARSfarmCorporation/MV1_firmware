@@ -27,7 +27,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 # Upload most recent image to amazon S3, every hour, ten minutes after the hour
 10 * * * * python3 $PYTHON_PATH/Remote_S3Util.py >> $LOG_PATH/S3.log 2>&1 &
 
-# Capture temperature, humidity, and Co2 sensor data, send it to MongoDB and Google Sheets, every hour, 2 minutes after the hour
+# Capture temperature, humidity, and Co2 sensor data, send it to MongoDB and Google Sheets, every hour, 8 minutes after the hour
 8 * * * * python3 $PYTHON_PATH/LogSensors.py >> $LOG_PATH/LogSensor.log 2>&1 &
 
 # Check trial settings, to determine LED channel values, every minute
@@ -49,13 +49,22 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 @reboot sudo pigpiod -s1 >> $LOG_PATH/boot_pigpio.log 2>&1 &
 
 # Set up MAC address to remain static, 30 seconds after reboot
-@reboot sleep 40; python3 $PYTHON_PATH/Ethernet.py >> $LOG_PATH/boot_ethernet.log 2>&1 &
+@reboot sleep 30; python3 $PYTHON_PATH/Ethernet.py >> $LOG_PATH/boot_ethernet.log 2>&1 &
 
 # Check for network connection, and if not found, restarts NetworkManager
 */5 * * * * sudo bash $SCRIPT_PATH/network_check.sh >> $LOG_PATH/network_check.log 2>&1 &
 
-# Reboot the device at 2:30AM every day, with a random delay of up to 5 minutes to avoid all devices rebooting at the same time
-30 2 * * * /bin/bash -c 'sleep $((RANDOM % 300)); sudo reboot'
+# Reboot the device at 2:30AM every day
+30 2 * * * sudo reboot
+
+# Back up any images not sent to S3 overnight, at 3:30AM every day
+30 3 * * * python3 $PYTHON_PATH/ImageBackup.py >> $LOG_PATH/S3_backup.log 2>&1 &
+
+# Delete inbound and outbound messages that have successfully been sorted/sent at 4am every day
+0 4 * * * python3 $PYTHON_PATH/SQLiteCleaner.py >> $LOG_PATH/SQLiteCleaner.log 2>&1 &
+
+# Attempts to mount the USB drive and find wifi_credentials.txt every minute
+* * * * * sudo python3 $PYTHON_PATH/WiFiCredentials.py >> $LOG_PATH/WiFiCredentials.log 2>&1 &
 
 # After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
 #@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &

@@ -56,6 +56,9 @@ class Light:
         
     def white(self):
         self.customMode(0,0,0,255)
+    
+    def camera_mode(self):
+        self.customMode(0,0,0,170)
         
     def off(self):
         self.customMode(0,0,0,0)
@@ -81,6 +84,12 @@ class Light:
         self.blink(num, spd, 0, 0, 0, 100)
         
     def trial_received_fail(self, num=3, spd=0.25):
+        self.blink(num, spd, 0, 0, 100, 0)
+    
+    def wifi_credentials_success(self, num=5, spd=4):
+        self.blink(num, spd, 0, 0, 0, 100)
+
+    def wifi_credentials_fail(self, num=5, spd=4):
         self.blink(num, spd, 0, 0, 100, 0)
 
     def blink(self, num=5, spd=1, fr=0, r=0, b=0, w=100):
