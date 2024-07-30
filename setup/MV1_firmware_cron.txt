@@ -66,6 +66,9 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 # Attempts to mount the USB drive and find wifi_credentials.txt every minute
 * * * * * sudo python3 $PYTHON_PATH/WiFiCredentials.py >> $LOG_PATH/WiFiCredentials.log 2>&1 &
 
+# Sends the visible SSIDs, current SSID, and IP address to the MQTT server 5 minutes after boot
+@reboot sleep 300; python3 $PYTHON_PATH/Network_Info.py >> $LOG_PATH/Network_Info.log 2>&1 &
+
 # After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
 #@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
 

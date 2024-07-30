@@ -33,11 +33,26 @@ def get_ssid(interface):
     except subprocess.CalledProcessError:
         return 'Error getting SSID'
 
+def get_visible_ssids(interface):
+    try:
+        result = subprocess.run(['sudo', 'iwlist', interface, 'scan'], capture_output=True, text=True)
+        output = result.stdout.split('\n')
+        ssids = []
+        for line in output:
+            if "ESSID" in line:
+                ssid = line.split(':')[1].strip().strip('"')
+                if ssid:
+                    ssids.append(ssid)
+        return ssids if ssids else ['No SSIDs found']
+    except subprocess.CalledProcessError:
+        return ['Error scanning for SSIDs']
+
 def main():
     interface = get_connection_method()
     if interface != 'None':
         ip_address = get_ip_address(interface)
         ssid = get_ssid(interface) if interface == 'wlan0' else 'Not applicable'
+        visible_ssids = get_visible_ssids(interface) if interface == 'wlan0' else ['Not applicable']
         
         # Write the network information to the database to send to the MongoDB device record
         topic = f"network-info/{DEVICE_ID}"
@@ -45,7 +60,8 @@ def main():
             "timestamp": datetime.datetime.now().timestamp(),
             "connection_method": interface,
             "ip_address": ip_address,
-            "ssid": ssid
+            "ssid": ssid,
+            "visible_ssids": visible_ssids
         }
         payload_json = json.dumps(payload)
         status = "Outbound - Unsent"
