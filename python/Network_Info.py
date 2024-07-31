@@ -57,10 +57,11 @@ def main():
         # Write the network information to the database to send to the MongoDB device record
         topic = f"network-info/{DEVICE_ID}"
         payload = {
+            "device_id": DEVICE_ID,
             "timestamp": datetime.datetime.now().timestamp(),
             "connection_method": interface,
             "ip_address": ip_address,
-            "ssid": ssid,
+            "connected_ssid": ssid,
             "visible_ssids": visible_ssids
         }
         payload_json = json.dumps(payload)

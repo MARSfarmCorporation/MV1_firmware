@@ -335,7 +335,7 @@ if __name__ == "__main__":
 
     # Start a thread to handle lost pending messages
     lost_pending_messages_thread = threading.Thread(target=handle_lost_pending_messages)
-    lost_pending_messages_thread.start
+    lost_pending_messages_thread.start()
     
     # Start the main loop
     main()
