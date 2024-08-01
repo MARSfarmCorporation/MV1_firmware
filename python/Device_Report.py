@@ -5,6 +5,7 @@ import datetime
 import json
 from Sys_Conf import DEVICE_ID
 from WebSocketUtil import secure_database_write
+from version import firmware_version
 
 def get_connection_method():
     interfaces = psutil.net_if_addrs()
@@ -54,15 +55,18 @@ def main():
         ssid = get_ssid(interface) if interface == 'wlan0' else 'Not applicable'
         visible_ssids = get_visible_ssids(interface) if interface == 'wlan0' else ['Not applicable']
         
-        # Write the network information to the database to send to the MongoDB device record
-        topic = f"network-info/{DEVICE_ID}"
+        # Write the network information and firmware version to the database to send to the MongoDB device record
+        topic = f"device-report/{DEVICE_ID}"
         payload = {
             "device_id": DEVICE_ID,
-            "timestamp": datetime.datetime.now().timestamp(),
-            "connection_method": interface,
-            "ip_address": ip_address,
-            "connected_ssid": ssid,
-            "visible_ssids": visible_ssids
+            "firmware_version": firmware_version,
+            "network_info": {
+                "timestamp": datetime.datetime.now().timestamp(),
+                "connection_method": interface,
+                "ip_address": ip_address,
+                "connected_ssid": ssid,
+                "visible_ssids": visible_ssids
+            }
         }
         payload_json = json.dumps(payload)
         status = "Outbound - Unsent"
