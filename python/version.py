@@ -1,1 +1,1 @@
-firmware_version = "Raddish 1.0"
+firmware_version = "Raddish 2.01"
