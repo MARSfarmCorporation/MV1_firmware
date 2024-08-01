@@ -18,6 +18,12 @@ Message_Queue_Refresh_Job_path = "/home/pi/Desktop/MV1_firmware/scripts/message_
 # This function closes the socket gracefully and exits the program
 def exit(job_socket):
     job_socket.close()
+    # Sleep 15 seconds to let the success message clear
+    subprocess.run(["sleep", "15"])
+    # Restart the websocket_comms.service
+    subprocess.run(["sudo", "systemctl", "restart", "websocket_comms.service"])
+    # Restart the broker.service
+    subprocess.run(["sudo", "systemctl", "restart", "broker.service"])
     sys.exit() # Exit the program when the job succeeds, sends a return code of 0 to the broker
 
 # This function closes the socket and exits the program with a return code of 3 to the broker
