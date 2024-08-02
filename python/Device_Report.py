@@ -71,6 +71,7 @@ def main():
         payload_json = json.dumps(payload)
         status = "Outbound - Unsent"
         try:
+            print(f"Logging network data: {payload_json}")
             secure_database_write(topic, payload_json, status)
         except Exception as e:
             print(f"Error logging network data: {e}")
