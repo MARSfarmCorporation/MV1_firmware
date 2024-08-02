@@ -2,6 +2,7 @@ import os
 import shutil
 import json
 import subprocess
+from configparser import ConfigParser
 from Lights import Light
 
 # Attempt to mount a USB drive and process a file with WiFi credentials
@@ -46,16 +47,23 @@ def process_file(file_path):
     if len(lines) >= 2:
         ssid = lines[0].strip()
         password = lines[1].strip()
-        if not wifi_credential_exists(ssid):
+        if not wifi_credential_exists(ssid, password):
             add_wifi_credentials(ssid, password)
     # shutil.move(file_path, os.path.join(PROCESSING_DIR, os.path.basename(file_path)))  # Comment out this line
 
-def wifi_credential_exists(ssid):
+def wifi_credential_exists(ssid, password):
     config_path = f"/etc/NetworkManager/system-connections/{ssid}.nmconnection"
-    exists = os.path.exists(config_path)
-    return exists
+    if not os.path.exists(config_path):
+        return False
+
+    config = ConfigParser()
+    config.read(config_path)
+    existing_password = config.get('wifi-security', 'psk', fallback=None)
+
+    return existing_password == password
 
 def add_wifi_credentials(ssid, password):
+    config_path = f"/etc/NetworkManager/system-connections/{ssid}.nmconnection"
     config_content = f"""
 [connection]
 id={ssid}
@@ -79,7 +87,6 @@ addr-gen-mode=stable-privacy
 dns-search=
 method=auto
 """
-    config_path = f"/etc/NetworkManager/system-connections/{ssid}.nmconnection"
     with open(config_path, 'w') as f:
         f.write(config_content)
     subprocess.run(['sudo', 'chmod', '600', config_path], capture_output=True, text=True)
@@ -93,7 +100,6 @@ def main():
 
     usb_devices = get_usb_devices()
     if not usb_devices:
-        print("No USB drive detected. Exiting.")
         exit(0)
 
     light = Light()
