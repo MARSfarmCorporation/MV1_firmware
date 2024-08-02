@@ -88,28 +88,31 @@ method=auto
     print(f'Added and activated WiFi connection for SSID: {ssid}')
 
 def main():
+    if not os.path.exists(MOUNT_POINT):
+        os.makedirs(MOUNT_POINT)
+
+    usb_devices = get_usb_devices()
+    if not usb_devices:
+        print("No USB drive detected. Exiting.")
+        exit(0)
+
     light = Light()
     success = False
 
-    if not os.path.exists(MOUNT_POINT):
-        os.makedirs(MOUNT_POINT)
-    
-    usb_devices = get_usb_devices()
-    if usb_devices:
-        for device in usb_devices:
-            if mount_usb(device):
-                for root, dirs, files in os.walk(MOUNT_POINT):
-                    if TARGET_FILENAME in files:
-                        file_path = os.path.join(root, TARGET_FILENAME)
-                        process_file(file_path)
+    for device in usb_devices:
+        if mount_usb(device):
+            for root, dirs, files in os.walk(MOUNT_POINT):
+                if TARGET_FILENAME in files:
+                    file_path = os.path.join(root, TARGET_FILENAME)
+                    process_file(file_path)
 
-                        light.wifi_credentials_success()
-                        success = True
-                        import Light_Control
-                        break
-                unmount_usb()
-            if success:
-                break
+                    light.wifi_credentials_success()
+                    success = True
+                    import Light_Control
+                    break
+            unmount_usb()
+        if success:
+            break
 
     if not success:
         light.wifi_credentials_fail()
