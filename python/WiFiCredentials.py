@@ -48,7 +48,7 @@ def process_file(file_path):
         password = lines[1].strip()
         if not wifi_credential_exists(ssid):
             add_wifi_credentials(ssid, password)
-    shutil.move(file_path, os.path.join(PROCESSING_DIR, os.path.basename(file_path)))
+    # shutil.move(file_path, os.path.join(PROCESSING_DIR, os.path.basename(file_path)))  # Comment out this line
 
 def wifi_credential_exists(ssid):
     config_path = f"/etc/NetworkManager/system-connections/{ssid}.nmconnection"
