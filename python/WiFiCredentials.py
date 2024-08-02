@@ -16,20 +16,26 @@ def get_usb_devices():
     devices = []
     if result.returncode == 0:
         output = json.loads(result.stdout)
+        print("lsblk output:", output)  # Debug print
         for device in output['blockdevices']:
             if device['mountpoint'] is None and device['name'].startswith('sd'):
-                # Look for partitions (e.g., sda1, sdb1)
                 for child in device.get('children', []):
                     devices.append(child['name'])
+    print("Detected USB devices:", devices)  # Debug print
     return devices
 
 def mount_usb(device):
     device_path = f'/dev/{device}'
+    print(f"Attempting to mount {device_path}...")  # Debug print
     result = subprocess.run(['sudo', 'mount', device_path, MOUNT_POINT], capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"Failed to mount {device_path}: {result.stderr}")  # Debug print
     return result.returncode == 0
 
 def unmount_usb():
     result = subprocess.run(['sudo', 'umount', MOUNT_POINT], capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"Failed to unmount {MOUNT_POINT}: {result.stderr}")  # Debug print
     return result.returncode == 0
 
 def process_file(file_path):
@@ -39,13 +45,16 @@ def process_file(file_path):
     if len(lines) >= 2:
         ssid = lines[0].strip()
         password = lines[1].strip()
+        print(f"SSID: {ssid}, Password: {password}")  # Debug print
         if not wifi_credential_exists(ssid):
             add_wifi_credentials(ssid, password)
     shutil.move(file_path, os.path.join(PROCESSING_DIR, os.path.basename(file_path)))
 
 def wifi_credential_exists(ssid):
     config_path = f"/etc/NetworkManager/system-connections/{ssid}.nmconnection"
-    return os.path.exists(config_path)
+    exists = os.path.exists(config_path)
+    print(f"WiFi credential exists for {ssid}: {exists}")  # Debug print
+    return exists
 
 def add_wifi_credentials(ssid, password):
     config_content = f"""
