@@ -12,15 +12,20 @@ TARGET_FILENAME = 'wifi_credentials.txt'
 PROCESSING_DIR = '/home/pi/'  # Directory where the file will be processed
 
 def get_usb_devices():
-    result = subprocess.run(['lsblk', '-o', 'NAME,MOUNTPOINT', '-J'], capture_output=True, text=True)
+    result = subprocess.run(['lsblk', '-o', 'NAME,MOUNTPOINT,TYPE', '-J'], capture_output=True, text=True)
     devices = []
     if result.returncode == 0:
         output = json.loads(result.stdout)
         print("lsblk output:", output)  # Debug print
         for device in output['blockdevices']:
             if device['mountpoint'] is None and device['name'].startswith('sd'):
-                for child in device.get('children', []):
-                    devices.append(child['name'])
+                if device['type'] == 'disk':
+                    # Include whole devices (e.g., /dev/sda)
+                    devices.append(device['name'])
+                if 'children' in device:
+                    # Include partitions (e.g., /dev/sda1)
+                    for child in device['children']:
+                        devices.append(child['name'])
     print("Detected USB devices:", devices)  # Debug print
     return devices
 
