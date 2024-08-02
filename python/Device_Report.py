@@ -52,8 +52,8 @@ def main():
     interface = get_connection_method()
     if interface != 'None':
         ip_address = get_ip_address(interface)
-        ssid = get_ssid(interface) #if interface == 'wlan0' else 'Not applicable'
-        visible_ssids = get_visible_ssids(interface) if interface == 'wlan0' else ['Not applicable']
+        ssid = get_ssid(interface) if interface == 'wlan0' else 'Not applicable'
+        visible_ssids = get_visible_ssids(interface) #if interface == 'wlan0' else ['Not applicable']
         
         # Write the network information and firmware version to the database to send to the MongoDB device record
         topic = f"device-report/{DEVICE_ID}"
