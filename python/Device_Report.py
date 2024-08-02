@@ -25,7 +25,7 @@ def get_ip_address(interface):
 
 def get_ssid(interface):
     try:
-        result = subprocess.run(['iwgetid', '-r', interface], capture_output=True, text=True)
+        result = subprocess.run(['/usr/sbin/iwgetid', '-r', interface], capture_output=True, text=True)
         ssid = result.stdout.strip()
         if ssid:
             return ssid
@@ -36,7 +36,7 @@ def get_ssid(interface):
 
 def get_visible_ssids(interface):
     try:
-        result = subprocess.run(['sudo', 'iwlist', interface, 'scan'], capture_output=True, text=True)
+        result = subprocess.run(['sudo', '/usr/sbin/iwlist', interface, 'scan'], capture_output=True, text=True)
         output = result.stdout.split('\n')
         ssids = []
         for line in output:

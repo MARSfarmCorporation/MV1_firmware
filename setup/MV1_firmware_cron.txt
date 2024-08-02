@@ -67,7 +67,7 @@ LOG_PATH=/home/pi/Desktop/MV1_firmware/logs
 * * * * * sudo python3 $PYTHON_PATH/WiFiCredentials.py >> $LOG_PATH/WiFiCredentials.log 2>&1 &
 
 # Sends the visible SSIDs, current SSID, and IP address to the MQTT server 5 minutes after boot
-@reboot sleep 300; python3 $PYTHON_PATH/Device_Report.py >> $LOG_PATH/Device_Report.log 2>&1 &
+@reboot sleep 300; PATH=/usr/sbin:/usr/bin:/sbin:/bin python3 /home/pi/Desktop/MV1_firmware/python/Device_Report.py >> /home/pi/Desktop/MV1_firmware/logs/Device_Report.log 2>&1 &
 
 # After ethernet setup has had chance to run, the wifi service will be created at 40 seconds after reboot 
 #@reboot sleep 40; sudo bash $SCRIPT_PATH/wifi.sh >> $LOG_PATH/boot_wifi.log 2>&1 &
