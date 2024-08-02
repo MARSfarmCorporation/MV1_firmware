@@ -1,0 +1,1 @@
+firmware_version = "Radish 2.01"

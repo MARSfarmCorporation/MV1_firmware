@@ -27,10 +27,10 @@ class Light:
         self._white = 0;
         
         #Setup PWM on selected pins
-        pi.set_PWM_frequency(self.gpioFarRed,20000)
-        pi.set_PWM_frequency(self.gpioRed,20000)
-        pi.set_PWM_frequency(self.gpioBlue,20000)
-        pi.set_PWM_frequency(self.gpioWhite,20000)
+        pi.set_PWM_frequency(self.gpioFarRed,8000)
+        pi.set_PWM_frequency(self.gpioRed,8000)
+        pi.set_PWM_frequency(self.gpioBlue,8000)
+        pi.set_PWM_frequency(self.gpioWhite,8000)
 
     #Turn light on and off
     def setState(self, state):
