@@ -16,7 +16,6 @@ def get_usb_devices():
     devices = []
     if result.returncode == 0:
         output = json.loads(result.stdout)
-        print("lsblk output:", output)  # Debug print
         for device in output['blockdevices']:
             if device['mountpoint'] is None and device['name'].startswith('sd'):
                 if device['type'] == 'disk':
@@ -26,12 +25,10 @@ def get_usb_devices():
                     # Include partitions (e.g., /dev/sda1)
                     for child in device['children']:
                         devices.append(child['name'])
-    print("Detected USB devices:", devices)  # Debug print
     return devices
 
 def mount_usb(device):
     device_path = f'/dev/{device}'
-    print(f"Attempting to mount {device_path}...")  # Debug print
     result = subprocess.run(['sudo', 'mount', device_path, MOUNT_POINT], capture_output=True, text=True)
     if result.returncode != 0:
         print(f"Failed to mount {device_path}: {result.stderr}")  # Debug print
@@ -44,13 +41,11 @@ def unmount_usb():
     return result.returncode == 0
 
 def process_file(file_path):
-    print(f'Processing file: {file_path}')
     with open(file_path, 'r') as f:
         lines = f.readlines()
     if len(lines) >= 2:
         ssid = lines[0].strip()
         password = lines[1].strip()
-        print(f"SSID: {ssid}, Password: {password}")  # Debug print
         if not wifi_credential_exists(ssid):
             add_wifi_credentials(ssid, password)
     shutil.move(file_path, os.path.join(PROCESSING_DIR, os.path.basename(file_path)))
@@ -58,7 +53,6 @@ def process_file(file_path):
 def wifi_credential_exists(ssid):
     config_path = f"/etc/NetworkManager/system-connections/{ssid}.nmconnection"
     exists = os.path.exists(config_path)
-    print(f"WiFi credential exists for {ssid}: {exists}")  # Debug print
     return exists
 
 def add_wifi_credentials(ssid, password):
@@ -100,9 +94,7 @@ def main():
     usb_devices = get_usb_devices()
     if usb_devices:
         for device in usb_devices:
-            print(f'USB drive detected: {device}. Mounting...')
             if mount_usb(device):
-                print('USB drive mounted.')
                 for root, dirs, files in os.walk(MOUNT_POINT):
                     if TARGET_FILENAME in files:
                         file_path = os.path.join(root, TARGET_FILENAME)
@@ -116,7 +108,6 @@ def main():
                         break
 
                 unmount_usb()
-                print('USB drive unmounted.')
             else:
                 print(f'Failed to mount USB drive: {device}.')
 
