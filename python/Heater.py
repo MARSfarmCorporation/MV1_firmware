@@ -1,10 +1,10 @@
-from pigpio import pi
+import pigpio
 from GPIO_Conf import HEATER, ON, OFF, HEATER_PWM
 from time import sleep
 
 # pi needs to be defined outside the class
 # set up a connection to the pigpio daemon
-pi = pi()
+pi = pigpio.pi()
 
 # define a class for the heater
 class Heater:
