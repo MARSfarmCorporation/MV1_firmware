@@ -46,6 +46,10 @@ class Thermostat(object):
             if self.heater.is_on():
                 print("Error: Heater did not turn off as expected!")
                 self.heater.reset_pin()  # Reset the pin
+
+                # sleep for 0.1 seconds to allow the heater to turn off
+                time.sleep(0.1)
+
                 if self.heater.is_on():
                     print("Warning: Heater is still on after reset!")
                 else:
