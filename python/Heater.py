@@ -23,6 +23,10 @@ class Heater:
         pi.set_PWM_dutycycle(HEATER, OFF)
         print("Heater Off")
 
+        # Check if the heater actually turned off
+        if self.is_on():
+            print("Error: Heater did not turn off as expected!")
+
     def is_on(self):
         # Check the actual physical state of the heater pin
         return pi.read(HEATER) == 1  # Returns True if the pin is high (heater is on)
