@@ -6,7 +6,6 @@ from Trial_Util import Trial
 from GPIO_Conf import ON, OFF
 import time
 from datetime import datetime
-from GPIO_Conf import HEATER
 
 class Thermostat(object):
 
@@ -28,32 +27,6 @@ class Thermostat(object):
             s = t_s
         return s
 
-    # def adjust(self):
-    #     # Control code
-    #     setpoint = self.get_Setpoint()
-    #     temp = self.get_temp()
-    #     print("Set", setpoint, "Temp", temp)
-    #     self.cfan.on()  # Set circ fan state
-    #     print("Circ_Fan: ON")
-
-    #     if temp < setpoint:  # Measured temp is below setpoint
-    #         self.heater.on()  # Turn on heater to raise temp
-    #         print("Heater: On")
-    #     else:  # Measured temp is above setpoint
-    #         self.heater.off()  # Turn off heater to lower temp
-    #         print("Heater: OFF")
-
-    #         # Take multiple readings of the heater pin after attempting to turn it off
-    #         self.check_heater_state_initial(samples=100)
-
-    #     # Exhaust fan control code
-    #     if temp >= setpoint + 1:  # Measured temp is above setpoint by too much
-    #         self.efan.on()  # Turn on exhaust fan
-    #         print("Exhaust Fan ON")
-    #     else:
-    #         self.efan.off()  # Turn off fan
-    #         print("Exhaust Fan OFF")
-
     def adjust(self):
         # Control code
         setpoint = self.get_Setpoint()
@@ -72,7 +45,7 @@ class Thermostat(object):
             # Check if the heater actually turned off
             if self.heater.is_on():
                 print("Error: Heater did not turn off as expected!")
-                self.reset_pin(HEATER)  # Reset the pin
+                self.heater.reset_pin()  # Reset the pin
                 if self.heater.is_on():
                     print("Warning: Heater is still on after reset!")
                 else:
@@ -85,33 +58,6 @@ class Thermostat(object):
         else:
             self.efan.off()  # Turn off fan
             print("Exhaust Fan OFF")
-
-    def reset_pin(self, gpio_pin):
-        # Reinitialize the pin as an output
-        self.pi.set_mode(gpio_pin, pigpio.OUTPUT)
-        
-        # Optionally toggle the pin to ensure it's responding
-        self.pi.write(gpio_pin, 1)  # Set pin high
-        self.pi.write(gpio_pin, 0)  # Set pin low
-        
-        # Ensure the pin is set to the desired state (e.g., off)
-        self.pi.write(gpio_pin, 0)  # Explicitly set pin low
-        
-        # Optionally, reset PWM if used
-        self.pi.set_PWM_dutycycle(gpio_pin, 0)  # Set PWM duty cycle to 0
-        self.pi.set_PWM_frequency(gpio_pin, 0)  # Set PWM frequency to 0 (turn off PWM)
-
-    def check_heater_state_initial(self, samples=100, delay=0.01):
-        # Check the state of the heater pin over a series of samples
-        for i in range(samples):
-            if self.heater.is_on():
-                self.log_error("Heater unexpectedly on during off period.")
-                break  # Log the error and exit early if an issue is detected
-            time.sleep(delay)  # Small delay between readings
-
-    def log_error(self, message):
-        # Log an error message with a timestamp
-        print(f"{datetime.now().isoformat()}: {message}\n")
 
 # Testing the thermostat
 def test():

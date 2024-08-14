@@ -30,6 +30,21 @@ class Heater:
     def is_on(self):
         # Check the actual physical state of the heater pin
         return pi.read(HEATER) == 1  # Returns True if the pin is high (heater is on)
+    
+    def reset_pin(self):
+        # Reinitialize the pin as an output
+        pi.set_mode(HEATER, pigpio.OUTPUT)
+        
+        # Optionally toggle the pin to ensure it's responding
+        pi.write(HEATER, 1)  # Set pin high
+        pi.write(HEATER, 0)  # Set pin low
+        
+        # Ensure the pin is set to the desired state (e.g., off)
+        pi.write(HEATER, 0)  # Explicitly set pin low
+        
+        # Optionally, reset PWM if used
+        pi.set_PWM_dutycycle(HEATER, 0)  # Set PWM duty cycle to 0
+        pi.set_PWM_frequency(HEATER, 0)  # Set PWM frequency to 0 (turn off PWM)
 
 # tests the heater's functions        
 def test():
