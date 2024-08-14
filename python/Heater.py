@@ -21,6 +21,7 @@ class Heater:
     def off(self):
         # turn off the heater
         pi.set_PWM_dutycycle(HEATER, OFF)
+        print("Heater Off")
 
     def is_on(self):
         # Check the actual physical state of the heater pin
