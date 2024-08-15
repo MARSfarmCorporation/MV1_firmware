@@ -4,7 +4,7 @@ class representation of the pump
 Author: Tyler Richards - 09.10.2021
 Modified By: Howard Webb - 11/2/2022
 
-NOTE: The pump was designed to be reversable, but not implemented
+NOTE: The pump was designed to be reversible, but not implemented
 needs more development to implement
 '''
 
@@ -28,7 +28,7 @@ class Pump:
 
     def is_pumping(self):
         # Check if pump is currently pumping
-        return pi.read(self.gpioA) == ON
+        return self.pi.read(self.gpioA) == ON  # Use self.pi instead of pi
 
     # Turn on the pump
     def on(self):
