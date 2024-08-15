@@ -65,19 +65,19 @@ class Thermostat(object):
                 if self.heater.is_on():
                     print("Warning: Heater is still on after reset! Killing, restarting, and reinitializing pigpio daemon...")
 
-                    # # Find the PID of pigpiod
-                    # pid = subprocess.check_output(["pgrep", "pigpiod"]).strip().decode('utf-8')
+                    # Find the PID of pigpiod
+                    pid = subprocess.check_output(["pgrep", "pigpiod"]).strip().decode('utf-8')
                     
-                    # # Kill the pigpiod process
-                    # subprocess.run(["sudo", "kill", pid])
+                    # Kill the pigpiod process
+                    subprocess.run(["sudo", "kill", pid])
                     
-                    # # Restart pigpiod with the -s1 option
-                    # subprocess.run(["sudo", "pigpiod", "-s1"])
+                    # Restart pigpiod with the -s1 option
+                    subprocess.run(["sudo", "pigpiod", "-s1"])
                     
-                    # # Reinitialize the heater and fans after restarting pigpio
-                    # self.heater = Heater()
-                    # self.efan = Exhaust_Fan()
-                    # self.cfan = Circulation_Fan()
+                    # Reinitialize the heater and fans after restarting pigpio
+                    self.heater = Heater()
+                    self.efan = Exhaust_Fan()
+                    self.cfan = Circulation_Fan()
 
                     print("pigpio daemon restarted and peripherals reinitialized.")
 
