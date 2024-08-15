@@ -8,17 +8,16 @@ NOTE: The pump was designed to be reversable, but not implemented
 needs more development to implement
 '''
 
-from pigpio import pi, OUTPUT
+from PigpioManager import PigpioManager
 from time import sleep
 from GPIO_Conf import PUMP_POS, PUMP_GND, ON, OFF
-
-# create a new instance of the pigpio.pi class
-pi = pi()
-
 
 class Pump:
     # Initialize the pump object 
     def __init__(self, gpio_pinA=None, gpio_pinB=None):
+        # get the pigpio instance
+        pi = PigpioManager().get_pi()
+
         self.gpioA = PUMP_POS  # Store pump GPIO
         self.gpioB = PUMP_GND  # Store pump GPIO
         self.calibration = 0.7  # Rate of pumping, measured in ml/sec

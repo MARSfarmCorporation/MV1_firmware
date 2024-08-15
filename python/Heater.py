@@ -1,14 +1,12 @@
-import pigpio
+from PigpioManager import PigpioManager
 from GPIO_Conf import HEATER, ON, OFF, HEATER_PWM
 from time import sleep
-
-# pi needs to be defined outside the class
-# set up a connection to the pigpio daemon
-pi = pigpio.pi()
 
 # define a class for the heater
 class Heater:
     def __init__(self):
+        # get the pigpio instance
+        pi = PigpioManager().get_pi()
         # initialize the heater in off state
         #We have to change sample rate to 1 microsecond so that it is able to provide a 40 kHz signal (faster switching of the heater)
         pi.set_PWM_frequency(HEATER, 40000)  # Set heater as 40kHz PWM channel

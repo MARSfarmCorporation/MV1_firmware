@@ -3,16 +3,15 @@ Low level light abstraction
 Author: Tyler Richards - 08.10.2021
 Modified By: Howard Webb - 11/2/2022
 '''
-import pigpio
+from PigpioManager import PigpioManager
 from GPIO_Conf import LIGHT_FAR_RED, LIGHT_RED, LIGHT_BLUE, LIGHT_WHITE
 from time import sleep
-# pi needs to be outside the class
-# intialize pigpio library
-pi = pigpio.pi()
 
 # intialize the light class
 class Light:
     def __init__( self, gpio_pin_far_red=0, gpio_pin_red=0, gpio_pin_blue=0, gpio_pin_white=0):
+        # get the pigpio instance
+        pi = PigpioManager().get_pi()
         # input parameters are ignored and may be removed in future release
         # wrapper for the four channel grow light pannel
         self.gpioFarRed = LIGHT_FAR_RED #Store red GPIO
