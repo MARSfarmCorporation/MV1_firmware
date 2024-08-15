@@ -11,7 +11,7 @@ from time import sleep
 class Light:
     def __init__( self, gpio_pin_far_red=0, gpio_pin_red=0, gpio_pin_blue=0, gpio_pin_white=0):
         # get the pigpio instance
-        pi = PigpioManager().get_pi()
+        self.pi = PigpioManager().get_pi()
         # input parameters are ignored and may be removed in future release
         # wrapper for the four channel grow light pannel
         self.gpioFarRed = LIGHT_FAR_RED #Store red GPIO
@@ -26,32 +26,32 @@ class Light:
         self._white = 0;
         
         #Setup PWM on selected pins
-        pi.set_PWM_frequency(self.gpioFarRed,8000)
-        pi.set_PWM_frequency(self.gpioRed,8000)
-        pi.set_PWM_frequency(self.gpioBlue,8000)
-        pi.set_PWM_frequency(self.gpioWhite,8000)
+        self.pi.set_PWM_frequency(self.gpioFarRed,8000)
+        self.pi.set_PWM_frequency(self.gpioRed,8000)
+        self.pi.set_PWM_frequency(self.gpioBlue,8000)
+        self.pi.set_PWM_frequency(self.gpioWhite,8000)
 
     #Turn light on and off
     def setState(self, state):
         # legacy function that should not be used
         if state != 0:
             # If else statements allow lights to turn off fully; Issue with PWM not shutting of LED's all the way
-            pi.set_PWM_dutycycle(self.gpioFarRed, self._farred)
-            pi.set_PWM_dutycycle(self.gpioRed, self._red)
-            pi.set_PWM_dutycycle(self.gpioBlue, self._blue)
-            pi.set_PWM_dutycycle(self.gpioWhite, self._white)
+            self.pi.set_PWM_dutycycle(self.gpioFarRed, self._farred)
+            self.pi.set_PWM_dutycycle(self.gpioRed, self._red)
+            self.pi.set_PWM_dutycycle(self.gpioBlue, self._blue)
+            self.pi.set_PWM_dutycycle(self.gpioWhite, self._white)
         else:
-            pi.set_PWM_dutycycle(self.gpioFarRed, 0)
-            pi.set_PWM_dutycycle(self.gpioRed, 0)
-            pi.set_PWM_dutycycle(self.gpioBlue, 0)
-            pi.set_PWM_dutycycle(self.gpioWhite, 0)
+            self.pi.set_PWM_dutycycle(self.gpioFarRed, 0)
+            self.pi.set_PWM_dutycycle(self.gpioRed, 0)
+            self.pi.set_PWM_dutycycle(self.gpioBlue, 0)
+            self.pi.set_PWM_dutycycle(self.gpioWhite, 0)
             
     def customMode(self, fr, r, b, w):
         # main function for setting lights
-        pi.set_PWM_dutycycle(self.gpioFarRed, fr)
-        pi.set_PWM_dutycycle(self.gpioRed, r)
-        pi.set_PWM_dutycycle(self.gpioBlue, b)
-        pi.set_PWM_dutycycle(self.gpioWhite, w)
+        self.pi.set_PWM_dutycycle(self.gpioFarRed, fr)
+        self.pi.set_PWM_dutycycle(self.gpioRed, r)
+        self.pi.set_PWM_dutycycle(self.gpioBlue, b)
+        self.pi.set_PWM_dutycycle(self.gpioWhite, w)
         
     def white(self):
         self.customMode(0,0,0,255)

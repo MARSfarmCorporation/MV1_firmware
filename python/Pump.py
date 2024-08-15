@@ -10,19 +10,20 @@ needs more development to implement
 
 from PigpioManager import PigpioManager
 from time import sleep
+from pigpio import OUTPUT
 from GPIO_Conf import PUMP_POS, PUMP_GND, ON, OFF
 
 class Pump:
     # Initialize the pump object 
     def __init__(self, gpio_pinA=None, gpio_pinB=None):
         # get the pigpio instance
-        pi = PigpioManager().get_pi()
+        self.pi = PigpioManager().get_pi()
 
         self.gpioA = PUMP_POS  # Store pump GPIO
         self.gpioB = PUMP_GND  # Store pump GPIO
         self.calibration = 0.7  # Rate of pumping, measured in ml/sec
-        pi.set_mode(self.gpioA, OUTPUT)  # Set pump as output
-        pi.set_mode(self.gpioB, OUTPUT)  # Set pump as output
+        self.pi.set_mode(self.gpioA, OUTPUT)  # Set pump as output
+        self.pi.set_mode(self.gpioB, OUTPUT)  # Set pump as output
         #self.off()  # Turn off pump when initialized
 
     def is_pumping(self):
@@ -31,13 +32,13 @@ class Pump:
 
     # Turn on the pump
     def on(self):
-        pi.write(self.gpioA, OFF)
-        pi.write(self.gpioB, ON)
+        self.pi.write(self.gpioA, OFF)
+        self.pi.write(self.gpioB, ON)
 
     # Turn off the pump
     def off(self):
-        pi.write(self.gpioA, OFF)
-        pi.write(self.gpioB, OFF)
+        self.pi.write(self.gpioA, OFF)
+        self.pi.write(self.gpioB, OFF)
 
     # Dispense some user-defined amount of water
     def dispense(self, volume):
