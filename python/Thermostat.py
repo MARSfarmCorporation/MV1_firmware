@@ -6,6 +6,21 @@ from Trial_Util import Trial
 from GPIO_Conf import ON, OFF
 import time
 from datetime import datetime
+import os
+# from PigpioManager import PigpioManager
+
+def restart_pigpiod():
+    # Stop pigpiod
+    os.system("sudo killall pigpiod")
+    time.sleep(1)  # Wait for a moment to ensure pigpiod has stopped
+
+    # Restart pigpiod with your specific settings
+    os.system("sudo pigpiod -s1")  # Adjust the parameters as needed
+    time.sleep(2)  # Give pigpiod time to fully initialize
+
+    # # You might also want to reinitialize your pigpio instance
+    # PigpioManager._instance = None  # Reset the singleton instance
+    # pi = PigpioManager().get_pi()  # Reconnect to pigpiod
 
 class Thermostat(object):
 
@@ -57,6 +72,11 @@ class Thermostat(object):
 
                 if self.heater.is_on():
                     print("Warning: Heater is still on after reset!")
+                    restart_pigpiod()  # Restart pigpiod if the issue persists
+                    # Reattempt turning off the heater after restarting pigpiod
+                    self.heater.off()
+                    if self.heater.is_on():
+                        print("Critical: Heater still on after pigpiod restart!")
                 else:
                     print("Heater reset successfully, resuming normal operation...")
 
