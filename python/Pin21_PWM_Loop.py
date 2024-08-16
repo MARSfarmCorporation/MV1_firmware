@@ -1,33 +1,26 @@
 import pigpio
 import time
 
-# Pin and PWM settings
-PIN = 21  # GPIO pin number
+PIN = 21  # GPIO pin for the heater
 FREQUENCY = 50  # PWM frequency in Hz
-DUTY_CYCLE = 255  # PWM duty cycle
+DUTY_CYCLE = 255  # PWM duty cycle (100%)
 
-# Create a single pigpio instance
 pi = pigpio.pi()
 
-# Check if pigpio daemon is running
 if not pi.connected:
     raise Exception("Failed to connect to pigpio daemon")
 
-def reset_pin_and_run_pwm():
-    try:
-        while True:
-            # Reset the pin to output
-            pi.set_mode(PIN, pigpio.OUTPUT)
+try:
+    while True:
+        # Reset the pin to output mode and apply PWM settings
+        pi.set_mode(PIN, pigpio.OUTPUT)
+        pi.set_PWM_frequency(PIN, FREQUENCY)
+        pi.set_PWM_dutycycle(PIN, DUTY_CYCLE)
 
-            # Set the PWM frequency and duty cycle
-            pi.set_PWM_frequency(PIN, FREQUENCY)
-            pi.set_PWM_dutycycle(PIN, DUTY_CYCLE)
+        # Brief sleep to simulate timing
+        time.sleep(0.1)
 
-            # Short delay to prevent overloading the CPU
-    except Exception as e:
-        print(f"Exception occurred: {e}")
-    finally:
-        pi.stop()  # Ensure pigpio is stopped on exit
-
-if __name__ == "__main__":
-    reset_pin_and_run_pwm()
+except Exception as e:
+    print(f"Exception occurred: {e}")
+finally:
+    pi.stop()  # Ensure pigpio is stopped on exit
