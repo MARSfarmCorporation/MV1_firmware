@@ -24,7 +24,6 @@ def reset_pin_and_run_pwm():
             pi.set_PWM_dutycycle(PIN, DUTY_CYCLE)
 
             # Short delay to prevent overloading the CPU
-            time.sleep(0.1)
     except Exception as e:
         print(f"Exception occurred: {e}")
     finally:

@@ -38,6 +38,10 @@ class Thermostat(object):
         if temp < setpoint:  # Measured temp is below setpoint
             self.heater.on()  # Turn on heater to raise temp
             print("Heater: On")
+            time.sleep(1)  # Wait for heater to turn on
+
+            if not self.heater.is_on():
+                print("Error: Heater did not turn on as expected!")
         else:  # Measured temp is above setpoint
             self.heater.off()  # Turn off heater to lower temp
             print("Heater: OFF")
