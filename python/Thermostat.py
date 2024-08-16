@@ -8,6 +8,8 @@ import time
 from datetime import datetime
 import os
 from PigpioManager import PigpioManager
+from WebSocketUtil import secure_database_write
+from Sys_Conf import SERIAL_NUMBER
 
 def restart_pigpiod():
     # Stop pigpiod
@@ -41,6 +43,18 @@ class Thermostat(object):
         if int(t_s) < 90:
             s = t_s
         return s
+    
+    def log_overheat_event(self):
+        try:
+            topic = f"overheat/{SERIAL_NUMBER}"
+            payload = {
+                "timestamp": datetime.now().timestamp(),
+                "message": f"Warning: {SERIAL_NUMBER} Overheat Event"
+            }
+            status = "Outbound - Unsent"
+            secure_database_write(topic, json.dumps(payload), status)
+        except Exception as e:
+            print(f"Error logging overheat event: {e}")
 
     def adjust(self):
         # Control code
@@ -49,6 +63,13 @@ class Thermostat(object):
         print("Set", setpoint, "Temp", temp)
         self.cfan.on()  # Set circ fan state
         print("Circ_Fan: ON")
+
+        # Check if the temperature is too high and reboot if necessary
+        if temp >= 100:
+            print("Temperature exceeds 100°F. Logging event and rebooting system to prevent damage...")
+            self.log_overheat_event()  # Log the overheat event to the database
+            time.sleep(10)  # Wait for 10 seconds before rebooting
+            os.system("sudo reboot")
 
         if temp < setpoint:  # Measured temp is below setpoint
             self.heater.on()  # Turn on heater to raise temp
@@ -71,7 +92,7 @@ class Thermostat(object):
                 time.sleep(0.1)
 
                 if self.heater.is_on():
-                    print("Warning: Heater is still on after reset!")
+                    print("Warning: Heater is still on after reset! Attempting to restart pigpiod...")
                     restart_pigpiod()  # Restart pigpiod if the issue persists
                     # Reattempt turning off the heater after restarting pigpiod
                     self.heater.off()
