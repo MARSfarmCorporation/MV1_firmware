@@ -1,6 +1,7 @@
 from PigpioManager import PigpioManager
 from GPIO_Conf import HEATER, ON, OFF, HEATER_PWM
 from time import sleep
+import pigpio
 
 # define a class for the heater
 class Heater:
