@@ -1,6 +1,6 @@
 import pigpio
 import time
-from GPIO_Conf import LIGHT_WHITE, ON, OFF  # Import the pin number for the white light
+from GPIO_Conf import LIGHT_WHITE, MAX_WHITE  # Import the pin number and max PWM value for the white light
 
 # Create a single pigpio instance for the entire module
 pi = pigpio.pi()
@@ -15,31 +15,34 @@ LOG_FILE = "../logs/Light_Stress_Log.log"
 class Light:
     def __init__(self):
         self.pi = pi  # Use the shared pigpio instance
+        self.pi.set_PWM_frequency(LIGHT_WHITE, 8000)  # Set PWM frequency to 8,000 Hz
 
     def on(self):
-        self.pi.write(LIGHT_WHITE, ON)
+        self.pi.set_PWM_dutycycle(LIGHT_WHITE, MAX_WHITE)  # Set the PWM duty cycle
 
     def off(self):
-        self.pi.write(LIGHT_WHITE, OFF)
+        self.pi.set_PWM_dutycycle(LIGHT_WHITE, 0)  # Turn off the PWM signal
 
     def is_on(self):
-        return self.pi.read(LIGHT_WHITE) == ON
+        return self.pi.get_PWM_dutycycle(LIGHT_WHITE) == MAX_WHITE
 
 def stress_test():
     light = Light()
 
     try:
-        # Set the pin high
+        # Set the pin high (PWM on)
         light.on()
         time.sleep(0.1)
         if not light.is_on():
-            log_error("Failed to set pin high")
+            log_error("Failed to set PWM high")
+        time.sleep(10)  # Wait for 10 seconds
 
-        # Set the pin low
+        # Set the pin low (PWM off)
         light.off()
         time.sleep(0.1)
         if light.is_on():
-            log_error("Failed to set pin low")
+            log_error("Failed to set PWM low")
+        time.sleep(10)  # Wait for 10 seconds
 
     except Exception as e:
         log_error(f"Exception during stress test: {e}")
