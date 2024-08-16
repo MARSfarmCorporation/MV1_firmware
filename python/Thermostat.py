@@ -24,6 +24,9 @@ def restart_pigpiod():
     PigpioManager._instance = None  # Reset the singleton instance
     pi = PigpioManager().get_pi()  # Reconnect to pigpiod
 
+    # Restart the Broker service
+    os.system("sudo systemctl restart broker.service")
+
 class Thermostat(object):
 
     def __init__(self):
