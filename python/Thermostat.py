@@ -45,6 +45,7 @@ class Thermostat(object):
         else:  # Measured temp is above setpoint
             self.heater.off()  # Turn off heater to lower temp
             print("Heater: OFF")
+            time.sleep(1)  # Wait for heater to turn off
 
             # Check if the heater actually turned off
             if self.heater.is_on():
