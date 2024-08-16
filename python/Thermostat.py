@@ -7,7 +7,7 @@ from GPIO_Conf import ON, OFF
 import time
 from datetime import datetime
 import os
-# from PigpioManager import PigpioManager
+from PigpioManager import PigpioManager
 
 def restart_pigpiod():
     # Stop pigpiod
@@ -18,9 +18,9 @@ def restart_pigpiod():
     os.system("sudo pigpiod -s1")  # Adjust the parameters as needed
     time.sleep(2)  # Give pigpiod time to fully initialize
 
-    # # You might also want to reinitialize your pigpio instance
-    # PigpioManager._instance = None  # Reset the singleton instance
-    # pi = PigpioManager().get_pi()  # Reconnect to pigpiod
+    # You might also want to reinitialize your pigpio instance
+    PigpioManager._instance = None  # Reset the singleton instance
+    pi = PigpioManager().get_pi()  # Reconnect to pigpiod
 
 class Thermostat(object):
 
