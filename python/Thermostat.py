@@ -99,6 +99,7 @@ class Thermostat(object):
                     print("Warning: Heater is still on after reset! Attempting to restart pigpiod...")
                     restart_pigpiod()  # Restart pigpiod if the issue persists
                     # Reattempt turning off the heater after restarting pigpiod
+                    time.sleep(5)  # Wait for pigpiod to restart
                     self.heater.off()
                     if self.heater.is_on():
                         print("Critical: Heater still on after pigpiod restart!")
