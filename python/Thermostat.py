@@ -10,6 +10,7 @@ import os
 from PigpioManager import PigpioManager
 from WebSocketUtil import secure_database_write
 from Sys_Conf import SERIAL_NUMBER
+import json
 
 def restart_pigpiod():
     # Stop pigpiod
@@ -79,7 +80,7 @@ class Thermostat(object):
             print("Heater: On")
             time.sleep(1)  # Wait for heater to turn on
 
-            if not self.heater.is_on():
+            if not self.heater.is_on_long():
                 print("Error: Heater did not turn on as expected!")
         else:  # Measured temp is above setpoint
             self.heater.off()  # Turn off heater to lower temp

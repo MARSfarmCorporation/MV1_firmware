@@ -1,6 +1,7 @@
 from PigpioManager import PigpioManager
 from GPIO_Conf import HEATER, ON, OFF, HEATER_PWM
 from time import sleep
+import pigpio
 
 # define a class for the heater
 class Heater:
@@ -8,7 +9,7 @@ class Heater:
         # get the pigpio instance
         self.pi = PigpioManager().get_pi()
         # initialize the heater in off state
-        #We have to change sample rate to 1 microsecond so that it is able to provide a 40 kHz signal (faster switching of the heater)
+        # We have to change sample rate to 1 microsecond so that it is able to provide a 40 kHz signal (faster switching of the heater)
         self.pi.set_PWM_frequency(HEATER, 40000)  # Set heater as 40kHz PWM channel
         self.pi.set_PWM_dutycycle(HEATER, OFF)  # Turn off heater when initialized
 
@@ -24,6 +25,14 @@ class Heater:
         # Check the actual physical state of the heater pin
         return self.pi.read(HEATER) == 1  # Returns True if the pin is high (heater is on)
     
+    def is_on_long(self):
+        # Check the state of the HEATER pin 50 times over 0.5 seconds and return 1 if the pin is ever high
+        for _ in range(50):
+            if self.pi.read(HEATER) == 1:
+                return 1
+            sleep(0.01)  # Sleep for 10 milliseconds (0.01 seconds) between checks
+        return 0
+
     def reset_pin(self):
         # Reinitialize the pin as an output
         self.pi.set_mode(HEATER, pigpio.OUTPUT)
@@ -42,8 +51,8 @@ class Heater:
 # tests the heater's functions        
 def test():
     print("Test Heater")
-    print("PWM frequency BEFORE initialization", h.pi.get_PWM_frequency(HEATER))
     h = Heater()  # create an instance of the heater class
+    print("PWM frequency BEFORE initialization", h.pi.get_PWM_frequency(HEATER))
     print("PWM frequency AFTER initialization", h.pi.get_PWM_frequency(HEATER))
     print("Turn On")
     h.on()
