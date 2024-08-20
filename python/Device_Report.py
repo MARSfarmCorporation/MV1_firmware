@@ -6,6 +6,7 @@ import json
 from Sys_Conf import DEVICE_ID
 from WebSocketUtil import secure_database_write
 from version import firmware_version
+import time
 
 def get_connection_method():
     interfaces = psutil.net_if_addrs()
@@ -48,35 +49,45 @@ def get_visible_ssids(interface):
     except subprocess.CalledProcessError:
         return ['Error scanning for SSIDs']
 
-def main():
-    interface = get_connection_method()
-    if interface != 'None':
-        ip_address = get_ip_address(interface)
-        ssid = get_ssid(interface) if interface == 'wlan0' else 'Not applicable'
-        visible_ssids = get_visible_ssids('wlan0') #if interface == 'wlan0' else ['Not applicable']
-        
-        # Write the network information and firmware version to the database to send to the MongoDB device record
-        topic = f"device-report/{DEVICE_ID}"
-        payload = {
-            "device_id": DEVICE_ID,
-            "firmware_version": firmware_version,
-            "network_info": {
-                "timestamp": datetime.datetime.now().timestamp(),
-                "connection_method": interface,
-                "ip_address": ip_address,
-                "connected_ssid": ssid,
-                "visible_ssids": visible_ssids
+def main(retries=6, delay=305):
+    for attempt in range(retries):
+        interface = get_connection_method()
+        if interface != 'None':
+            ip_address = get_ip_address(interface)
+            ssid = get_ssid(interface) if interface == 'wlan0' else 'Not applicable'
+            visible_ssids = get_visible_ssids('wlan0') # if interface == 'wlan0' else ['Not applicable']
+            
+            # Prepare the payload
+            topic = f"device-report/{DEVICE_ID}"
+            payload = {
+                "device_id": DEVICE_ID,
+                "firmware_version": firmware_version,
+                "network_info": {
+                    "timestamp": datetime.datetime.now().timestamp(),
+                    "connection_method": interface,
+                    "ip_address": ip_address,
+                    "connected_ssid": ssid,
+                    "visible_ssids": visible_ssids
+                }
             }
-        }
-        payload_json = json.dumps(payload)
-        status = "Outbound - Unsent"
-        try:
-            print(f"Logging network data: {payload_json}")
-            secure_database_write(topic, payload_json, status)
-        except Exception as e:
-            print(f"Error logging network data: {e}")
-    else:
-        print("No network connection detected")
+            payload_json = json.dumps(payload)
+            status = "Outbound - Unsent"
+
+            try:
+                print(f"Logging network data: {payload_json}")
+                secure_database_write(topic, payload_json, status)
+                print("Data logged successfully.")
+                return  # Exit after successful log
+            except Exception as e:
+                print(f"Error logging network data: {e}")
+
+        else:
+            print(f"No network connection detected. Attempt {attempt + 1} of {retries}. Retrying in {delay} seconds...")
+        
+        time.sleep(delay)
+
+    # If the loop completes without success
+    print("No network connection detected after retries. Unable to log network data.")
 
 if __name__ == "__main__":
     main()
