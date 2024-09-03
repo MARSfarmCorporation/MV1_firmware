@@ -186,12 +186,12 @@ def cloud_device_control(payload, id):
 def secure_tunnel(payload, id):
     # Parse the payload
     try:
-        with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+        with open('../logs/Broker_Log.txt', 'a') as log_file:
             log_file.write(f"Broker.py: attempting to parse payload: {payload}\n")
         data = json.loads(payload)
         region = data['region']
         client_access_token = data['clientAccessToken']
-        with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+        with open('../logs/Broker_Log.txt', 'a') as log_file:
             log_file.write(f"Broker.py: attempting to start a secure tunnel with region: {region} and token {client_access_token}\n")
         print(f"Region: {region}, Client Access Token: {client_access_token}")
     except (KeyError, json.JSONDecodeError) as e:
@@ -199,15 +199,15 @@ def secure_tunnel(payload, id):
         return
 
     # Construct the command
-    command = f"../../localproxy -r {region} -d {client_access_token} -a localhost:22"
-    with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+    command = f"../../localproxy -r {region} -d 22 --access-token {client_access_token}"
+    with open('../logs/Broker_Log.txt', 'a') as log_file:
         log_file.write(f"Broker.py: Attempting to open secure tunnel via the command: {command}\n")
     print(f"Command: {command}")
 
     # Start the subprocess
     try:
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+        with open('../logs/Broker_Log.txt', 'a') as log_file:
             log_file.write(f"Broker.py: Subprocess started with PID: {process.pid}\n")
         print(f"Subprocess started with PID: {process.pid}")
 
@@ -222,7 +222,7 @@ def secure_tunnel(payload, id):
         # Optionally, update the database with a failure status
         status = "Error - Inbound - Unsortable"
         secure_database_update(id, status)
-        with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+        with open('../logs/Broker.txt', 'a') as log_file:
             log_file.write(f"Broker.py: Error starting secure tunnel: {e}\n")
         print(f"Database entry with ID {id} updated to 'Error starting secure tunnel'.")
 
