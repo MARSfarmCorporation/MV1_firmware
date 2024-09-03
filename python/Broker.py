@@ -186,11 +186,13 @@ def cloud_device_control(payload, id):
 def secure_tunnel(payload, id):
     # Parse the payload
     try:
+        with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+            log_file.write(f"Broker.py: attempting to parse payload: {payload}\n")
         data = json.loads(payload)
         region = data['region']
         client_access_token = data['clientAccessToken']
         with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
-                    log_file.write(f"Broker.py: attempting to start a secure tunnel with region: {region} and token {client_access_token}\n")
+            log_file.write(f"Broker.py: attempting to start a secure tunnel with region: {region} and token {client_access_token}\n")
         print(f"Region: {region}, Client Access Token: {client_access_token}")
     except (KeyError, json.JSONDecodeError) as e:
         print(f"Error parsing payload: {e}")
