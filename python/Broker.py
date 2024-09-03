@@ -19,6 +19,7 @@ trial2_topic = 'trial2/' + DEVICE_ID
 #device_control_topic = 'device-control/' + DEVICE_ID # Remove this topic as it is not used
 cloud_device_control_topic = 'cloud-device-control/' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
+secure_tunnel_topic = f'$aws/things/{SERIAL_NUMBER}/tunnels/notify'
 
 ###########################################################################################################################
 # SEMAPHORES
@@ -182,6 +183,26 @@ def cloud_device_control(payload, id):
         light.blink_red()
     secure_database_update(id, status)
 
+def secure_tunnel(payload, id):
+    # Parse the payload
+    try:
+        data = json.loads(payload)
+        region = data['region']
+        client_access_token = data['clientAccessToken']
+    except (KeyError, json.JSONDecodeError) as e:
+        print(f"Error parsing payload: {e}")
+        return
+
+    # Construct the command
+    command = f"../../localproxy -r {region} -d {client_access_token} -a localhost:22"
+
+    # Run the subprocess
+    try:
+        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(f"Subprocess finished with output: {result.stdout.decode()}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error running subprocess: {e.stderr.decode()}")
+
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
 ###########################################################################################################################
@@ -200,6 +221,8 @@ def process_inbound_message(cursor, id, topic, payload):
         #    device_control(payload, id)
         elif topic == cloud_device_control_topic:
             cloud_device_control(payload, id)
+        elif topic == secure_tunnel_topic:
+            secure_tunnel(payload, id)
         else:
             # Handle other topics as needed
             pass
