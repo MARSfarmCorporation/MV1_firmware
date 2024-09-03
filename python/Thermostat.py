@@ -62,11 +62,12 @@ class Thermostat(object):
 
     def adjust(self):
         # Control code
+        self.cfan.on()  # Set circ fan state
+        print("Circ_Fan: ON")
         setpoint = self.get_Setpoint()
         temp = self.get_temp()
         print("Set", setpoint, "Temp", temp)
-        self.cfan.on()  # Set circ fan state
-        print("Circ_Fan: ON")
+
 
         # Check if the temperature is too high and reboot if necessary
         if temp >= 100:

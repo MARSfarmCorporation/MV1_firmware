@@ -19,6 +19,7 @@ trial2_topic = 'trial2/' + DEVICE_ID
 #device_control_topic = 'device-control/' + DEVICE_ID # Remove this topic as it is not used
 cloud_device_control_topic = 'cloud-device-control/' + DEVICE_ID
 job_notify_topic = f'$aws/things/{SERIAL_NUMBER}/jobs/notify-next'
+secure_tunnel_topic = f'$aws/things/{SERIAL_NUMBER}/tunnels/notify'
 
 ###########################################################################################################################
 # SEMAPHORES
@@ -182,6 +183,49 @@ def cloud_device_control(payload, id):
         light.blink_red()
     secure_database_update(id, status)
 
+def secure_tunnel(payload, id):
+    # Parse the payload
+    try:
+        with open('../logs/Broker_Log.txt', 'a') as log_file:
+            log_file.write(f"Broker.py: attempting to parse payload: {payload}\n")
+        data = json.loads(payload)
+        region = data['region']
+        client_access_token = data['clientAccessToken']
+        with open('../logs/Broker_Log.txt', 'a') as log_file:
+            log_file.write(f"Broker.py: attempting to start a secure tunnel with region: {region} and token {client_access_token}\n")
+        print(f"Region: {region}, Client Access Token: {client_access_token}")
+    except (KeyError, json.JSONDecodeError) as e:
+        print(f"Error parsing payload: {e}")
+        return
+
+    # Construct the command
+    command = f"../../localproxy -r {region} -d 22 --access-token {client_access_token}"
+    with open('../logs/Broker_Log.txt', 'a') as log_file:
+        log_file.write(f"Broker.py: Attempting to open secure tunnel via the command: {command}\n")
+    print(f"Command: {command}")
+
+    # Start the subprocess
+    try:
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        with open('../logs/Broker_Log.txt', 'a') as log_file:
+            log_file.write(f"Broker.py: Subprocess started with PID: {process.pid}\n")
+        print(f"Subprocess started with PID: {process.pid}")
+
+        # Optionally, you can update the database status immediately, or handle it after the process completes.
+        # This example updates the status immediately after starting the process.
+        status = 'Inbound - Sorted'
+        secure_database_update(id, status)
+        print(f"Database entry with ID {id} updated to 'Inbound - Sorted'.")
+
+    except Exception as e:
+        print(f"Error starting subprocess: {e}")
+        # Optionally, update the database with a failure status
+        status = "Error - Inbound - Unsortable"
+        secure_database_update(id, status)
+        with open('../logs/Broker.txt', 'a') as log_file:
+            log_file.write(f"Broker.py: Error starting secure tunnel: {e}\n")
+        print(f"Database entry with ID {id} updated to 'Error starting secure tunnel'.")
+
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
 ###########################################################################################################################
@@ -200,6 +244,8 @@ def process_inbound_message(cursor, id, topic, payload):
         #    device_control(payload, id)
         elif topic == cloud_device_control_topic:
             cloud_device_control(payload, id)
+        elif topic == secure_tunnel_topic:
+            secure_tunnel(payload, id)
         else:
             # Handle other topics as needed
             pass

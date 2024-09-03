@@ -572,5 +572,8 @@ if __name__ == '__main__':
         callback=handle_pong
     )
     
+    # Subscribing to the secure tunnel topic
+    mqtt_connection.subscribe(topic=f"$aws/things/{thing_name}/tunnels/notify", qos=mqtt.QoS.AT_LEAST_ONCE, callback=handle_inbound_message)
+    
     subscribe_result = subscribe_future.result()
     print(f"Subscribed with {str(subscribe_result['qos'])}")
