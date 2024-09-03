@@ -189,19 +189,40 @@ def secure_tunnel(payload, id):
         data = json.loads(payload)
         region = data['region']
         client_access_token = data['clientAccessToken']
+        with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+                    log_file.write(f"Broker.py: attempting to start a secure tunnel with region: {region} and token {client_access_token}\n")
+        print(f"Region: {region}, Client Access Token: {client_access_token}")
     except (KeyError, json.JSONDecodeError) as e:
         print(f"Error parsing payload: {e}")
         return
 
     # Construct the command
     command = f"../../localproxy -r {region} -d {client_access_token} -a localhost:22"
+    with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+        log_file.write(f"Broker.py: Attempting to open secure tunnel via the command: {command}\n")
+    print(f"Command: {command}")
 
-    # Run the subprocess
+    # Start the subprocess
     try:
-        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print(f"Subprocess finished with output: {result.stdout.decode()}")
-    except subprocess.CalledProcessError as e:
-        print(f"Error running subprocess: {e.stderr.decode()}")
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+            log_file.write(f"Broker.py: Subprocess started with PID: {process.pid}\n")
+        print(f"Subprocess started with PID: {process.pid}")
+
+        # Optionally, you can update the database status immediately, or handle it after the process completes.
+        # This example updates the status immediately after starting the process.
+        status = 'Inbound - Sorted'
+        secure_database_update(id, status)
+        print(f"Database entry with ID {id} updated to 'Inbound - Sorted'.")
+
+    except Exception as e:
+        print(f"Error starting subprocess: {e}")
+        # Optionally, update the database with a failure status
+        status = "Error - Inbound - Unsortable"
+        secure_database_update(id, status)
+        with open('../logs/Job_Agent_Log.txt', 'a') as log_file:
+            log_file.write(f"Broker.py: Error starting secure tunnel: {e}\n")
+        print(f"Database entry with ID {id} updated to 'Error starting secure tunnel'.")
 
 ###########################################################################################################################
 # INBOUND MESSAGE HANDLING
