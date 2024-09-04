@@ -1,1 +1,1 @@
-firmware_version = "Radish 2.07"
+firmware_version = "Radish 2.08"
